@@ -1,0 +1,52 @@
+.username,.password {
+    display: none;
+}
+
+.active {
+    display: block;
+}
+
+.header-user {
+    padding-top: 20px;
+}
+
+.section-1-user {
+    padding-top: 20px;
+}
+
+
+
+body {
+    position: relative;
+}
+
+.anyClass {
+    height:215px;
+    overflow-y: auto;
+    padding: inherit;
+    width: 100%;
+
+}
+
+
+.anyClass::-webkit-scrollbar-track
+{
+    background-color: #F5F5F5;
+}
+
+.anyClass::-webkit-scrollbar
+{
+    width: 10px;
+    background-color: #F5F5F5;
+}
+
+.anyClass::-webkit-scrollbar-thumb
+{
+    background-color: #8c8c8c;
+}
+
+
+.cite {
+    font-size: 8px;
+    color:currentColor
+}

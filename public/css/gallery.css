@@ -1,0 +1,19 @@
+.gallery-img {
+    height: 238px;
+    position: relative;
+}
+
+
+.delete-img {
+    position: absolute;
+    z-index: 3;
+    right: 5px;
+    top: 5px;
+    color: #9f191f;
+    cursor: pointer;
+}
+
+.card .delete-img {
+    display: none;
+    font-size: 30px; !important;
+}
