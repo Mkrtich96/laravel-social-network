@@ -81,5 +81,4 @@ class MessageController extends Controller
             return ['item' => $data,'seen' => $seen];
         }
     }
-
 }
