@@ -24,7 +24,10 @@ $(function () {
         'cite'          : $("<cite>"),
         'messageBody'   : $('.anyClass'),
         'citeElements'  : $('.cite'),
-        'seenText'      : "<cite class='cite last'>  Seen!</cite>"
+        'seenText'      : "<cite class='cite last'>  Seen!</cite>",
+        'notifMenu'     : $('<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">'),
+        'notif'         : $('li.dropdown'),
+        'notifLi'       : $('<li class="dropdown-item text-primary form-group header-request">'),
 
 };
 
@@ -224,6 +227,11 @@ $(function () {
     scrollDown = (element) => {
 
         return element.scrollTop(element[0].scrollHeight);
+    };
+
+    createFollowButton = (clasS,data_id) => {
+        "use strict";
+        return $('<a class="fa '+ clasS +' text-right">').attr('data-id',data_id);
     };
 
     $(document).on('click','.open-message',function (e) {

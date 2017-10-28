@@ -21,7 +21,7 @@
                     </li>
                     <li class="nav-item dropdown">
                         @if(count($data->unreadNotifications) > 0 && !empty($replyFollowers))
-                            <a class="nav-link dropdown-toggle notification" href="http://example.com"
+                            <a class="nav-link dropdown-toggle notification"
                                id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
                                aria-expanded="false">
                                 Notification <span
@@ -32,17 +32,19 @@
                                     <li class="dropdown-item text-primary form-group header-request">
                                         {{ $replyFollowers['message'][$id] }}
                                         <a data-id="{{ $replyFollowers['follower'][$id] }}"
-                                           data-token="{{ csrf_token() }}" class="fa fa-check text-right check"></a>
+                                            class="fa fa-check text-right check"></a>
                                         <a data-id="{{ $replyFollowers['follower'][$id] }}"
-                                           data-token="{{ csrf_token() }}" class="fa fa-times text-right cancel"></a>
+                                           class="fa fa-times text-right cancel"></a>
                                     </li>
                                 @endforeach
                             </ul>
                         @else
-                            <a class="nav-link dropdown-toggle notification text-dark" id="navbarDropdownMenuLink"
+                            <a class="nav-link dropdown-toggle notification" id="navbarDropdownMenuLink"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
-                                Notification
+                                Notification <span
+                                        class="badge badge-danger"></span>
                             </a>
+
                         @endif
 
                     </li>

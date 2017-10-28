@@ -22,8 +22,37 @@ class MessageController extends Controller
         }
     }
 
+
+    /**
+     * @param $id
+     * @return array|int
+     *
+     * This function for real time message response...
+     * ...OR user notification response
+     * ...OR seen message response
+     *
+     */
+
     public function generate($id){
-        $messages = Message::where('to', $id)->where('seen', 0)->get();
+        $infoOk         = false;
+        $replyFollowers = [];
+        $messages       = Message::where('to', $id)->where('seen', 0)->get();
+        $notifications  = User::find($id);
+        $unreadNtfs = $notifications->unreadNotifications;
+
+        // Notifications
+        if(count($unreadNtfs) > 0){
+            foreach ($unreadNtfs as $notif) {
+                $replyFollowers['message'][]    = [
+                    'name'          =>  $notif->data['follower_name'],
+                    'followerId'    =>  $notif->data['follower_id']
+                ];
+            }
+            $unreadNtfs->markAsRead();
+            $infoOk = true;
+        }
+
+        // Messages
         if(count($messages) > 0){
             $data = [];
             foreach ($messages as $message) {
@@ -33,20 +62,25 @@ class MessageController extends Controller
                         'id'        =>  $from->id,
                         'name'      =>  $from->name,
                         'avatar'    =>  $from->avatar,
-                        'date'      =>  date('h:i M-D-y')
+                        'date'      =>  date('h:i M-D-y'),
+                        'notif'     =>  ($infoOk) ? $replyFollowers : null,
                 ];
                 $message->seen = 2;
                 $message->save();
             }
             return $data;
         }else{
+            // Seen Messages
             $messages = Message::where('from', $id)->get()->last();
-            if($messages->seen == 3){
-                $messages->seen = 1;
-                return ($messages->save()) ? 1 : 0;
+            if(!is_null($messages)){
+                if($messages->seen == 3){
+                    $messages->seen = 1;
+                    $messages->save();
+                    return ($infoOk) ? $replyFollowers : 1;
+                }
             }
-            return 0;
         }
+        return ($infoOk) ? $replyFollowers : 0;
     }
 
     public function seen(Request $request){

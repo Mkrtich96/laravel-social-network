@@ -1,18 +1,40 @@
 $(function () {
 
+    let createNotification = (length, array) => {
+        data.length = data.notif.find('.badge').html(length);
+        if(Array.isArray(array)){
+            array.map((item)=>{
+                data.text = item.name +  " send follow request. ";
+                data.accept = createFollowButton('fa-check check',item.followerId);
+                data.cancel = createFollowButton('fa-times cancel',item.followerId);
+                data.notifLi.append(data.text).append(data.accept).append(data.cancel);
+                data.notifMenu.append(data.notifLi);
+                data.notif.append(data.notifMenu);
+            });
+        }
+    };
+
+
     let responseMessage = () => {
         $.post('/generate_message/' + data.get_id, {
             '_token' : data.token
         },(res) => {
+            if(res.message){
+                createNotification(res.message.length, res.message);
+            }
+
             if(res.info){
-                data.sendInput = $('.send-message');
+                console.log(res.info);
+
+
+                /*data.sendInput = $('.send-message');
                 data.message.css('display','block');
                 data.text = createMessage(res.info.message, res.info.date, "success", "left");
                 data.messageBody.append(data.text);
                 data.toFriendProfile = "<a href='http://github.dev/user/"+ res.info.id +"' target='_blank' >" + res.info.name + "</a>";
                 data.userName.html(data.toFriendProfile);
                 data.sendInput.attr('data-id',res.info.id);
-                scrollDown(data.messageBody);
+                scrollDown(data.messageBody);*/
             }else if(res == 1){
                 data.messageText    = data.messageBody.find('.message-text');
                 data.messageText.last().append(data.seenText);
