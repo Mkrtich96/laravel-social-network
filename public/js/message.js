@@ -1,9 +1,15 @@
 $(function () {
 
     let createNotification = (length, array) => {
-        data.length = data.notif.find('.badge').html(length);
+        data.badge = data.notif.find('.badge');
+        if(data.badge.is(':empty')){
+            data.badge.text(length);
+        }else{
+            data.badge.text(parseInt(data.badge.text()) + length);
+        }
         if(Array.isArray(array)){
             array.map((item)=>{
+                data.notifLi = $('<li class="dropdown-item text-primary form-group header-request">');
                 data.text = item.name +  " send follow request. ";
                 data.accept = createFollowButton('fa-check check',item.followerId);
                 data.cancel = createFollowButton('fa-times cancel',item.followerId);

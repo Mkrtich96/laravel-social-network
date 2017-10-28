@@ -27,7 +27,7 @@ $(function () {
         'seenText'      : "<cite class='cite last'>  Seen!</cite>",
         'notifMenu'     : $('<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">'),
         'notif'         : $('li.dropdown'),
-        'notifLi'       : $('<li class="dropdown-item text-primary form-group header-request">'),
+
 
 };
 
