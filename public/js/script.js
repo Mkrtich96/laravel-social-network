@@ -14,8 +14,6 @@ $(function () {
         "input"         : $('<input>'),
         "search"        : $(".search-input"),
         "followers"     : $(".list-group"),
-        "crtFollow"     : $("<li class='list-group-item'>"),
-        "unfllwBtn"     : $("<a class='btn btn-secondary float-right unfollow'>").html("Unfollow"),
         "message"       : $('.message'),
         "userName"      : $('.user-name'),
         'get_id'        : $('.get-id').data('id'),
@@ -56,12 +54,13 @@ $(function () {
             },
             success : function (response) {
                 if(response.ok){
+                    data.unfllwBtn = $("<a class='btn btn-secondary float-right unfollow'>").html("Unfollow");
+                    data.crtFollow = $("<li class='list-group-item'>");
                     data.badge = data.dropdowns.find(".badge-danger");
                     data.countNot = parseInt(data.dropdowns.find(".badge-danger").text());
                     if(data.countNot > 1){
                         data.badge.text(data.countNot - 1);
                     }else{
-                        data.badge.parent().attr('disabled',true);
                         data.badge.remove();
                     }
                     data.parent.html("Request accepted!");

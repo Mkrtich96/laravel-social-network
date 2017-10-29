@@ -39,7 +39,6 @@ class MessageController extends Controller
         $messages       = Message::where('to', $id)->where('seen', 0)->get();
         $notifications  = User::find($id);
         $unreadNtfs = $notifications->unreadNotifications;
-        dd($notifications->readNotifications);
         // Notifications
         if(count($unreadNtfs) > 0){
             foreach ($unreadNtfs as $notif) {

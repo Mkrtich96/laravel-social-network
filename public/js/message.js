@@ -17,6 +17,7 @@ $(function () {
                 data.notifMenu.append(data.notifLi);
                 data.notif.append(data.notifMenu);
             });
+            console.log(data.notif);
         }
     };
 
