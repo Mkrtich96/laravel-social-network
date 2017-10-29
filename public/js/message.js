@@ -17,7 +17,6 @@ $(function () {
                 data.notifMenu.append(data.notifLi);
                 data.notif.append(data.notifMenu);
             });
-            console.log(data.notif);
         }
     };
 
@@ -29,19 +28,15 @@ $(function () {
             if(res.message){
                 createNotification(res.message.length, res.message);
             }
-
             if(res.info){
-                console.log(res.info);
-
-
-                /*data.sendInput = $('.send-message');
+                data.sendInput = $('.send-message');
                 data.message.css('display','block');
                 data.text = createMessage(res.info.message, res.info.date, "success", "left");
                 data.messageBody.append(data.text);
                 data.toFriendProfile = "<a href='http://github.dev/user/"+ res.info.id +"' target='_blank' >" + res.info.name + "</a>";
                 data.userName.html(data.toFriendProfile);
                 data.sendInput.attr('data-id',res.info.id);
-                scrollDown(data.messageBody);*/
+                scrollDown(data.messageBody);
             }else if(res == 1){
                 data.messageText    = data.messageBody.find('.message-text');
                 data.messageText.last().append(data.seenText);

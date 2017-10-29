@@ -62,7 +62,6 @@ class MessageController extends Controller
                         'name'      =>  $from->name,
                         'avatar'    =>  $from->avatar,
                         'date'      =>  date('h:i M-D-y'),
-                        'notif'     =>  ($infoOk) ? $replyFollowers : null,
                 ];
                 $message->seen = 2;
                 $message->save();
@@ -75,7 +74,7 @@ class MessageController extends Controller
                 if($messages->seen == 3){
                     $messages->seen = 1;
                     $messages->save();
-                    return ($infoOk) ? $replyFollowers : 1;
+                    return 1;
                 }
             }
         }
