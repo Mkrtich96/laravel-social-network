@@ -169,11 +169,7 @@ return [
         Laravel\Tinker\TinkerServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
-        /*
-         * FileSystem
-         */
 
-        GrahamCampbell\Flysystem\FlysystemServiceProvider::class,
 
         /*
          * Github Service Provider
@@ -203,7 +199,6 @@ return [
     */
 
     'aliases' => [
-        'Flysystem' => GrahamCampbell\Flysystem\Facades\Flysystem::class,
         'GitHub' => GrahamCampbell\GitHub\Facades\GitHub::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
         'App' => Illuminate\Support\Facades\App::class,

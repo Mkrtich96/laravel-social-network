@@ -134,6 +134,8 @@ class UserController extends Controller
          * Providers profile
          */
         $repository = $this->github->api('user')->repositories($data->name);
+
+
         foreach ($repository as $repos) {
             $this->repositories['name'][] = $repos['name'];
             $this->repositories['url'][] = $repos['html_url'];
