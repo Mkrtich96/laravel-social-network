@@ -20,12 +20,12 @@
                         <a href="{{ url('/gallery') }}"  class="nav-link text-left">Gallery</a>
                     </li>
                     <li class="nav-item dropdown">
-                        @if(count($data->unreadNotifications) > 0 && !empty($replyFollowers))
+                        @if(count($data->readNotifications) > 0 && !empty($replyFollowers))
                             <a class="nav-link dropdown-toggle notification"
                                id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
                                aria-expanded="false">
                                 Notification <span
-                                        class="badge badge-danger">{{ count($data->unreadNotifications) }}</span>
+                                        class="badge badge-danger">{{ count($data->readNotifications) }}</span>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 @foreach($replyFollowers['message'] as $id => $value)

@@ -112,7 +112,7 @@ class UserController extends Controller
             }
 
 
-            foreach ($data->unreadNotifications as $notification) {
+            foreach ($data->readNotifications as $notification) {
                 $replyFollowers['message'][]    = $notification->data['follower_name'] . " send follow request";
                 $replyFollowers['follower'][]   = $notification->data['follower_id'];
             }
