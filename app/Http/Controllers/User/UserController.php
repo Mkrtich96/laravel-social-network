@@ -80,6 +80,7 @@ class UserController extends Controller
      *
      * @param  int $id
      * @return \Illuminate\Http\Response
+     *
      */
     public function show($user_id)
     {
@@ -128,7 +129,6 @@ class UserController extends Controller
                 'followers'     => $followers_list
             ]);
         }
-
 
         /**
          * Providers profile
@@ -193,7 +193,6 @@ class UserController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
@@ -204,7 +203,6 @@ class UserController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
      * @param  \Illuminate\Http\Request $request
      * @param  int $id
      * @return \Illuminate\Http\Response

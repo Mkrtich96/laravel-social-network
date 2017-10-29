@@ -182,7 +182,7 @@ $(function () {
                 data.avatar     = $('<img src="'+ searchRes[key].avatar +'" class="search-avatar rounded float-left">');
                 data.button     = $('<button>');
                 data.textDiv    = $('<div class="card-text">');
-                data.cardTitle.html('<a class="open-message">' + searchRes[key].value + '</a>');
+                data.cardTitle.html('<a href="http://github.dev/user/'+ searchRes[key].id +'" target="_blank">' + searchRes[key].value + '</a>');
                 if (searchRes[key].follow) {
                     data.button.addClass('btn btn-secondary unfollow')
                         .attr("data-id",searchRes[key].id)
