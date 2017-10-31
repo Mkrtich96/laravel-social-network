@@ -1,7 +1,7 @@
 <header class="header">
     <div class="container-fluid">
         <nav class="navbar navbar-expand-lg navbar-light bg-light header-navbar">
-            <a class="navbar-brand" href="#">{{ $data['name'] }}</a>
+            <a class="navbar-brand" href="{{ url('/') }}">{{ $data['name'] }}</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -20,12 +20,12 @@
                         <a href="{{ url('/gallery') }}"  class="nav-link text-left">Gallery</a>
                     </li>
                     <li class="nav-item dropdown">
-                        @if(count($data->readNotifications) > 0 && !empty($replyFollowers))
+                        @if(isset($replyFollowers))
                             <a class="nav-link dropdown-toggle notification"
                                id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
                                aria-expanded="false">
                                 Notification <span
-                                        class="badge badge-danger">{{ count($data->readNotifications) }}</span>
+                                        class="badge badge-danger">{{ count($replyFollowers) - 1 }}</span>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 @foreach($replyFollowers['message'] as $id => $value)
@@ -44,7 +44,6 @@
                                 Notification <span
                                         class="badge badge-danger"></span>
                             </a>
-
                         @endif
 
                     </li>

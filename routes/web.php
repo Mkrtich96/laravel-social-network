@@ -24,10 +24,10 @@ Route::group(['middleware'=>['auth']],function(){
     /**
      * Follow system
      */
-    Route::post('/follow/{user_id}','User\FollowController@follow')->name('follow.request');
-    Route::post('/unfollow/{follower_id}','User\FollowController@unfollow');
-    Route::post('/cancel/{follower_id}','User\FollowController@cancel')->name('response.not.request');
-    Route::post('/accept/{follower_id}','User\FollowController@accept')->name('response.ok.request');
+    Route::post('/follow','User\FollowController@follow')->name('follow.request');
+    Route::post('/unfollow','User\FollowController@unfollow');
+    Route::post('/cancel','User\FollowController@cancel')->name('response.not.request');
+    Route::post('/accept','User\FollowController@accept')->name('response.ok.request');
 
     /**
      * Auth profile
@@ -49,8 +49,8 @@ Route::group(['middleware'=>['auth']],function(){
     /**
      * Messages system
      */
-    Route::post('selmessages/','User\MessageController@select');
-    Route::post('seen/','User\MessageController@seen');
-    Route::post('send/{id}','User\MessageController@send');
-    Route::post('generate_message/{id}','User\MessageController@generate');
+    Route::post('/selmessages','User\MessageController@select');
+    Route::post('/seen','User\MessageController@seen');
+    Route::post('/send','User\MessageController@send');
+    Route::post('/generate_message','User\MessageController@generate');
 });

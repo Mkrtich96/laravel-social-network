@@ -48,9 +48,10 @@ $(function () {
         data.follower_id    = $(this).data('id');
         $.ajax({
             method : "POST",
-            url    : "/accept/" + data.follower_id,
+            url    : "/accept",
             data   : {
                 "_token" : data.token,
+                "follower_id": data.follower_id
             },
             success : function (response) {
                 if(response.ok){
@@ -88,13 +89,14 @@ $(function () {
         data.follower_id = $(this).data('id');
         $.ajax({
             method : "POST",
-            url    : "/cancel/" + data.follower_id,
+            url    : "/cancel",
             data   : {
                 "_token" : data.token,
                 "check"  : (data.parent.hasClass('header-request')) ? 1 : 0,
+                "follower_id" : data.follower_id
             },
             success : function (response) {
-                if(response){
+                if(response.ok){
                     if(data.parent.hasClass('header-request')){
                         data.badge      = data.dropdowns.find(".badge-danger");
                         data.countNot   = parseInt(data.dropdowns.find(".badge-danger").text());
@@ -129,12 +131,13 @@ $(function () {
         data.follower_id = $(this).data('id');
         $.ajax({
             method : "POST",
-            url    : "/unfollow/" + data.follower_id,
+            url    : "/unfollow",
             data   : {
                 "_token" : data.token,
+                "follower_id" : data.follower_id,
             },
             success : function (response) {
-                if(response){
+                if(response.ok){
                         if(data.parent.hasClass('list-group-item')){
                             data.parent.remove();
                         }else{
@@ -154,12 +157,13 @@ $(function () {
         data.follower_id = $(this).data('id');
         $.ajax({
             method : "POST",
-            url    : "/follow/" + data.follower_id,
+            url    : "/follow",
             data   : {
                 "_token" : data.token,
+                "follower_id" : data.follower_id,
             },
             success : function (response) {
-                if(response){
+                if(response.ok){
                     data.followBtn.removeClass('btn-outline-primary follow')
                                     .attr("data-id",response.id)
                                     .addClass('btn-secondary cancel')

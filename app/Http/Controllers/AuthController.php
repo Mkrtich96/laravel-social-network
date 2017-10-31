@@ -75,26 +75,20 @@ class AuthController extends Controller
      */
     public function findOrCreateUser($user, $provider)
     {
-        $authUser = User::where('provider_id',$user->id)->first();
+        $authUser = User::find($user->id);
         if ($authUser) {
             return $authUser;
         }
-        $client =   new Client;
-        $body   =   $client->get($user->user['url']);
-        if($body->getStatusCode() === 200){
-            $body = $body->getBody();
-            $repo_api  =   $body->repos_url;
-        }
+
         $data = [
-            'name'  => $user->name,
-            'email' => $user->email,
-            'avatar'=> $user->avatar,
-            'gender'=> ($provider === 'facebook') ? $user->user['gender'] : 'None',
-            'provider'=> $provider,
-            'api_info'=> $repo_api,
-            'provider_id'=> $user->id
+            'name'          => $user->name,
+            'email'         => $user->email,
+            'avatar'        => $user->avatar,
+            'gender'        => ($provider === 'facebook') ? $user->user['gender'] : 'None',
+            'provider'      => $provider,
+            'provider_id'   => $user->id
         ];
-        return User::insertInfo($data);
+        return User::create($data);
     }
 
     public function update(Request $request, $id)

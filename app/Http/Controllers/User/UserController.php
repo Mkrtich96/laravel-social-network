@@ -2,24 +2,18 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Follow;
-use App\Notifications\RepliedToFollow;
-use App\User;
+use App\Notify;
 use Auth;
-use function GuzzleHttp\default_ca_bundle;
+use App\User;
+use App\Follow;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-/*use GuzzleHttp\Client as Client;
-use GrahamCampbell\GitHub\Facades\GitHub;*/
 use GrahamCampbell\GitHub\GitHubManager;
-use Illuminate\Support\Facades\DB;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 
 class UserController extends Controller
 {
 
-    protected $repositories = [];
     protected $github;
 
     public function __construct(GitHubManager $github)
@@ -60,11 +54,12 @@ class UserController extends Controller
 
         $rules = [
             'reponame' => 'required|max:12',
-            'public' => 'required|',
+            'public' => 'required',
         ];
         $this->validate($request, $rules);
         if ($request->public == "public") {
-            $this->github->api('repo')->create($request->reponame, $request->description, true);
+            $this->github->api('repo')
+                        ->create($request->reponame, $request->description, true);
             return redirect()->back();
         } else {
             try {
@@ -84,7 +79,9 @@ class UserController extends Controller
      */
     public function show($user_id)
     {
+
         $data = User::find($user_id);
+
         if (is_null($data)) {
             return redirect('404');
         }
@@ -93,63 +90,86 @@ class UserController extends Controller
          * Registered Users
          */
         if(is_null($data->provider)){
+
             $replyFollowers = [];
             $followers_list = [];
-            $followers = Follow::where('user_id',$user_id)->orWhere('follower_id',$user_id)->get();
+            $followers = Follow::where('user_id',$user_id)
+                                ->orWhere('follower_id',$user_id)
+                                ->get();
 
-            foreach ($followers as $follower) {
+            if(count($followers) > 0){
 
-                if($user_id == $follower->user_id){
-                    $follow = User::find($follower->follower_id);
-                    $follower_id = $follower->follower_id;
-                }elseif($user_id == $follower->follower_id){
-                    $follow = User::find($follower->user_id);
-                    $follower_id = $follower->user_id;
+                foreach ($followers as $follower) {
+
+                    if($user_id == $follower->user_id){
+                        $follow = User::find($follower->follower_id);
+                        $follower_id = $follower->follower_id;
+                    }elseif($user_id == $follower->follower_id){
+                        $follow = User::find($follower->user_id);
+                        $follower_id = $follower->user_id;
+                    }
+
+                    $followers_list['id'][]     = $follower_id;
+                    $followers_list['name'][]   = $follow->name;
+                    $followers_list['avatar'][] = $this->generate_avatar($follow);
                 }
 
-                $followers_list['name'][]   = $follow->name;
-                $followers_list['id'][]     = $follower_id;
-                $followers_list['avatar'][] = User::generate_avatar($follow);
+            }else{
+                $followers = null;
             }
 
 
-            foreach ($data->readNotifications as $notification) {
-                $replyFollowers['message'][]    = $notification->data['follower_name'] . " send follow request";
-                $replyFollowers['follower'][]   = $notification->data['follower_id'];
+            $read_notifications =   $data->readnotifications;
+            if(count($read_notifications) > 0){
+                foreach ($read_notifications as $notification) {
+                    $replyFollowers['message'][]    = $notification->data['follower_name'] . " send follow request";
+                    $replyFollowers['follower'][]   = $notification->data['follower_id'];
+                }
+            }else{
+                $replyFollowers = null;
             }
-
             /**
              * Auth user Avatar
              */
-            $avatar = User::generate_avatar($data);
+            $avatar = $this->generate_avatar($data);
+
             return view('front.user',[
                 'data'          => $data,
                 'avatar'        => $avatar,
                 'replyFollowers'=> $replyFollowers,
-                'followers'     => $followers_list
+                'followers'     => (isset($followers)) ? $followers_list : null
             ]);
         }
 
         /**
          * Providers profile
          */
+        $repositories   = [];
         $repository = $this->github->api('user')->repositories($data->name);
 
-
-        foreach ($repository as $repos) {
-            $this->repositories['name'][] = $repos['name'];
-            $this->repositories['url'][] = $repos['html_url'];
-            $this->repositories['clone'][] = $repos['clone_url'];
+        if(count($repository) > 0){
+            foreach ($repository as $repos) {
+                $repositories['name'][]  = $repos['name'];
+                $repositories['url'][]   = $repos['html_url'];
+                $repositories['clone'][] = $repos['clone_url'];
+            }
+        }else{
+            $repositories = null;
         }
+
         switch ($data['provider']) {
-            case 'github'   : $data = [
-                                'name' => $data->name,
-                                'avatar' => $data->avatar,
-                                'provider' => $data->provider
-                                ];
-                return view('front.user', ['data' => $data, 'repos' => $this->repositories]);
-                break;
-            default: break;
+                case 'github'   :   $data = [
+                                        'name'      => $data->name,
+                                        'avatar'    => $data->avatar,
+                                        'provider'  => $data->provider
+                                    ];
+                                    return view('front.user', [
+                                        'data'  => $data,
+                                        'repos' => $repositories
+                                    ]);
+                                    break;
+
+                default         :   break;
         }
     }
 
@@ -163,26 +183,32 @@ class UserController extends Controller
         $user = User::find($id);
         $authId = Auth::user()->id;
         $requested = 0;
+
         if(is_null($user) || !is_null($user->provider)){
             return redirect('404');
         }
+
         if($id == $authId){
             return redirect('/');
         }
-        foreach ($user->unreadNotifications as $notification) {
-            if($notification->data['follower_id'] == $authId){
-                $requested = 1;
-                break;
-            }
-        };
-        $follow = Follow::check_follower_or_not($id,$authId);
-        if(is_null($follow)){
-            $followBtn = Follow::crtFollowBtn('outline-primary follow',$id, 'Follow');
-        }else{
-            $followBtn = Follow::crtFollowBtn('secondary unfollow',$id, 'Unfollow');
+
+        $notifications = Notify::where('to', $authId)->first();
+
+        if(!is_null($notifications)){
+            $requested = 1;
         }
+
+
+        $follow = check_follower_or_not($id,$authId);
+
+        if(is_null($follow)){
+            $followBtn = $this->crtFollowBtn('outline-primary follow',$id, 'Follow');
+        }else{
+            $followBtn = $this->crtFollowBtn('secondary unfollow',$id, 'Unfollow');
+        }
+
         if($requested){
-            $followBtn = Follow::crtFollowBtn('secondary cancel',$id, 'Cancel Request');
+            $followBtn = $this->crtFollowBtn('secondary cancel',$id, 'Cancel Request');
         }
 
         return view('front.profile.user_page',[
@@ -233,6 +259,33 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+
+    }
+
+
+    public function crtFollowBtn($class, $data_id, $text){
+
+        $button =   "<button class='btn btn-". $class ."' data-id='". $data_id ."'>"
+                        . $text .
+                    "</button>";
+
+        return $button;
+    }
+
+    public function generate_avatar($data){
+
+        $avatar = null;
+
+        if(is_null($data->avatar)) {
+            if (!$data->gender){
+                $avatar = asset('images/avatars/male.gif');
+            }else{
+                $avatar = asset('images/avatars/female.gif');
+            }
+        }else{
+            $avatar = asset('images/' .$data->id . '/' . $data->avatar);
+        }
+
+        return $avatar;
     }
 }

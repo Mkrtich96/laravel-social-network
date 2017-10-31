@@ -6,7 +6,7 @@
             </div>
             <div class="row">
                 <ul class="list-group">
-                    @if(!empty($followers))
+                    @if(isset($followers))
                         @foreach($followers['name'] as $key => $value)
                             <li class="list-group-item">
                                 <img src="{{ $followers['avatar'][$key] }}" class="rounded-circle followers-avatar">

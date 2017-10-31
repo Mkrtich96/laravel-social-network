@@ -8,7 +8,7 @@ $(function () {
             data.badge.text(parseInt(data.badge.text()) + length);
         }
         if(Array.isArray(array)){
-            array.map((item)=>{
+            array.map((item) => {
                 data.notifLi = $('<li class="dropdown-item text-primary form-group header-request">');
                 data.text = item.name +  " send follow request. ";
                 data.accept = createFollowButton('fa-check check',item.followerId);
@@ -22,8 +22,9 @@ $(function () {
 
 
     let responseMessage = () => {
-        $.post('/generate_message/' + data.get_id, {
-            '_token' : data.token
+        $.post('/generate_message', {
+            '_token' : data.token,
+            'get_id' : data.get_id
         },(res) => {
             if(res.message){
                 createNotification(res.message.length, res.message);
@@ -33,11 +34,13 @@ $(function () {
                 data.message.css('display','block');
                 data.text = createMessage(res.info.message, res.info.date, "success", "left");
                 data.messageBody.append(data.text);
-                data.toFriendProfile = "<a href='http://github.dev/user/"+ res.info.id +"' target='_blank' >" + res.info.name + "</a>";
+                data.toFriendProfile =  "<a href='http://github.dev/user/"+ res.info.id +"' target='_blank' >"
+                                            + res.info.name +
+                                        "</a>";
                 data.userName.html(data.toFriendProfile);
                 data.sendInput.attr('data-id',res.info.id);
                 scrollDown(data.messageBody);
-            }else if(res == 1){
+            }else if(res.ok){
                 data.messageText    = data.messageBody.find('.message-text');
                 data.messageText.last().append(data.seenText);
             }
@@ -57,12 +60,14 @@ $(function () {
     });
 
     $(document).on('keyup','.send-message',function (event) {
+
         data.val = $(this).val().trim().replace(/(<([^>]+)>)/ig,"");
         data.id  = $(this).data('id');
         if(event.keyCode == 13 && data.val != ""){
-            $.post("/send/" + data.id,{
+            $.post("/send",{
                 '_token'    :   data.token,
-                'message'   :   data.val
+                'message'   :   data.val,
+                'user_id'   :   data.id
             },(res) => {
                 if(res.ok){
                     $('.send-message').val("");

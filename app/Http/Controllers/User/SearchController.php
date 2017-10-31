@@ -2,27 +2,29 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Follow;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class SearchController extends Controller
 {
+
     public function search(Request $request){
         $term = $request->term;
         $user_id = \Auth::user()->id;
         $searchResult = [];
         $requested = 0;
-        $users = User::where('name','LIKE', $term . '%')->where('provider',null)->where('id','<>',$user_id)->get();
+        $users = User::where('name','LIKE', $term . '%')
+                        ->where('provider',null)
+                        ->where('id','<>',$user_id)
+                        ->get();
         if(count($users) == 0){
             $searchResult[] = "Not user found";
         }else{
             foreach ($users as $user => $value) {
 
                 $user = User::find($value->id);
-
-                $follow = Follow::check_follower_or_not($user->id,$user_id);
+                $follow = check_follower_or_not($user->id,$user_id);
 
                 foreach ($user->unreadNotifications as $notification) {
                     if($notification->data['follower_id'] == $user_id){
