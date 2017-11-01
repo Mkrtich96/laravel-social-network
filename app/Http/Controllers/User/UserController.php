@@ -81,6 +81,8 @@ class UserController extends Controller
 
         $data = User::find($user_id);
 
+//        dd($data->galleries);
+
         if (is_null($data)) {
             return redirect('404');
         }

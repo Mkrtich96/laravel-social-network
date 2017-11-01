@@ -24,4 +24,9 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function galleries()
+    {
+        return $this->hasMany('App\Gallery','user_id');
+    }
 }
