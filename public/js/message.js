@@ -1,13 +1,16 @@
-$(function () {
+$(() => {
 
     let createNotification = (length, array) => {
+
         data.badge = data.notif.find('.badge');
         if(data.badge.is(':empty')){
             data.badge.text(length);
         }else{
             data.badge.text(parseInt(data.badge.text()) + length);
         }
+
         if(Array.isArray(array)){
+
             array.map((item) => {
                 data.notifLi = $('<li class="dropdown-item text-primary form-group header-request">');
                 data.text = item.name +  " send follow request. ";
@@ -22,7 +25,7 @@ $(function () {
 
 
     let responseMessage = () => {
-        console.log(data);
+
         $.post('/generate_message', {
             '_token' : data.token,
             'get_id' : data.get_id
@@ -48,7 +51,7 @@ $(function () {
         })
     };
 
-    $(document).on('click','.message',function () {
+    $(document).on('click','.message', () => {
         data.messageText = data.messageBody.find('.message-text');
         if(data.messageText.last().hasClass('text-left')){
             $.post('/seen', {
@@ -64,6 +67,7 @@ $(function () {
 
         data.val = $(this).val().trim().replace(/(<([^>]+)>)/ig,"");
         data.id  = $(this).data('id');
+
         if(event.keyCode == 13 && data.val != ""){
             $.post("/send",{
                 '_token'    :   data.token,

@@ -6,12 +6,12 @@
             </div>
             <div class="row">
                 <ul class="list-group">
-                    @if(isset($followers_lists))
-                        @foreach($followers_lists['name'] as $key => $value)
+                    @if(isset($followers_list))
+                        @foreach($followers_list['name'] as $key => $value)
                             <li class="list-group-item">
-                                <img src="{{ $followers_lists['avatar'][$key] }}" class="rounded-circle followers-avatar">
-                                <a class="open-message text-primary" data-id="{{ $followers_lists['id'][$key] }}">{{ $followers_lists['name'][$key] }}</a>
-                                <a class="btn btn-secondary float-right unfollow" data-id="{{ $followers_lists['id'][$key] }}">Unfollow</a>
+                                <img src="{{ $followers_list['avatar'][$key] }}" class="rounded-circle followers-avatar">
+                                <a class="open-message text-primary" data-id="{{ $followers_list['id'][$key] }}">{{ $followers_list['name'][$key] }}</a>
+                                <a class="btn btn-secondary float-right unfollow" data-id="{{ $followers_list['id'][$key] }}">Unfollow</a>
                             </li>
                         @endforeach
                     @endif

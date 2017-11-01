@@ -114,7 +114,7 @@ class UserController extends Controller
                 }
 
             }else{
-                $followers = null;
+                $followers_list = null;
             }
 
 
@@ -131,8 +131,6 @@ class UserController extends Controller
              * Auth user Avatar
              */
             $avatar = $this->generate_avatar($data);
-
-            (isset($followers)) ? $followers_list : null;
 
             return view('front.user',compact("data","avatar", 'replyFollowers', 'followers_list'));
         }

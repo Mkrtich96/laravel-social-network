@@ -1,4 +1,4 @@
-$(function () {
+$(() => {
 
     /**
      * Delete Picture

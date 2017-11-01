@@ -1,4 +1,4 @@
-$(function () {
+$(() => {
 
     data = {
         "token"         : $('meta[name="csrf-token"]').attr('content'),
@@ -24,10 +24,8 @@ $(function () {
         'citeElements'  : $('.cite'),
         'seenText'      : "<cite class='cite last'>  Seen!</cite>",
         'notifMenu'     : $('<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">'),
-        'notif'         : $('li.dropdown'),
-
-
-};
+        'notif'         : $('li.dropdown')
+    };
 
 
     let searchRes = null;
@@ -36,7 +34,7 @@ $(function () {
      */
     data.search.autocomplete({
         source : "/search",
-        response : function (event,ui) {
+        response : (event,ui) => {
             searchRes = ui.content;
         }
     });
@@ -53,7 +51,7 @@ $(function () {
                 "_token" : data.token,
                 "follower_id": data.follower_id
             },
-            success : function (response) {
+            success : (response) => {
                 if(response.ok){
                     data.unfllwBtn = $("<a class='btn btn-secondary float-right unfollow'>").html("Unfollow");
                     data.crtFollow = $("<li class='list-group-item'>");
@@ -100,7 +98,7 @@ $(function () {
                 "check"  : (data.parent.hasClass('header-request')) ? 1 : 0,
                 "follower_id" : data.follower_id
             },
-            success : function (response) {
+            success : (response) => {
                 if(response.ok){
                     if(data.parent.hasClass('header-request')){
                         data.badge      = data.dropdowns.find(".badge-danger");
@@ -127,7 +125,7 @@ $(function () {
                 }
             },
             statusCode: {
-                404: function() {
+                404: () => {
                     console.log('Cancel follow response not found. Error 404.');
                 }
             }
@@ -146,7 +144,7 @@ $(function () {
                 "_token" : data.token,
                 "follower_id" : data.follower_id,
             },
-            success : function (response) {
+            success : (response) => {
                 if(response.ok){
                         if(data.parent.hasClass('list-group-item')){
                             data.parent.remove();
@@ -159,7 +157,7 @@ $(function () {
                 }
             },
             statusCode: {
-                404: function() {
+                404: () => {
                     console.log('Unfollow response not found. Error 404.');
                 }
             }
@@ -194,12 +192,13 @@ $(function () {
 
     });
 
-    $(document).on("click",".search-btn",function (e) {
+    $(document).on("click",".search-btn", (e) => {
         e.preventDefault();
         if(!$.isEmptyObject(searchRes)){
-            data.cards.html("");
 
+            data.cards.html("");
             searchRes.map((item) => {
+
                 data.cards1     = $('<div class="card col-12 col-sm-12">');
                 data.cards2     = $('<div class="card-body">');
                 data.cards3     = $('<div class="card-text">');
@@ -277,6 +276,7 @@ $(function () {
             data.sendInput.attr("data-id",data.to);
             data.messageBody.html("");
             res.item.map((item) => {
+
                 if(item.from == data.get_id){
                     data.color      = "info";
                     data.position   = "right";
@@ -304,7 +304,7 @@ $(function () {
     /**
      * Close message window
      */
-    $(document).on('click','.close', function() {
+    $(document).on('click','.close', () => {
 
         data.message.css('display','none');
     });
