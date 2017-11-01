@@ -77,6 +77,11 @@ $(function () {
                         data.menu.remove();
                     },3000);
                 }
+            },
+            statusCode: {
+                404: function() {
+                    console.log('Accept follow response not found. Error 404.');
+                }
             }
         });
     });
@@ -172,7 +177,7 @@ $(function () {
                 "_token" : data.token,
                 "follower_id" : data.follower_id,
             },
-            success : function (response) {
+            success : (response) => {
                 if(response.ok){
                     data.followBtn.removeClass('btn-outline-primary follow')
                                     .attr("data-id",response.id)

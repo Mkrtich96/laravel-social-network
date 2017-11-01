@@ -16,8 +16,13 @@ $(function () {
                 'src'       : data.src
             },
             success   : function (data) {
-                if(data){
+                if(data.ok){
                     _this.parent().parent().remove();
+                }
+            }
+            statusCode : {
+                404: function() {
+                    console.log('Gallery delete response not found. Error 404.');
                 }
             }
         });

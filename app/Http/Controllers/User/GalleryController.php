@@ -32,7 +32,7 @@ class GalleryController extends Controller
             }
         }
 
-        return view('front.profile.gallery', ['images' => $data]);
+        return view('front.profile.gallery', compact('data'));
     }
 
     /**
@@ -55,17 +55,20 @@ class GalleryController extends Controller
     {
         $user_id = Auth::user()->id;
 
-        $data    = [];
-        if($request->hasFile('gallery')){
+        $data = [];
+        if ($request->hasFile('gallery')) {
             $files = $request->file('gallery');
             foreach ($files as $file) {
                 $name = $file->store('public/' . $user_id . '/gallery');
-                $data[] = ['user_id' => $user_id, 'image'=> basename($name)];
+                $data[] = ['user_id' => $user_id, 'image' => basename($name)];
             }
-            return Gallery::insert($data) ? redirect()->back() : 0;
+            if (Gallery::insert($data)) {
+                return redirect()->back()->with('status_200', 'Gallery updated!');
+            } else {
+                return redirect()->back()->with('status_404', 'Connection error');
+            }
         }
     }
-
     /**
      * Display the specified resource.
      *
@@ -113,7 +116,11 @@ class GalleryController extends Controller
 
         $user->avatar = $image->image;
 
-        return ($user->save()) ? redirect()->back() : 0;
+        if($user->save()){
+            return redirect('/')->with('status_202', 'Profile photo updated!');
+        }else{
+            return redirect()->back()->with('status_404','Connection error!');
+        }
     }
 
     /**
@@ -124,11 +131,25 @@ class GalleryController extends Controller
     public function destroy(Request $request,$id)
     {
         if($request->ajax()){
+            $rules = [
+                'src' => 'regex:/^([a-zA-Z1-9]+)\.([a-z]{3,5})$/',
+            ];
+
+            $validate = $this->validate($request, $rules);
+
+            if(!is_null($validate)){
+                return response(null, 404);
+            }
+
             $src = basename($request->src);
             $user_id = \Auth::user()->id;
             unlink(storage_path('app/public/'. $user_id . '/gallery/' . $src));
             $image = Gallery::find($id);
-            return ($image->delete()) ? 1 : 0;
+            if($image->delete()){
+                return response(['ok' => 1],200);
+            }else{
+                return response(null, 404);
+            }
         }
     }
 }

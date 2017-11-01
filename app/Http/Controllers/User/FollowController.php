@@ -74,7 +74,7 @@ class FollowController extends Controller
             $delete = $follower->delete();
 
             if($delete){
-                return response(['ok' => 1],200);
+                return response(['ok' => 1], 200);
             }
         }
 
@@ -110,7 +110,11 @@ class FollowController extends Controller
             }
 
             if($delete){
+
                 return response(['ok' => 1],200);
+            }else{
+
+                return response(null, 404);
             }
 
         }
@@ -158,12 +162,18 @@ class FollowController extends Controller
                 $avatar = User::find($follower_id);
 
                 if ($follow->save()) {
-                    return response([
+
+                    $data = [
                         "ok" => 1,
                         "name" => $data['follower_name'],
                         "id" => $data['follower_id'],
                         "avatar" => $avatar->avatar
-                    ],200);
+                    ];
+
+                    return response($data, 200);
+                }else{
+
+                    return response(null, 404);
                 }
             }
         }

@@ -8,6 +8,15 @@
         </div>
     </div>
     <div class="container">
+        @if (session('status_200'))
+            <div class="alert alert-success text-center">
+                {{ session('status_200') }}
+            </div>
+        @elseif(session('status_404'))
+            <div class="alert alert-danger text-center">
+                {{ session('status_400') }}
+            </div>
+        @endif
         <div class="row">
             <div class="col">
                 <form action="{{ route('gallery.store') }}" method="post" enctype="multipart/form-data">
@@ -18,8 +27,8 @@
             </div>
         </div><br>
         <div class="row">
-            @if(count($images) > 0)
-                @foreach($images as $image)
+            @if(count($data) > 0)
+                @foreach($data as $image)
                     <div class="col-3 images">
                         <div class="card" style="width: 15rem;">
                             <span class="delete-img fa fa-trash-o" data-id="{{ $image['id'] }}"></span>
