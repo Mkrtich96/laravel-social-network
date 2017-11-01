@@ -126,10 +126,10 @@ class MessageController extends Controller
 
                             return response(['ok' => 1],200);
                         }
+                        return response(null, 404);
                     }
                 }
             }
-            return response(null, 404);
         }
 
     }

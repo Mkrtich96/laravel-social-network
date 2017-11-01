@@ -20,7 +20,7 @@ $(() => {
                 if(data.ok){
                     _this.parent().parent().remove();
                 }
-            }
+            },
             statusCode : {
                 404: function() {
                     console.log('Gallery delete response not found. Error 404.');

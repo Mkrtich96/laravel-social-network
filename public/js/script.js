@@ -268,7 +268,7 @@ $(() => {
             'from'  : data.get_id,
             'to'    : data.to
         },(res) => {
-            data.message.css('display','block');
+            data.message.fadeIn();
             data.sendInput  = $('.send-message');
             data.xsUserAvatar = "<img src='"+ data.avatar.attr('src') +"' class='rounded-circle xs-avatar'>";
             data.toFriendProfile    = data.xsUserAvatar + "<a href='http://github.dev/user/"+ data.to +"' target='_blank' >" + data.name + "</a>";
@@ -306,7 +306,7 @@ $(() => {
      */
     $(document).on('click','.close', () => {
 
-        data.message.css('display','none');
+        data.message.fadeOut();
     });
 
 
