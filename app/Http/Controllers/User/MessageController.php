@@ -13,6 +13,7 @@ class MessageController extends Controller
     public function send(Request $request){
 
         if($request->ajax()){
+
             $rules = [
                 'user_id' => 'required',
                 'message' => 'max:200'
@@ -39,7 +40,7 @@ class MessageController extends Controller
                             'date' => date('h:i M-D-y')
                         ],200);
             }else{
-                return response(['error' => "Message dont sended!"],404);
+                return response(null,404);
             }
         }
     }
@@ -111,10 +112,9 @@ class MessageController extends Controller
                     $message->save();
                 }
                 if(count($data) > 0){
+
                     return response($data, 200);
                 }
-
-                return response(null, 404);
 
             }else{
                 // Seen Messages
@@ -123,13 +123,13 @@ class MessageController extends Controller
                     if($messages->seen == 3){
                         $messages->seen = 1;
                         if($messages->save()){
+
                             return response(['ok' => 1],200);
                         }
-
-                        return response(null, 404);
                     }
                 }
             }
+            return response(null, 404);
         }
 
     }
@@ -139,7 +139,7 @@ class MessageController extends Controller
 
             $messages = Message::where([
                                     ['to',  '=',$request->id],
-                                    ['seen','=',2],
+                                    ['seen','=',2]
                                 ])->get();
 
             if(count($messages) > 0){
@@ -178,11 +178,9 @@ class MessageController extends Controller
     public function get_chat_history($from,$to){
         $get =  Message::where(function($query) use ($from, $to) {
             $query->where([
-                        ['to','=',$to]
+                        ['to','=',$to],
                         ['from','=',$from]
                     ]);
-
-
         })->orWhere(function($query) use ($from, $to) {
             $query->where([
                         ['to','=',$from],

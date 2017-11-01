@@ -19,7 +19,7 @@ Route::group(['middleware'=>['auth']],function(){
     /**
      * Profile photo
      */
-    Route::post('/updateavatar',['uses'=>'User\UserController@updateProfilePhoto','as'=>'user.avatar']);
+    Route::post('/updateavatar','User\UserController@updateProfilePhoto')->name('user.avatar');
 
     /**
      * Follow system

@@ -22,14 +22,17 @@ class GalleryController extends Controller
         $data   = [];
         $user_id = Auth::user()->id;
         $images = Gallery::where('user_id',$user_id)->get();
-        foreach ($images as $image) {
-            $data[] = [
-                'id'        => $image->id,
-                'image'     => $image->image,
-                'user_id'   => $user_id,
-            ];
+        if(count($images) > 0){
+            foreach ($images as $image) {
+                $data[] = [
+                    'id'        => $image->id,
+                    'image'     => $image->image,
+                    'user_id'   => $user_id,
+                ];
+            }
         }
-        return view('front.profile.gallery',['images' => $data]);
+
+        return view('front.profile.gallery', ['images' => $data]);
     }
 
     /**
@@ -50,7 +53,8 @@ class GalleryController extends Controller
      */
     public function store(Request $request)
     {
-        $user_id = \Auth::user()->id;
+        $user_id = Auth::user()->id;
+
         $data    = [];
         if($request->hasFile('gallery')){
             $files = $request->file('gallery');
@@ -94,14 +98,22 @@ class GalleryController extends Controller
     public function update(Request $request, $id)
     {
         $user_id    = Auth::user()->id;
+
         $image      = Gallery::find($id);
+
         $user       = User::find($user_id);
+
         unlink(storage_path('app/public/' . $user_id . "/" . $user->avatar));
+
         $file       = storage_path('app/public/' . $user_id . "/gallery/" . $image->image);
+
         $to         = storage_path('app/public/' . $user_id . "/" . $image->image);
+
         File::copy($file, $to);
+
         $user->avatar = $image->image;
-        return ($user->save()) ? redirect('/') : 0;
+
+        return ($user->save()) ? redirect()->back() : 0;
     }
 
     /**

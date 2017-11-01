@@ -21,7 +21,6 @@ class UserController extends Controller
         $this->github = $github;
     }
 
-    protected $gitAuthorization = "https://api.github.com/authorizations";
 
     /**
      * Display a listing of the resource.
@@ -133,12 +132,9 @@ class UserController extends Controller
              */
             $avatar = $this->generate_avatar($data);
 
-            return view('front.user',[
-                'data'          => $data,
-                'avatar'        => $avatar,
-                'replyFollowers'=> $replyFollowers,
-                'followers'     => (isset($followers)) ? $followers_list : null
-            ]);
+            (isset($followers)) ? $followers_list : null;
+
+            return view('front.user',compact("data","avatar", 'replyFollowers', 'followers_list'));
         }
 
         /**
@@ -211,10 +207,7 @@ class UserController extends Controller
             $followBtn = $this->crtFollowBtn('secondary cancel',$id, 'Cancel Request');
         }
 
-        return view('front.profile.user_page',[
-            'user'      => $user,
-            'followBtn' => $followBtn
-        ]);
+        return view('front.profile.user_page',compact('user','followBtn'));
     }
 
     /**

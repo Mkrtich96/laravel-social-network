@@ -71,7 +71,7 @@ class SearchController extends Controller
                 }
             }
             if(isset($searchResult)){
-                return response($searchResult,200);
+                return response($searchResult, 200);
             }
         }
 

@@ -16,9 +16,11 @@ class FollowController extends Controller
     public function follow(Request $request)
     {
         if($request->ajax()){
+
             $rules = [
                 'follower_id' => 'required'
             ];
+
             $validate = $this->validate($request, $rules);
 
             if(!is_null($validate)){
