@@ -81,8 +81,6 @@ class UserController extends Controller
 
         $data = User::find($user_id);
 
-        dd($data);
-
         if (is_null($data)) {
             return redirect('404');
         }
