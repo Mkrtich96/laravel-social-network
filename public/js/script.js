@@ -198,27 +198,28 @@ $(function () {
         e.preventDefault();
         if(!$.isEmptyObject(searchRes)){
             data.cards.html("");
-            for(let key in searchRes){
+
+            searchRes.map((item) => {
                 data.cards1     = $('<div class="card col-12 col-sm-12">');
                 data.cards2     = $('<div class="card-body">');
                 data.cards3     = $('<div class="card-text">');
                 data.cardTitle  = $('<h4 class="card-title">');
-                data.avatar     = $('<img src="'+ searchRes[key].avatar +'" class="search-avatar rounded float-left">');
+                data.avatar     = $('<img src="'+ item.avatar +'" class="search-avatar rounded float-left">');
                 data.button     = $('<button>');
                 data.textDiv    = $('<div class="card-text">');
-                data.cardTitle.html('<a href="http://github.dev/user/'+ searchRes[key].id +'" target="_blank">' + searchRes[key].value + '</a>');
-                if (searchRes[key].follow) {
+                data.cardTitle.html('<a href="http://github.dev/user/'+ item.id +'" target="_blank">' +item.value + '</a>');
+                if (item.follow) {
                     data.button.addClass('btn btn-secondary unfollow')
-                        .attr("data-id",searchRes[key].id)
+                        .attr("data-id", item.id)
                         .html("Unfollow");
-                } else if (searchRes[key].requested){
+                } else if (item.requested){
                     data.button.removeClass('btn-outline-primary follow')
-                        .attr("data-id",searchRes[key].id)
+                        .attr("data-id", item.id)
                         .addClass('btn btn-secondary cancel')
                         .html("Cancel Request");
                 } else {
                     data.button.addClass('btn btn-outline-primary follow')
-                        .attr("data-id",searchRes[key].id)
+                        .attr("data-id", item.id)
                         .html("Follow");
                 }
                 data.textDiv.append(data.button);
@@ -228,7 +229,8 @@ $(function () {
                 data.cards2.append(data.cards3);
                 data.cards1.append(data.cards2);
                 data.cards.append(data.cards1);
-            }
+
+            });
         }
     });
 

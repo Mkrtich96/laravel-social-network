@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Gallery;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Auth;
 use File;
 use App\User;
+use App\Gallery;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 
 class GalleryController extends Controller

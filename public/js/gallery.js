@@ -16,6 +16,7 @@ $(function () {
                 'src'       : data.src
             },
             success   : function (data) {
+
                 if(data.ok){
                     _this.parent().parent().remove();
                 }

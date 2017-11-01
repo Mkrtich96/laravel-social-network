@@ -88,6 +88,7 @@ class AuthController extends Controller
             'provider'      => $provider,
             'provider_id'   => $user->id
         ];
+
         return User::create($data);
     }
 
