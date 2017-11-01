@@ -120,6 +120,11 @@ $(function () {
                             .html("Follow");
                     }
                 }
+            },
+            statusCode: {
+                404: function() {
+                    console.log('Cancel follow response not found. Error 404.');
+                }
             }
         })
     });
@@ -147,6 +152,11 @@ $(function () {
                             $('.list-group-item').find("[data-id="+data.follower_id+"]").parent().remove();
                         }
                 }
+            },
+            statusCode: {
+                404: function() {
+                    console.log('Unfollow response not found. Error 404.');
+                }
             }
         });
     });
@@ -168,6 +178,11 @@ $(function () {
                                     .attr("data-id",response.id)
                                     .addClass('btn-secondary cancel')
                                     .html("Cancel Request");
+                }
+            },
+            statusCode: {
+                404: function() {
+                    console.log('Follow response not found. Error 404.');
                 }
             }
         })

@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email');
             $table->string('password')->nullable();
-            $table->string('avatar');
+            $table->string('avatar')->nullable();
             $table->string('gender')->default('None');
             $table->string('provider')->nullable();
             $table->string('api_info')->default('None');

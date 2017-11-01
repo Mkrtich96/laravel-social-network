@@ -22,7 +22,7 @@ class MessageController extends Controller
             if(!is_null($validate)){
                 return response(null,404);
             }
-            
+
             $user_id = $request->user_id;
             $message = $request->message;
 
@@ -73,9 +73,6 @@ class MessageController extends Controller
             $get_id = $request->get_id;
 
             $replyFollowers = [];
-            $messages       = Message::where('to', $get_id)
-                                    ->where('seen', 0)
-                                    ->get();
 
             $notifications  = User::find($get_id);
             $unreadNtfs = $notifications->unreadNotifications;
@@ -92,6 +89,11 @@ class MessageController extends Controller
 
                 return response($replyFollowers, 200);
             }
+
+            $messages       = Message::where([
+                                            ['to','=',$get_id],
+                                            ['seen','=',0]
+                                        ])->get();
 
             // Messages
             if(count($messages) > 0){
@@ -135,9 +137,11 @@ class MessageController extends Controller
     public function seen(Request $request){
         if($request->ajax()){
 
-            $messages = Message::where('to', $request->id)
-                                ->where('seen', 2)
-                                ->get();
+            $messages = Message::where([
+                                    ['to',  '=',$request->id],
+                                    ['seen','=',2],
+                                ])->get();
+
             if(count($messages) > 0){
                 foreach ($messages as $message) {
                     $message->seen = 3;
@@ -150,6 +154,7 @@ class MessageController extends Controller
 
     public function select(Request $request){
         if($request->ajax()){
+
 
             $data   = [];
             $seen   = null;
@@ -172,11 +177,17 @@ class MessageController extends Controller
 
     public function get_chat_history($from,$to){
         $get =  Message::where(function($query) use ($from, $to) {
-            $query->where('to',$to)
-                ->where('from',$from);
+            $query->where([
+                        ['to','=',$to]
+                        ['from','=',$from]
+                    ]);
+
+
         })->orWhere(function($query) use ($from, $to) {
-            $query->where('to',$from)
-                ->where('from',$to);
+            $query->where([
+                        ['to','=',$from],
+                        ['from','=',$to]
+                    ]);
         })->get();
 
         return $get;

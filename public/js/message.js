@@ -22,6 +22,7 @@ $(function () {
 
 
     let responseMessage = () => {
+        console.log(data);
         $.post('/generate_message', {
             '_token' : data.token,
             'get_id' : data.get_id

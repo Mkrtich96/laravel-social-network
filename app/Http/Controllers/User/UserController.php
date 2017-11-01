@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Notify;
 use Auth;
 use App\User;
 use App\Follow;
+use App\Notify;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use GrahamCampbell\GitHub\GitHubManager;
