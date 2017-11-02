@@ -99,7 +99,7 @@ body {
 .section .section-1nd .cols {
     margin-bottom: 20px;
 }
-.section .section-1nd .list-group{
+.list-group{
     width: 100%;
 }
 .section .section-1nd {
@@ -129,12 +129,12 @@ body {
     border-radius: 22px;
     border: 1px solid #a0a1b6;
 }
-.section .section-1nd .user-parameters {
+.user-parameters {
     font-weight: bold;
     color: #686a8b;
     font-size: 17px;
 }
-.section .section-1nd .unfollow {
+.section .section-1nd .unfollow, .section-1-user .section-1nd .unfollow {
     color: #fff;
     cursor: pointer;
 }

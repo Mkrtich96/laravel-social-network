@@ -94,33 +94,8 @@ class UserController extends Controller
         if(is_null($data->provider)){
 
             $replyFollowers = [];
-            $followers_list = [];
-            $posts          = [];
-            $followers = Follow::where('user_id',$user_id)
-                                ->orWhere('follower_id',$user_id)
-                                ->get();
 
-            if(count($followers) > 0){
-
-                foreach ($followers as $follower) {
-
-                    if($user_id == $follower->user_id){
-                        $follow = User::find($follower->follower_id);
-                        $follower_id = $follower->follower_id;
-                    }elseif($user_id == $follower->follower_id){
-                        $follow = User::find($follower->user_id);
-                        $follower_id = $follower->user_id;
-                    }
-
-                    $followers_list['id'][]     = $follower_id;
-                    $followers_list['name'][]   = $follow->name;
-                    $followers_list['avatar'][] = $this->generate_avatar($follow);
-                }
-
-            }else{
-                $followers_list = null;
-            }
-
+            $followers_list = $this->getFollowersList($user_id);
 
             $read_notifications =   $data->readnotifications;
 
@@ -136,20 +111,7 @@ class UserController extends Controller
             $user_posts  =   $data->posts()->orderBy('created_at','DESC')->get();
 
 
-            if(count($user_posts) > 0){
-                foreach ($user_posts as $body) {
-
-                    $date_time = Carbon::parse($body->created_at)->format('M-d-Y, H:i');
-
-                    $posts[] = [
-                        'id'    =>  $body->id,
-                        'text'  =>  $body->text,
-                        'date'  =>  $date_time
-                    ];
-                }
-            }else{
-                $posts = null;
-            }
+            $posts = (count($user_posts) > 0) ? $this->createUserPostList($user_posts) : null;
 
             /**
              * Auth user Avatar
@@ -198,9 +160,13 @@ class UserController extends Controller
      */
 
     public function userPage($id){
-        $user = User::find($id);
-        $authId = get_auth_id();
-        $requested = 0;
+
+        $user       =   User::find($id);
+
+        $authId     =   get_auth_id();
+
+        $requested  =   0;
+
 
         if(is_null($user) || !is_null($user->provider)){
             return redirect('404');
@@ -228,8 +194,19 @@ class UserController extends Controller
             $followBtn = $this->crtFollowBtn('secondary cancel',$id, 'Cancel Request');
         }
 
-        return view('front.profile.user_page',compact('user','followBtn'));
+        $user_posts = $user->posts()->where('status',0)
+                                    ->orderBy('created_at','DESC')
+                                    ->get();
+
+
+        $posts = (count($user_posts) > 0) ? $posts = $this->createUserPostList($user_posts) : null;
+
+        $followers_list =   $this->getFollowersList($authId);
+
+        return view('front.profile.user_page',compact('user','followBtn', 'posts' , 'authId', 'followers_list'));
     }
+
+
 
     /**
      * Show the form for editing the specified resource.
@@ -277,6 +254,16 @@ class UserController extends Controller
     }
 
 
+    /**
+     * @param $class
+     * @param $data_id
+     * @param $text
+     * @return string
+     *
+     *
+     * Custom created methods!!
+     */
+
     public function crtFollowBtn($class, $data_id, $text){
 
         $button =   "<button class='btn btn-". $class ."' data-id='". $data_id ."'>"
@@ -302,5 +289,65 @@ class UserController extends Controller
 
         return $avatar;
     }
+
+    public function parseCreatedAt($data){
+
+        return Carbon::parse($data)->format('M-d-Y, H:i');
+    }
+
+    public function createUserPostList($user_posts) {
+
+        $posts = [];
+
+        foreach ($user_posts as $body) {
+
+            $date_time  =   $this->parseCreatedAt($body->created_at);
+
+            $posts[] = [
+                'id'    =>  $body->id,
+                'text'  =>  $body->text,
+                'date'  =>  $date_time
+            ];
+        }
+
+        return $posts;
+    }
+
+    public function getFollowersList($user_id){
+
+        $followers_list = [];
+
+        $followers = Follow::where('user_id',$user_id)
+            ->orWhere('follower_id',$user_id)
+            ->get();
+
+        if(count($followers) > 0){
+
+            foreach ($followers as $follower) {
+
+                if($user_id == $follower->user_id){
+
+                    $follow = User::find($follower->follower_id);
+                    $follower_id = $follower->follower_id;
+
+                }elseif($user_id == $follower->follower_id){
+
+                    $follow = User::find($follower->user_id);
+                    $follower_id = $follower->user_id;
+                }
+
+                $followers_list['id'][]     = $follower_id;
+                $followers_list['name'][]   = $follow->name;
+                $followers_list['avatar'][] = $this->generate_avatar($follow);
+            }
+
+        }else{
+            $followers_list = null;
+        }
+
+        return $followers_list;
+
+    }
+
 
 }
