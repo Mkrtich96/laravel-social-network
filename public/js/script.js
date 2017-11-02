@@ -24,6 +24,8 @@ $(() => {
         'notifMenu'     : $('<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">'),
         'notif'         : $('li.dropdown'),
         'form_post'     : $('.form-post'),
+        'profile_photo' : $('.card-img-top').attr('src'),
+        'profile_name'  : $('.navbar-brand').text(),
     };
 
 

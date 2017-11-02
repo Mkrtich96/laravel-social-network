@@ -6,6 +6,7 @@ use Auth;
 use App\User;
 use App\Follow;
 use App\Notify;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use GrahamCampbell\GitHub\GitHubManager;
@@ -94,6 +95,7 @@ class UserController extends Controller
 
             $replyFollowers = [];
             $followers_list = [];
+            $posts          = [];
             $followers = Follow::where('user_id',$user_id)
                                 ->orWhere('follower_id',$user_id)
                                 ->get();
@@ -121,6 +123,7 @@ class UserController extends Controller
 
 
             $read_notifications =   $data->readnotifications;
+
             if(count($read_notifications) > 0){
                 foreach ($read_notifications as $notification) {
                     $replyFollowers['message'][]    = $notification->data['follower_name'] . " send follow request";
@@ -129,12 +132,31 @@ class UserController extends Controller
             }else{
                 $replyFollowers = null;
             }
+
+            $user_posts  =   $data->posts()->orderBy('created_at','DESC')->get();
+
+
+            if(count($user_posts) > 0){
+                foreach ($user_posts as $body) {
+
+                    $date_time = Carbon::parse($body->created_at)->format('M-d-Y, H:i');
+
+                    $posts[] = [
+                        'id'    =>  $body->id,
+                        'text'  =>  $body->text,
+                        'date'  =>  $date_time
+                    ];
+                }
+            }else{
+                $posts = null;
+            }
+
             /**
              * Auth user Avatar
              */
             $avatar = $this->generate_avatar($data);
 
-            return view('front.user',compact("data","avatar", 'replyFollowers', 'followers_list'));
+            return view('front.user',compact("data","avatar", 'replyFollowers', 'followers_list', 'posts'));
         }
 
         /**

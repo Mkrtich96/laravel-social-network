@@ -10,6 +10,7 @@ class PostController extends Controller
 {
 
     public function post(Request $request){
+
         if($request->ajax()){
 
             $rules = [
@@ -38,7 +39,10 @@ class PostController extends Controller
             $post->status   =   $status;
 
             if($post->save()){
-                return response(['ok' => 1], 200);
+                return response([
+                    'ok'    => 1,
+                    'date'  => date('M-d-Y, H:i'),
+                    ], 200);
             }else{
                 return response(null, 404);
             }

@@ -28,7 +28,24 @@
 
         </form>
         <div class="cards">
-
+            @if( $posts )
+                @foreach( $posts as $post )
+                    <div class="users-res card col-12 col-sm-12">
+                        <div class="card-body">
+                            <div class="card-text">
+                                <img src="{{ $avatar }}" class="rounded-circle followers-avatar float-left">
+                                <h5 class="card-title">{{ $data['name'] }}</h5>
+                                <small class="form-text text-muted">{{ $post['date'] }}</small>
+                            </div>
+                            <div class="card-text mt-3">
+                                <p class="text-justify">
+                                    {{ $post['text'] }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @endif
         </div>
     </div>
 </div>
