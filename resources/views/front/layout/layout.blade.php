@@ -24,5 +24,6 @@
     <script src="{{ asset('js/script.js') }}"></script>
     <script src="{{ asset('js/gallery.js') }}"></script>
     <script src="{{ asset('js/message.js') }}"></script>
+    <script src="{{ asset('js/post.js') }}"></script>
     <script src="https://use.fontawesome.com/cf1e7fe2e3.js"></script>
 </html>

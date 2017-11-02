@@ -53,4 +53,10 @@ Route::group(['middleware'=>['auth']],function(){
     Route::post('/seen','User\MessageController@seen');
     Route::post('/send','User\MessageController@send');
     Route::post('/generate_message','User\MessageController@generate');
+
+    /**
+     * Post system
+     */
+    Route::post('/post','User\PostController@post');
+
 });

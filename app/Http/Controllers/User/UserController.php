@@ -55,7 +55,9 @@ class UserController extends Controller
             'reponame' => 'required|max:12',
             'public' => 'required',
         ];
+
         $this->validate($request, $rules);
+
         if ($request->public == "public") {
             $this->github->api('repo')
                         ->create($request->reponame, $request->description, true);
@@ -175,7 +177,7 @@ class UserController extends Controller
 
     public function userPage($id){
         $user = User::find($id);
-        $authId = Auth::user()->id;
+        $authId = get_auth_id();
         $requested = 0;
 
         if(is_null($user) || !is_null($user->provider)){
@@ -191,7 +193,6 @@ class UserController extends Controller
         if(!is_null($notifications)){
             $requested = 1;
         }
-
 
         $follow = check_follower_or_not($id,$authId);
 
@@ -279,4 +280,5 @@ class UserController extends Controller
 
         return $avatar;
     }
+
 }

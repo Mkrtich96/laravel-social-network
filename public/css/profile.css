@@ -191,8 +191,12 @@ body {
     box-shadow: 2px 2px 7px #848383
 }
 .section .section-2nd {
-    padding-top: 3%;
-    padding-bottom:3%;
+    padding-top: 1%;
+    padding-bottom:1%;
+}
+
+.section-2nd {
+    color: #686a8b;
 }
 .cards-8 {
     margin-top:20px;
@@ -241,6 +245,9 @@ body {
     cursor: pointer;
 }
 
+.form-post {
+    margin-top: 20px;
+}
 /* MEDIA */
 
 

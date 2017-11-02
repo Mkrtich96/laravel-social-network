@@ -3,9 +3,7 @@ $(() => {
     data = {
         "token"         : $('meta[name="csrf-token"]').attr('content'),
         "cards"         : $('.cards'),
-        "cards1"        : $('<div class="card col-12 col-sm-12">'),
-        "cards2"        : $('<div class="card-body">'),
-        "cards3"        : $('<div class="card-text">'),
+        "search_win"    : $('.modal').find('.modal-body'),
         "cardTitle"     : $('<h4 class="card-title">'),
         "button"        : $('<button>'),
         "lists"         : $('.list-group-item'),
@@ -24,7 +22,8 @@ $(() => {
         'citeElements'  : $('.cite'),
         'seenText'      : "<cite class='cite last'>  Seen!</cite>",
         'notifMenu'     : $('<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">'),
-        'notif'         : $('li.dropdown')
+        'notif'         : $('li.dropdown'),
+        'form_post'     : $('.form-post'),
     };
 
 
@@ -195,11 +194,11 @@ $(() => {
     $(document).on("click",".search-btn", (e) => {
         e.preventDefault();
         if(!$.isEmptyObject(searchRes)){
-
-            data.cards.html("");
+            $('.modal').modal('show');
+            data.search_win.html("");
             searchRes.map((item) => {
 
-                data.cards1     = $('<div class="card col-12 col-sm-12">');
+                data.cards1     = $('<div class="users-res card col-12 col-sm-12">');
                 data.cards2     = $('<div class="card-body">');
                 data.cards3     = $('<div class="card-text">');
                 data.cardTitle  = $('<h4 class="card-title">');
@@ -227,7 +226,7 @@ $(() => {
                 data.cards3.append(data.textDiv);
                 data.cards2.append(data.cards3);
                 data.cards1.append(data.cards2);
-                data.cards.append(data.cards1);
+                data.search_win.append(data.cards1);
 
             });
         }

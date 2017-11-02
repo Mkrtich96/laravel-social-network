@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use App\Follow;
 
 if( !function_exists('check_follower_or_not') ){
@@ -21,4 +22,11 @@ if( !function_exists('check_follower_or_not') ){
     }
 }
 
+if( !function_exists('get_auth_id') ){
+
+    function get_auth_id() {
+
+        return Auth::user()->id;
+    }
+}
 

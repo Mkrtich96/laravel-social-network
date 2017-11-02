@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+
 class User extends Authenticatable
 {
     use Notifiable;
@@ -17,7 +18,6 @@ class User extends Authenticatable
 
     /**
      * The attributes that should be hidden for arrays.
-     *
      * @var array
      */
 
@@ -29,4 +29,10 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Gallery','user_id');
     }
+
+    public function posts()
+    {
+        return $this->hasMany('App\Post','user_id');
+    }
+
 }

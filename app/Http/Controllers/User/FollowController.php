@@ -67,7 +67,7 @@ class FollowController extends Controller
 
             $follower_id = $request->follower_id;
 
-            $user_id = Auth::user()->id;
+            $user_id = get_auth_id();
 
             $follower = check_follower_or_not($follower_id, $user_id);
 

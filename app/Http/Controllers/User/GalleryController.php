@@ -20,7 +20,7 @@ class GalleryController extends Controller
     public function index()
     {
         $data   = [];
-        $user_id = Auth::user()->id;
+        $user_id = get_auth_id();
         $images = Gallery::where('user_id',$user_id)->get();
         if(count($images) > 0){
             foreach ($images as $image) {
@@ -53,7 +53,7 @@ class GalleryController extends Controller
      */
     public function store(Request $request)
     {
-        $user_id = Auth::user()->id;
+        $user_id = get_auth_id();
 
         $data = [];
         if ($request->hasFile('gallery')) {
@@ -100,7 +100,7 @@ class GalleryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user_id    = Auth::user()->id;
+        $user_id    = get_auth_id();
 
         $image      = Gallery::find($id);
 

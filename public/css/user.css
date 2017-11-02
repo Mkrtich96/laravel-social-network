@@ -29,24 +29,36 @@ body {
 }
 
 
-.anyClass::-webkit-scrollbar-track
+.anyClass::-webkit-scrollbar-track, .modal-body::-webkit-scrollbar-track
 {
     background-color: #F5F5F5;
 }
 
-.anyClass::-webkit-scrollbar
+.anyClass::-webkit-scrollbar, .modal-body::-webkit-scrollbar
 {
     width: 10px;
     background-color: #F5F5F5;
 }
 
-.anyClass::-webkit-scrollbar-thumb
+.anyClass::-webkit-scrollbar-thumb, .modal-body::-webkit-scrollbar-thumb
 {
-    background-color: #8c8c8c;
+    background-color: dimgrey;
 }
 
+.modal-body {
+    overflow-y: auto;
+    height: 475px;
+}
+
+.users-res {
+    margin-top: 5px;
+}
 
 .cite {
     font-size: 8px;
     color:currentColor
+}
+
+.alert-post-error, .alert-post-success {
+    display: none;
 }

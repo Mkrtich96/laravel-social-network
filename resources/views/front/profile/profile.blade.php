@@ -13,4 +13,5 @@
         @include('front.profile.sec_part_three')
     </div>
     @include('front.profile.message_win')
+    @include('front.profile.search_result')
 </section>

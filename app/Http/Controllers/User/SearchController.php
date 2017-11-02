@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Notify;
+use Auth;
 use App\User;
+use App\Notify;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -25,9 +26,10 @@ class SearchController extends Controller
             }
 
             $term = $request->term;
-            $user_id = \Auth::user()->id;
+            $user_id = get_auth_id();
             $searchResult = [];
             $requested = 0;
+
             $users = User::where([
                                 ['name','LIKE', $term . "%"],
                                 ['provider','=', null],

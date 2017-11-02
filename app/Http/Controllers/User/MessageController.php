@@ -155,7 +155,6 @@ class MessageController extends Controller
     public function select(Request $request){
         if($request->ajax()){
 
-
             $data   = [];
             $seen   = null;
             $from   = $request->from;
@@ -170,7 +169,7 @@ class MessageController extends Controller
                 ];
                 $seen = $message->seen;
             }
-            return ['item' => $data,'seen' => $seen];
+            return response(['item' => $data,'seen' => $seen],200);
         }
     }
 

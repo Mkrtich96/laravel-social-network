@@ -14,5 +14,6 @@ class UsersTableSeeder extends Seeder
             'email' => 'melik@mail.ru',
             'password'=> bcrypt('password')
         ]);
+
     }
 }
