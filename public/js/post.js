@@ -29,6 +29,8 @@ $(() => {
 
                     if(res.ok){
 
+                        $('.post-text').val("");
+
                         data.sendButton.removeClass('btn-secondary')
                             .addClass('btn-primary')
                             .prop('disabled',false)
