@@ -18,12 +18,12 @@ class CreateCommentsTable extends Migration
             $table->text('comment');
             $table->integer('on_post')->unsigned();
             $table->foreign('on_post')
-                    ->referenced('id')
-                    ->on('users')
+                    ->references('id')
+                    ->on('posts')
                     ->onDelete('cascade');
             $table->integer('from_user')->unsigned();
             $table->foreign('from_user')
-                    ->referenced('id')
+                    ->references('id')
                     ->on('users')
                     ->onDelete('cascade');
             $table->timestamps();

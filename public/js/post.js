@@ -41,7 +41,19 @@ $(() => {
 
                         data.cards2     =   $('<div>').addClass('card-body');
                         data.cards3     =   $('<div>').addClass('card-text');
-                        data.commField  =   $('<div>').addClass('card-text');
+
+                        data.commInFil  =   $('<div>').addClass('card-text float-right w-75 comments-body');
+                        data.commApply  =   $('<div>').addClass('input-group input-group-sm mt-2 apply-comment');
+
+                        data.clearfix   =   $('<div>').addClass('clearfix');
+
+                        data.commInput  =   $('<input>').attr({
+                                                            "type"              : "text",
+                                                            "placeholder"       : "Comment..",
+                                                            "aria-describedby"  : "sizing-addon2"
+                                                        }).addClass('rounded-0 form-control');
+
+                        data.commField  =   $('<div>').addClass('card-text mt-3');
 
                         data.commBtn    =   $('<a>').addClass('btn comment badge badge-primary text-light float-right')
                                                     .attr('data-id', res.post_id)
@@ -65,12 +77,18 @@ $(() => {
 
                         data.commField.append(data.commBtn);
 
+                        data.commApply.append(data.commInput);
+
+                        data.commInFil.append(data.commApply);
+
                         data.cards3.append(data.avatar)
                                     .append(data.cardTitle)
                                     .append(data.date);
 
                         data.cards2.append(data.cards3)
                                     .append(data.textDiv)
+                                    .append(data.commInFil)
+                                    .append(data.clearfix)
                                     .append(data.commField);
 
                         data.cards1.append(data.cards2).hide();
@@ -100,7 +118,33 @@ $(() => {
     });
 
     $(document).on('keyup', '.apply-comment',  e => {
-        //data.this =
+
+        data.this   =   $(e.target);
+        data.value  =   data.this.val();
+
+        if(e.keyCode == 13){
+
+            if(data.value != ""){
+
+                $.ajax({
+                    url     :   "/comment",
+                    method  :   "POST",
+                    data    :   {
+
+                    },
+                    success :   res => {
+
+
+                    },
+                    statusCode: {
+                        404: () => {
+
+                        }
+                    }
+                })
+
+            }
+        }
 
 
     })

@@ -51,11 +51,11 @@
                                     </div>
                                 </div>--}}
                                 <div class="input-group input-group-sm mt-2 apply-comment">
-                                    <input type="text" class="rounded-0 form-control" placeholder="Comment.." aria-describedby="sizing-addon2">
+                                    <input type="text" class="rounded-0 form-control" placeholder="Comment.." aria-describedby="sizing-addon2" data-id="{{ $post['id'] }}" >
                                 </div>
                             </div>
 
-                            <div style="clear: both"></div>
+                            <div class="clearfix"></div>
 
                             <div class="card-text mt-3">
 

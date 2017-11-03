@@ -104,6 +104,7 @@ $(() => {
                 "follower_id" : data.follower_id
             },
             success : response => {
+
                 if(response.ok){
                     if(data.parent.hasClass('header-request')){
                         data.badge      = data.dropdowns.find(".badge-danger");
