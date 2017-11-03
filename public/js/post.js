@@ -57,8 +57,9 @@ $(() => {
                         data.cards2.append(data.cards3)
                                     .append(data.textDiv);
 
-                        data.cards1.append(data.cards2);
+                        data.cards1.append(data.cards2).hide();
                         data.cards.prepend(data.cards1);
+                        data.cards1.fadeIn();
 
                         $('.alert-post-success').fadeIn();
                     }

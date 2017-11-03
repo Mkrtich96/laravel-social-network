@@ -124,17 +124,17 @@ class UserController extends Controller
         /**
          * Providers profile
          */
-        $repositories   = [];
+        $repos   = [];
         $repository = $this->github->api('user')->repositories($data->name);
 
         if(count($repository) > 0){
             foreach ($repository as $repos) {
-                $repositories['name'][]  = $repos['name'];
-                $repositories['url'][]   = $repos['html_url'];
-                $repositories['clone'][] = $repos['clone_url'];
+                $repos['name'][]  = $repos['name'];
+                $repos['url'][]   = $repos['html_url'];
+                $repos['clone'][] = $repos['clone_url'];
             }
         }else{
-            $repositories = null;
+            $repos = null;
         }
 
         switch ($data['provider']) {
@@ -143,10 +143,7 @@ class UserController extends Controller
                                         'avatar'    => $data->avatar,
                                         'provider'  => $data->provider
                                     ];
-                                    return view('front.user', [
-                                        'data'  => $data,
-                                        'repos' => $repositories
-                                    ]);
+                                    return view('front.user', compact('data','repos'));
                                     break;
 
                 default         :   break;
@@ -178,32 +175,46 @@ class UserController extends Controller
 
         $notifications = Notify::where('to', $authId)->first();
 
+
         if(!is_null($notifications)){
+
             $requested = 1;
+
         }
 
         $follow = check_follower_or_not($id,$authId);
 
         if(is_null($follow)){
+
             $followBtn = $this->crtFollowBtn('outline-primary follow',$id, 'Follow');
+
+            $user_posts = $user->posts()->where('status',0)
+                ->orderBy('created_at','DESC')
+                ->get();
+
         }else{
-            $followBtn = $this->crtFollowBtn('secondary unfollow',$id, 'Unfollow');
+
+            $followBtn  = $this->crtFollowBtn('secondary unfollow',$id, 'Unfollow');
+
+            $user_posts = $user->posts()
+                ->orderBy('created_at','DESC')
+                ->get();
+
         }
 
         if($requested){
             $followBtn = $this->crtFollowBtn('secondary cancel',$id, 'Cancel Request');
         }
 
-        $user_posts = $user->posts()->where('status',0)
-                                    ->orderBy('created_at','DESC')
-                                    ->get();
-
 
         $posts = (count($user_posts) > 0) ? $posts = $this->createUserPostList($user_posts) : null;
 
         $followers_list =   $this->getFollowersList($authId);
 
-        return view('front.profile.user_page',compact('user','followBtn', 'posts' , 'authId', 'followers_list'));
+        return view('front.profile.user_page',
+                    compact('user','followBtn', 'posts' , 'authId', 'followers_list')
+                );
+
     }
 
 
@@ -318,8 +329,8 @@ class UserController extends Controller
         $followers_list = [];
 
         $followers = Follow::where('user_id',$user_id)
-            ->orWhere('follower_id',$user_id)
-            ->get();
+                            ->orWhere('follower_id',$user_id)
+                            ->get();
 
         if(count($followers) > 0){
 
