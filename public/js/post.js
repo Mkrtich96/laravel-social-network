@@ -37,7 +37,7 @@ $(() => {
                             .prop('disabled',false)
                             .html("Post");
 
-                        data.cards1     =   $('<div>').addClass('users-res card col-12 col-sm-12');
+                        data.cards1     =   $('<div>').addClass('parent-card users-res card col-12 col-sm-12');
 
                         data.cards2     =   $('<div>').addClass('card-body');
                         data.cards3     =   $('<div>').addClass('card-text');

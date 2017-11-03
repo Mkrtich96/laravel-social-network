@@ -48,10 +48,9 @@
                 </div>
                 <div class="col-lg-6 mb-4">
                     <div class="cards">
-                        <div class="cards">
                             @if( $posts )
                                 @foreach( $posts as $post )
-                                    <div class="users-res card col-12 col-sm-12">
+                                    <div class="parent-card users-res card col-12 col-sm-12">
                                         <div class="card-body">
                                             <div class="card-text">
                                                 <img src="{{ asset('images/' . $user->id . '/' . $user->avatar) }}" class="rounded-circle followers-avatar float-left">
@@ -64,13 +63,11 @@
                                                 </p>
                                             </div>
                                             <div class="card-text float-right w-75 comments-body">
-                                                {{--<div class="card">
+                                                <div class="card">
                                                     <div class="card-body">
-                                                        <div class="card-text">
                                                             Hello vasil
-                                                        </div>
                                                     </div>
-                                                </div>--}}
+                                                </div>
                                                 <div class="input-group input-group-sm mt-2 apply-comment">
                                                     <input type="text" class="rounded-0 form-control" placeholder="Comment.." aria-describedby="sizing-addon2" data-id="{{ $post['id'] }}" data-user="{{ $user->id }}">
                                                 </div>
@@ -85,8 +82,6 @@
                                     </div>
                                 @endforeach
                             @endif
-                        </div>
-
                     </div>
                 </div>
                 @include('front.profile.sec_part_three')

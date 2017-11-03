@@ -30,7 +30,7 @@
         <div class="cards">
             @if( $posts )
                 @foreach( $posts as $post )
-                    <div class="users-res card col-12 col-sm-12">
+                    <div class="parent-card users-res card col-12 col-sm-12">
                         <div class="card-body">
                             <div class="card-text">
                                 <img src="{{ $avatar }}" class="rounded-circle followers-avatar float-left">
