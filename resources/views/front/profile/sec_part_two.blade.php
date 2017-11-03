@@ -38,9 +38,28 @@
                                 <small class="form-text text-muted">{{ $post['date'] }}</small>
                             </div>
                             <div class="card-text mt-3">
-                                <p class="text-justify">
+                                <p class="text-justify" data-id="{{ $post['id'] }}">
                                     {{ $post['text'] }}
                                 </p>
+                            </div>
+                            <div class="card-text float-right w-75 comments-body">
+                                {{--<div class="card">
+                                    <div class="card-body">
+                                        <div class="card-text">
+                                            Hello vasil
+                                        </div>
+                                    </div>
+                                </div>--}}
+                                <div class="input-group input-group-sm mt-2 apply-comment">
+                                    <input type="text" class="rounded-0 form-control" placeholder="Comment.." aria-describedby="sizing-addon2">
+                                </div>
+                            </div>
+
+                            <div style="clear: both"></div>
+
+                            <div class="card-text mt-3">
+
+                                <a class="btn comment badge badge-primary text-light float-right"  data-id="{{ $post['id'] }}" >Comments</a>
                             </div>
                         </div>
                     </div>

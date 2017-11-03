@@ -42,7 +42,8 @@ class PostController extends Controller
                 return response([
                     'ok'    => 1,
                     'date'  => date('M-d-Y, H:i'),
-                    ], 200);
+                    'post_id' => $post->id
+                ], 200);
             }else{
                 return response(null, 404);
             }

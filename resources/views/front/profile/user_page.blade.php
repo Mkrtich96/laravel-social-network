@@ -63,6 +63,9 @@
                                                     {{ $post['text'] }}
                                                 </p>
                                             </div>
+                                            <div class="card-text">
+                                                <a class="btn comment badge badge-primary text-light float-right"  data-id="{{ $post['id'] }}" >Comments</a>
+                                            </div>
                                         </div>
                                     </div>
                                 @endforeach

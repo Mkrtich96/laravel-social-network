@@ -62,3 +62,11 @@ body {
 .alert-post-error, .alert-post-success {
     display: none;
 }
+
+.comment {
+    cursor: pointer;
+}
+
+.comments-body {
+    display: none;
+}

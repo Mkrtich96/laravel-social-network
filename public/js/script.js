@@ -52,7 +52,7 @@ $(() => {
                 "_token" : data.token,
                 "follower_id": data.follower_id
             },
-            success : (response) => {
+            success : response => {
                 if(response.ok){
                     data.unfllwBtn = $("<a class='btn btn-secondary float-right unfollow'>").html("Unfollow");
                     data.crtFollow = $("<li class='list-group-item'>");
@@ -99,7 +99,7 @@ $(() => {
                 "check"  : (data.parent.hasClass('header-request')) ? 1 : 0,
                 "follower_id" : data.follower_id
             },
-            success : (response) => {
+            success : response => {
                 if(response.ok){
                     if(data.parent.hasClass('header-request')){
                         data.badge      = data.dropdowns.find(".badge-danger");
@@ -145,7 +145,7 @@ $(() => {
                 "_token" : data.token,
                 "follower_id" : data.follower_id,
             },
-            success : (response) => {
+            success : response => {
                 if(response.ok){
                         if(data.parent.hasClass('list-group-item')){
                             data.parent.remove();
@@ -176,7 +176,7 @@ $(() => {
                 "_token" : data.token,
                 "follower_id" : data.follower_id,
             },
-            success : (response) => {
+            success : response => {
                 if(response.ok){
                     data.followBtn.removeClass('btn-outline-primary follow')
                                     .attr("data-id",response.id)
@@ -198,7 +198,7 @@ $(() => {
         if(!$.isEmptyObject(searchRes)){
             $('.modal').modal('show');
             data.search_win.html("");
-            searchRes.map((item) => {
+            searchRes.map( item => {
 
                 data.cards1     = $('<div class="users-res card col-12 col-sm-12">');
                 data.cards2     = $('<div class="card-body">');
@@ -249,7 +249,7 @@ $(() => {
 
 
 
-    scrollDown = (element) => {
+    scrollDown = element => {
 
         return element.scrollTop(element[0].scrollHeight);
     };
@@ -276,7 +276,7 @@ $(() => {
             data.userName.html(data.toFriendProfile);
             data.sendInput.attr("data-id",data.to);
             data.messageBody.html("");
-            res.item.map((item) => {
+            res.item.map( item => {
 
                 if(item.from == data.get_id){
                     data.color      = "info";

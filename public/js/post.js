@@ -36,26 +36,41 @@ $(() => {
                             .prop('disabled',false)
                             .html("Post");
 
-                        data.cards1     =   $('<div class="users-res card col-12 col-sm-12">');
-                        data.cards2     =   $('<div class="card-body">');
-                        data.cards3     =   $('<div class="card-text">');
-                        data.cardTitle  =   $('<h5 class="card-title">');
-                        data.avatar     =   $('<img src="'+ data.profile_photo +'" class="rounded-circle followers-avatar float-left">');
-                        data.textDiv    =   $('<div class="card-text mt-3">');
-                        data.textCon    =   $('<p class="text-justify">');
-                        data.date       =   $('<small class="form-text text-muted">');
+                        data.cards1     =   $('<div>').addClass('users-res card col-12 col-sm-12');
+
+                        data.cards2     =   $('<div>').addClass('card-body');
+                        data.cards3     =   $('<div>').addClass('card-text');
+                        data.commField  =   $('<div>').addClass('card-text');
+
+                        data.commBtn    =   $('<a>').addClass('btn comment badge badge-primary text-light float-right')
+                                                    .attr('data-id', res.post_id)
+                                                    .html('Comments');
+
+                        data.cardTitle  =   $('<h5>').addClass('card-title');
+
+                        data.avatar     =   $('<img>').addClass('rounded-circle followers-avatar float-left')
+                                                        .attr('src', data.profile_photo);
+
+                        data.textDiv    =   $('<div>').addClass('card-text mt-3');
+
+                        data.textCon    =   $('<p>').addClass('text-justify');
+
+                        data.date       =   $('<small>').addClass('form-text text-muted');
 
                         data.textCon.text(data.post);
                         data.textDiv.append(data.textCon);
                         data.cardTitle.text(data.profile_name);
                         data.date.text(res.date);
 
+                        data.commField.append(data.commBtn);
+
                         data.cards3.append(data.avatar)
                                     .append(data.cardTitle)
                                     .append(data.date);
 
                         data.cards2.append(data.cards3)
-                                    .append(data.textDiv);
+                                    .append(data.textDiv)
+                                    .append(data.commField);
 
                         data.cards1.append(data.cards2).hide();
                         data.cards.prepend(data.cards1);
@@ -75,5 +90,19 @@ $(() => {
             $('.alert-post-error').fadeIn();
         }
     });
+
+
+    $(document).on('click', '.comment', function () {
+
+        $(this).parents('.card-body').find('.comments-body').fadeToggle();
+
+    });
+
+    $(document).on('keyup', '.apply-comment', function (e) {
+
+
+
+    })
+
 
 });

@@ -11,7 +11,7 @@ $(() => {
 
         if(Array.isArray(array)){
 
-            array.map((item) => {
+            array.map( item => {
                 data.notifLi = $('<li class="dropdown-item text-primary form-group header-request">');
                 data.text = item.name +  " send follow request. ";
                 data.accept = createFollowButton('fa-check check',item.followerId);
@@ -29,7 +29,7 @@ $(() => {
         $.post('/generate_message', {
             '_token' : data.token,
             'get_id' : data.get_id
-        },(res) => {
+        }, res => {
             if(res.message){
                 createNotification(res.message.length, res.message);
             }
@@ -57,8 +57,6 @@ $(() => {
             $.post('/seen', {
                 '_token'    : data.token,
                 'id'        : data.get_id
-            },(res) => {
-
             })
         }
     });
