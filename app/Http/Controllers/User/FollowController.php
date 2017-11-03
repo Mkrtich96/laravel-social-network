@@ -21,11 +21,7 @@ class FollowController extends Controller
                 'follower_id' => 'required'
             ];
 
-            $validate = $this->validate($request, $rules);
-
-            if(!is_null($validate)){
-                return response(null,404);
-            }
+            $this->validate($request, $rules);
 
             $follower_id = $request->follower_id;
 
@@ -40,11 +36,7 @@ class FollowController extends Controller
             $insert->to = $auth_user->id;
 
 
-            if($insert->save()){
-                return response(['ok' => 1],200);
-            }else{
-                return response(null, 404);
-            }
+            return ($insert->save()) ? response(['ok' => 1],200) :  response(null, 404);
         }
     }
 
@@ -59,11 +51,8 @@ class FollowController extends Controller
             $rules = [
                 'follower_id' => 'required'
             ];
-            $validate = $this->validate($request, $rules);
 
-            if(!is_null($validate)){
-                return response(null,404);
-            }
+            $this->validate($request, $rules);
 
             $follower_id = $request->follower_id;
 
@@ -73,9 +62,7 @@ class FollowController extends Controller
 
             $delete = $follower->delete();
 
-            if($delete){
-                return response(['ok' => 1], 200);
-            }
+            return ($delete) ? response(['ok' => 1], 200) : response(null, 404);
         }
 
     }
@@ -91,11 +78,8 @@ class FollowController extends Controller
             $rules = [
                 'follower_id' => 'required'
             ];
-            $validate = $this->validate($request, $rules);
 
-            if(!is_null($validate)){
-                return response(null,404);
-            }
+            $this->validate($request, $rules);
 
             $follower_id = $request->follower_id;
 
@@ -109,14 +93,7 @@ class FollowController extends Controller
                                 ->delete();
             }
 
-            if($delete){
-
-                return response(['ok' => 1],200);
-            }else{
-
-                return response(null, 404);
-            }
-
+            return ($delete) ? response(['ok' => 1], 200) : response(null, 404);
         }
     }
 
@@ -130,15 +107,13 @@ class FollowController extends Controller
             $rules = [
                 'follower_id' => 'required'
             ];
-            $validate = $this->validate($request, $rules);
 
-            if(!is_null($validate)){
-                return response(null,404);
-            }
+            $this->validate($request, $rules);
 
             $follower_id = $request->follower_id;
 
             $user = \Auth::user();
+
             $data = [];
 
             $user_notifications = Notify::where('to',$follower_id)
@@ -161,20 +136,14 @@ class FollowController extends Controller
                 $follow->follower_id = $data['follower_id'];
                 $avatar = User::find($follower_id);
 
-                if ($follow->save()) {
+                $data = [
+                    "ok" => 1,
+                    "name" => $data['follower_name'],
+                    "id" => $data['follower_id'],
+                    "avatar" => $avatar->avatar
+                ];
 
-                    $data = [
-                        "ok" => 1,
-                        "name" => $data['follower_name'],
-                        "id" => $data['follower_id'],
-                        "avatar" => $avatar->avatar
-                    ];
-
-                    return response($data, 200);
-                }else{
-
-                    return response(null, 404);
-                }
+                return $follow->save() ? response($data, 200) : response(null, 404);
             }
         }
 

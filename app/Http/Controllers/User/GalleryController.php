@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\User;
 
-use Auth;
 use File;
 use App\User;
 use App\Gallery;
@@ -131,15 +130,12 @@ class GalleryController extends Controller
     public function destroy(Request $request,$id)
     {
         if($request->ajax()){
+
             $rules = [
                 'src' => 'regex:/^([a-zA-Z1-9]+)\.([a-z]{3,5})$/',
             ];
 
-            $validate = $this->validate($request, $rules);
-
-            if(!is_null($validate)){
-                return response(null, 404);
-            }
+            $this->validate($request, $rules);
 
             $src = basename($request->src);
             $user_id = \Auth::user()->id;

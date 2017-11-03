@@ -131,8 +131,12 @@ $(() => {
                 }
             },
             statusCode: {
-                404: () => {
+                404:    ()  =>  {
                     console.log('Cancel follow response not found. Error 404.');
+                },
+                422:    ()  =>  {
+                    "use strict";
+
                 }
             }
         })
@@ -165,8 +169,12 @@ $(() => {
                 }
             },
             statusCode: {
-                404: () => {
+                404:    ()  => {
                     console.log('Unfollow response not found. Error 404.');
+                },
+                422:    ()  =>  {
+                    "use strict";
+
                 }
             }
         });
@@ -194,8 +202,12 @@ $(() => {
                 }
             },
             statusCode: {
-                404: function() {
+                404:    ()  =>  {
                     console.log('Follow response not found. Error 404.');
+                },
+                422:    ()  =>  {
+                    "use strict";
+
                 }
             }
         })

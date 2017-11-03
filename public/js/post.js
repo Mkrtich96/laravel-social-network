@@ -18,6 +18,7 @@ $(() => {
                             .html("...");
 
             $.ajax({
+
                 method  : "POST",
                 url     : "/post",
                 data    : {
@@ -99,7 +100,11 @@ $(() => {
                     }
                 },
                 statusCode : {
-                    404 : () => {
+                    404 :   ()  =>  {
+
+                    },
+                    422 :   ()  =>  {
+                        "use strict";
 
                     }
                 }
@@ -119,10 +124,13 @@ $(() => {
 
     $(document).on('keyup', '.apply-comment',  e => {
 
-        data.this   =   $(e.target);
-        data.value  =   data.this.val();
+        data.this       =   $(e.target);
+        data.value      =   data.this.val();
+        data.post_id    =   data.this.data('id');
+        data.user_id    =   data.this.data('user');
 
         if(e.keyCode == 13){
+
 
             if(data.value != ""){
 
@@ -130,22 +138,26 @@ $(() => {
                     url     :   "/comment",
                     method  :   "POST",
                     data    :   {
-
+                        "_token"    :   data.token,
+                        "text"      :   data.value.trim(),
+                        "post_id"   :   data.post_id,
+                        "from_user" :   data.user_id
                     },
                     success :   res => {
 
 
                     },
                     statusCode: {
-                        404: () => {
+                        404 :   () => {
+
+                        },
+                        422 :   () => {
 
                         }
                     }
                 })
-
             }
         }
-
 
     })
 

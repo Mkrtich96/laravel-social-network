@@ -59,4 +59,9 @@ Route::group(['middleware'=>['auth']],function(){
      */
     Route::post('/post','User\PostController@post');
 
+    /**
+     * Comments
+     */
+    Route::post('/comment', 'User\CommentController@comment');
+
 });
