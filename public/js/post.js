@@ -1,9 +1,10 @@
 $(() => {
 
-    $(document).on('click','.post', function (e) {
+    $(document).on('click','.post', e => {
 
         e.preventDefault();
-        data.sendButton =   $(this);
+
+        data.sendButton =   $(e.target);
         data.checked    =   data.form_post.find('.checkbox').is(':checked');
         data.post       =   data.form_post.find('.post-text').val().trim();
 
@@ -25,7 +26,7 @@ $(() => {
                     "status"    : data.checked,
                     'post'      : data.post
                 },
-                success : (res) => {
+                success : res => {
 
                     if(res.ok){
 
@@ -92,14 +93,14 @@ $(() => {
     });
 
 
-    $(document).on('click', '.comment', function () {
+    $(document).on('click', '.comment', e => {
 
-        $(this).parents('.card-body').find('.comments-body').fadeToggle();
+        $(e.target).parents('.card-body').find('.comments-body').fadeToggle();
 
     });
 
-    $(document).on('keyup', '.apply-comment', function (e) {
-
+    $(document).on('keyup', '.apply-comment',  e => {
+        //data.this =
 
 
     })

@@ -40,11 +40,13 @@ $(() => {
         }
     });
 
-    $(document).on('click',".check",function (e) {
+    $(document).on('click',".check", e => {
+
         e.preventDefault();
 
-        data.parent         = $(this).parent();
-        data.follower_id    = $(this).data('id');
+        data.parent         = $(e.target).parent();
+        data.follower_id    = $(e.target).data('id');
+
         $.ajax({
             method : "POST",
             url    : "/accept",
@@ -86,11 +88,13 @@ $(() => {
     });
 
 
-    $(document).on('click',".cancel",function (e) {
+    $(document).on('click',".cancel", e => {
+
         e.preventDefault();
-        data.button = $(this);
-        data.parent = $(this).parent();
-        data.follower_id = $(this).data('id');
+        data.button = $(e.target);
+        data.parent = $(e.target).parent();
+        data.follower_id = $(e.target).data('id');
+
         $.ajax({
             method : "POST",
             url    : "/cancel",
@@ -133,11 +137,12 @@ $(() => {
         })
     });
 
-    $(document).on('click',".unfollow",function (e) {
+    $(document).on('click',".unfollow", e => {
+
         e.preventDefault();
-        data.button = $(this);
-        data.parent = $(this).parent();
-        data.follower_id = $(this).data('id');
+        data.button = $(e.target);
+        data.parent = $(e.target).parent();
+        data.follower_id = $(e.target).data('id');
         $.ajax({
             method : "POST",
             url    : "/unfollow",
@@ -165,10 +170,12 @@ $(() => {
         });
     });
 
-    $(document).on('click',".follow",function (e) {
+    $(document).on('click',".follow", e => {
+
         e.preventDefault();
-        data.followBtn   = $(this);
-        data.follower_id = $(this).data('id');
+        data.followBtn   = $(e.target);
+        data.follower_id = $(e.target).data('id');
+
         $.ajax({
             method : "POST",
             url    : "/follow",
@@ -193,8 +200,10 @@ $(() => {
 
     });
 
-    $(document).on("click",".search-btn", (e) => {
+    $(document).on("click",".search-btn", e => {
+
         e.preventDefault();
+
         if(!$.isEmptyObject(searchRes)){
             $('.modal').modal('show');
             data.search_win.html("");
@@ -255,20 +264,23 @@ $(() => {
     };
 
     createFollowButton = (clasS,data_id) => {
-        "use strict";
+
         return $('<a class="fa '+ clasS +' text-right">').attr('data-id',data_id);
     };
 
-    $(document).on('click','.open-message',function (e) {
+    $(document).on('click','.open-message', e => {
+
         e.preventDefault();
-        data.to     = $(this).data('id');
-        data.name   = $(this).text();
-        data.avatar = $(this).parent().find('.followers-avatar');
+
+        data.to     = $(e.target).data('id');
+        data.name   = $(e.target).text();
+        data.avatar = $(e.target).parent().find('.followers-avatar');
+
         $.post('/selmessages',{
             '_token': data.token,
             'from'  : data.get_id,
             'to'    : data.to
-        },(res) => {
+        }, res => {
             data.message.fadeIn();
             data.sendInput  = $('.send-message');
             data.xsUserAvatar = "<img src='"+ data.avatar.attr('src') +"' class='rounded-circle xs-avatar'>";

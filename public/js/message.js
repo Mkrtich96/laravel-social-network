@@ -61,10 +61,10 @@ $(() => {
         }
     });
 
-    $(document).on('keyup','.send-message',function (event) {
+    $(document).on('keyup','.send-message', e => {
 
-        data.val = $(this).val().trim().replace(/(<([^>]+)>)/ig,"");
-        data.id  = $(this).data('id');
+        data.val = $(e.target).val().trim().replace(/(<([^>]+)>)/ig,"");
+        data.id  = $(e.target).data('id');
 
         if(event.keyCode == 13 && data.val != ""){
             $.post("/send",{
