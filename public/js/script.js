@@ -143,6 +143,7 @@ $(() => {
         data.button = $(e.target);
         data.parent = $(e.target).parent();
         data.follower_id = $(e.target).data('id');
+
         $.ajax({
             method : "POST",
             url    : "/unfollow",
@@ -209,14 +210,19 @@ $(() => {
             data.search_win.html("");
             searchRes.map( item => {
 
-                data.cards1     = $('<div class="users-res card col-12 col-sm-12">');
-                data.cards2     = $('<div class="card-body">');
-                data.cards3     = $('<div class="card-text">');
-                data.cardTitle  = $('<h4 class="card-title">');
-                data.avatar     = $('<img src="'+ item.avatar +'" class="search-avatar rounded float-left">');
+                data.cards1     = $('<div>').addClass('users-res card col-12 col-sm-12');
+                data.cards2     = $('<div>').addClass('card-body');
+                data.cards3     = $('<div>').addClass('card-text');
+                data.cardTitle  = $('<h4>').addClass('card-title');
+                data.avatar     = $('<img>').addClass('search-avatar rounded float-left')
+                                            .attr('src', item.avatar);
                 data.button     = $('<button>');
-                data.textDiv    = $('<div class="card-text">');
-                data.cardTitle.html('<a href="http://github.dev/user/'+ item.id +'" target="_blank">' +item.value + '</a>');
+                data.textDiv    = $('<div>').addClass('card-text');
+                data.cardTitle.html('<a>').attr({
+                                            'href' : "http://github.dev/user/"+ item.id,
+                                            'target' : '_blank'
+                                            }).html(item.value);
+
                 if (item.follow) {
                     data.button.addClass('btn btn-secondary unfollow')
                         .attr("data-id", item.id)
