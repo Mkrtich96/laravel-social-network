@@ -4,9 +4,8 @@
 
     </div>
     <div class="form-group">
-        <form action="{{ route('profile.update',$data['id']) }}" method="post" enctype="multipart/form-data">
+        <form action="{{ route('user.avatar') }}" method="post" enctype="multipart/form-data">
             {{ csrf_field() }}
-            <input type="hidden" name="_method" value="PUT">
             <p>
                 <input type="file" name="avatar" style="width:100%">
             </p>

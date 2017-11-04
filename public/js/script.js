@@ -29,6 +29,14 @@ $(() => {
     };
 
 
+
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': data.token
+        }
+    });
+
     let searchRes = null;
     /**
      * Search autocompleate
@@ -43,15 +51,14 @@ $(() => {
     $(document).on('click',".check", e => {
 
         e.preventDefault();
-
-        data.parent         = $(e.target).parent();
-        data.follower_id    = $(e.target).data('id');
+        data.this           =   $(e.target);
+        data.parent         =   data.this.parent();
+        data.follower_id    =   data.this.data('id');
 
         $.ajax({
             method : "POST",
             url    : "/accept",
             data   : {
-                "_token" : data.token,
                 "follower_id": data.follower_id
             },
             success : response => {
@@ -72,7 +79,7 @@ $(() => {
                                     .append("<a class='open-message text-primary' data-id='"+data.follower_id+"'>"+response.name+"</a>")
                                     .append(data.unfllwBtn);
                     data.followers.prepend(data.crtFollow);
-                    setTimeout(function () {
+                    setTimeout( () => {
                         "use strict";
                         data.parent.remove();
                         data.menu.remove();
@@ -80,11 +87,11 @@ $(() => {
                 }
             },
             statusCode: {
-                404: function() {
+                404: () => {
                     console.log('Accept follow response not found. Error 404.');
                 }
             }
-        });
+        })
     });
 
 
@@ -99,7 +106,6 @@ $(() => {
             method : "POST",
             url    : "/cancel",
             data   : {
-                "_token" : data.token,
                 "check"  : (data.parent.hasClass('header-request')) ? 1 : 0,
                 "follower_id" : data.follower_id
             },
@@ -153,7 +159,6 @@ $(() => {
             method : "POST",
             url    : "/unfollow",
             data   : {
-                "_token" : data.token,
                 "follower_id" : data.follower_id,
             },
             success : response => {
@@ -183,31 +188,39 @@ $(() => {
     $(document).on('click',".follow", e => {
 
         e.preventDefault();
-        data.followBtn   = $(e.target);
-        data.follower_id = $(e.target).data('id');
+        data.this           = $(e.target);
+        data.notifiable_id    = data.this.data('id');
 
         $.ajax({
             method : "POST",
             url    : "/follow",
             data   : {
-                "_token" : data.token,
-                "follower_id" : data.follower_id,
+                "notifiable_id" : data.notifiable_id,
             },
             success : response => {
-                if(response.ok){
-                    data.followBtn.removeClass('btn-outline-primary follow')
+                console.log(response.status);
+                if(response.status == "success"){
+                    data.this.removeClass('btn-outline-primary follow')
                                     .attr("data-id",response.id)
                                     .addClass('btn-secondary cancel')
                                     .html("Cancel Request");
                 }
             },
             statusCode: {
-                404:    ()  =>  {
-                    console.log('Follow response not found. Error 404.');
+                404: res  =>  {
+                    try{
+                        throw res.responseJSON.message;
+                    }catch(err){
+                        console.log(err);
+                    }
                 },
-                422:    ()  =>  {
-                    "use strict";
+                422: res  =>  {
+                    try{
+                        throw res.responseJSON.message;
 
+                    }catch(err) {
+                        console.log(err);
+                    }
                 }
             }
         })
@@ -276,8 +289,6 @@ $(() => {
         return data.li;
     };
 
-
-
     scrollDown = element => {
 
         return element.scrollTop(element[0].scrollHeight);
@@ -285,7 +296,7 @@ $(() => {
 
     createFollowButton = (clasS, data_id) => {
 
-        return $('<a class="fa '+ clasS +' text-right">').attr('data-id',data_id);
+        return $('<a class="fa '+ clasS +' text-right">').attr('data-id', data_id);
     };
 
     $(document).on('click','.open-message', e => {
@@ -297,7 +308,6 @@ $(() => {
         data.avatar = $(e.target).parent().find('.followers-avatar');
 
         $.post('/selmessages',{
-            '_token': data.token,
             'from'  : data.get_id,
             'to'    : data.to
         }, res => {

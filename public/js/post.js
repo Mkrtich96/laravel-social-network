@@ -22,7 +22,6 @@ $(() => {
                 method  : "POST",
                 url     : "/post",
                 data    : {
-                    "_token"    : data.token,
                     "get_id"    : data.get_id,
                     "status"    : data.checked,
                     'post'      : data.post
@@ -138,13 +137,16 @@ $(() => {
                     url     :   "/comment",
                     method  :   "POST",
                     data    :   {
-                        "_token"    :   data.token,
                         "text"      :   data.value.trim(),
                         "post_id"   :   data.post_id,
                         "from_user" :   data.user_id
                     },
                     success :   res => {
 
+                        if(res.ok){
+                            data.this.val("");
+
+                        }
 
                     },
                     statusCode: {

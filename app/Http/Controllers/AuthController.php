@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Support\Facades\Auth as Auth;
 use Laravel\Socialite\Facades\Socialite as Socialite;
-use GuzzleHttp\Client as Client;
 
 class AuthController extends Controller
 {
@@ -62,7 +61,13 @@ class AuthController extends Controller
     {
         $user = Socialite::driver($provider)->user();
         $authUser = $this->findOrCreateUser($user, $provider);
+
+        if(is_null($authUser)){
+            return redirect()->route('login');
+        }
+
         Auth::login($authUser, true);
+
         return redirect('/profile/' . $authUser->id);
     }
 
@@ -89,7 +94,15 @@ class AuthController extends Controller
             'provider_id'   => $user->id
         ];
 
-        return User::create($data);
+        $user   =   User::create($data);
+
+        if(!is_null($user)){
+
+            return $user;
+        }
+
+        return null;
+
     }
 
     public function update(Request $request, $id)

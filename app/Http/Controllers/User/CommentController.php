@@ -36,12 +36,9 @@ class CommentController extends Controller
 
             $send->from_user =   $from_user;
 
-            $data   =   [
-                'ok'    =>  1,
-                'com_id' =>  $send->id
-            ];
 
-            return  ($send->save()) ? response($data, 200) : response(null, 404);
+            return  ($send->save()) ? response(['ok' => 1, 'com_id' => $send->id], 200)
+                                    : response(null, 404);
 
         }
 

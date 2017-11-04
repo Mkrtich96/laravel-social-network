@@ -18,18 +18,18 @@ class GalleryController extends Controller
      */
     public function index()
     {
-        $data   = [];
+        $data = [];
         $user_id = get_auth_id();
-        $images = Gallery::where('user_id',$user_id)->get();
-        if(count($images) > 0){
+        $images = Gallery::where('user_id', $user_id)->get();
+        if (count($images) > 0) {
             foreach ($images as $image) {
                 $data[] = [
-                    'id'        => $image->id,
-                    'image'     => $image->image,
-                    'user_id'   => $user_id,
+                    'id' => $image->id,
+                    'image' => $image->image,
+                    'user_id' => $user_id,
                 ];
             }
-        }else{
+        } else {
             $data = null;
         }
 
@@ -49,7 +49,7 @@ class GalleryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -70,10 +70,11 @@ class GalleryController extends Controller
             }
         }
     }
+
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -84,7 +85,7 @@ class GalleryController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -95,59 +96,58 @@ class GalleryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        $user_id    = get_auth_id();
 
-        $image      = Gallery::find($id);
+    }
 
-        $user       = User::find($user_id);
+    public function makeProfilePhoto($id)
+    {
 
+        $user_id = get_auth_id();
+        $image = Gallery::find($id);
+        $user = User::find($user_id);
         unlink(storage_path('app/public/' . $user_id . "/" . $user->avatar));
+        $copy = storage_path('app/public/' . $user_id . "/gallery/" . $image->image);
+        $to = storage_path('app/public/' . $user_id . "/" . $image->image);
 
-        $file       = storage_path('app/public/' . $user_id . "/gallery/" . $image->image);
-
-        $to         = storage_path('app/public/' . $user_id . "/" . $image->image);
-
-        File::copy($file, $to);
+        File::copy($copy, $to);
 
         $user->avatar = $image->image;
 
-        if($user->save()){
+        if ($user->save()) {
             return redirect('/')->with('status_202', 'Profile photo updated!');
-        }else{
-            return redirect()->back()->with('status_404','Connection error!');
+        } else {
+            return redirect()->back()->with('status_404', 'Connection error!');
         }
     }
 
+
     /**
      * Remove the specified resource from storage.
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request,$id)
+    public function destroy(Request $request, $id)
     {
-        if($request->ajax()){
 
-            $rules = [
-                'src' => 'regex:/^([a-zA-Z1-9]+)\.([a-z]{3,5})$/',
-            ];
+        $rules = [
+            'src' => 'regex:/^([a-zA-Z1-9]+)\.([a-z]{3,5})$/',
+        ];
 
-            $this->validate($request, $rules);
+        $this->validate($request, $rules);
 
-            $src = basename($request->src);
+        $src = basename($request->src);
+        $user_id = get_auth_id();
+        unlink(storage_path('app/public/' . $user_id . '/gallery/' . $src));
 
-            $user_id = get_auth_id();
+        $image = Gallery::find($id);
 
-            unlink(storage_path('app/public/'. $user_id . '/gallery/' . $src));
+        return ($image->delete()) ? response(['ok' => 1], 200) : response(null, 404);
 
-            $image = Gallery::find($id);
-
-            return ($image->delete()) ? response(['ok' => 1],200) : response(null, 404);
-        }
     }
 }

@@ -9,59 +9,66 @@ Route::resource('auth', 'AuthController',['except' => [
     'update', 'destroy'
 ]]);
 
-Route::group(['middleware'=>['auth']],function(){
+Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
 
     /**
      * Search Routes
      */
-    Route::get('/search','User\SearchController@search');
+    Route::get('/search','SearchController@search');
 
     /**
      * Profile photo
      */
-    Route::post('/updateavatar','User\UserController@updateProfilePhoto')->name('user.avatar');
+    Route::post('/update-avatar',[
+        'uses'  =>  'UserController@updateProfilePhoto',
+        'as'    =>  'user.avatar'
+    ]);
 
     /**
      * Follow system
      */
-    Route::post('/follow','User\FollowController@follow')->name('follow.request');
-    Route::post('/unfollow','User\FollowController@unfollow');
-    Route::post('/cancel','User\FollowController@cancel')->name('response.not.request');
-    Route::post('/accept','User\FollowController@accept')->name('response.ok.request');
+    Route::post('/follow','FollowController@follow');
+    Route::post('/unfollow','FollowController@unfollow');
+    Route::post('/cancel','FollowController@cancel');
+    Route::post('/accept','FollowController@accept');
 
     /**
      * Auth profile
      */
-    Route::resource('profile', 'User\UserController',['except' => [
+    Route::resource('profile', 'UserController',['except' => [
         'destroy'
     ]]);
 
     /**
      * User profile page
      */
-    Route::get('user/{id}','User\UserController@userPage');
+    Route::get('user/{id}','UserController@userPage');
 
     /**
      * Gallery page
      */
-    Route::resource('gallery','User\GalleryController');
+    Route::resource('gallery','GalleryController');
+    Route::post('/make-profile-photo',[
+        'uses'  =>  'GalleryController@makeProfilePhoto',
+        'as'    =>  'make.profile.photo'
+    ]);
 
     /**
      * Messages system
      */
-    Route::post('/selmessages','User\MessageController@select');
-    Route::post('/seen','User\MessageController@seen');
-    Route::post('/send','User\MessageController@send');
-    Route::post('/notifications','User\MessageController@generate');
+    Route::post('/selmessages','MessageController@select');
+    Route::post('/seen','MessageController@seen');
+    Route::post('/send','MessageController@send');
+    Route::post('/notifications','MessageController@generate');
 
     /**
      * Post system
      */
-    Route::post('/post','User\PostController@post');
+    Route::post('/post','PostController@post');
 
     /**
      * Comments
      */
-    Route::post('/comment', 'User\CommentController@comment');
+    Route::post('/comment', 'CommentController@comment');
 
 });

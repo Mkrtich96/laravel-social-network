@@ -64,7 +64,10 @@
                                             </div>
                                             <div class="card-text float-right w-75 comments-body">
                                                 <div class="card">
-                                                    <div class="card-body">
+                                                    <div class="card-body p-1">
+                                                        <h5 class="card-title">
+                                                            Hakob
+                                                        </h5>
                                                             Hello vasil
                                                     </div>
                                                 </div>

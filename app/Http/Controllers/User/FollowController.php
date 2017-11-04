@@ -7,145 +7,168 @@ use App\User;
 use App\Follow;
 use App\Notify;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreFollow;
 use App\Http\Controllers\Controller;
 use App\Notifications\RepliedToFollow;
 
 class FollowController extends Controller
 {
 
-    public function follow(Request $request)
+    public function follow(StoreFollow $request)
     {
-        if($request->ajax()){
+        $follower_id    = $request->notifiable_id;
+        $auth_user      = get_auth();
 
-            $rules = [
-                'follower_id' => 'required|numeric'
-            ];
+        $user = User::find($follower_id);
 
-            $this->validate($request, $rules);
-
-            $follower_id = $request->follower_id;
-
-            $auth_user = Auth::user();
-
-            $user = User::find($follower_id);
-
-            $user->notify(new RepliedToFollow($auth_user));
-
-            $insert = Notify::where('notifiable_id', $follower_id)->first();
-
-            $insert->to = $auth_user->id;
+        $user->notify(new RepliedToFollow($auth_user));
+        $change = Notify::where('notifiable_id', $follower_id)->first();
 
 
-            return ($insert->save()) ? response(['ok' => 1],200) :  response(null, 404);
+        if(!is_null($change)){
+
+            $change->to =   $auth_user->id;
+            $update     =   $change->save();
+            if($update){
+                return response(['status' => 'fail','message'   => 'Notification doesn\'t created.'], 404);
+            }
+
+            return response([
+                'message'   => 'Notification doesn\'t created.'
+            ], 404);
+
         }
+
+        return response([
+            'status'    => 'fail',
+        ], 404);
+
     }
 
     /**
      * Unfollow users
      */
 
-    public function unfollow(Request $request)
+    public function unfollow(StoreFollow $request)
     {
-        if($request->ajax()){
+        $follower_id = $request->follower_id;
+        $user_id = get_auth('id');
+        $follower = check_follower_or_not($follower_id, $user_id);
+        $delete = $follower->delete();
 
-            $rules = [
-                'follower_id' => 'required|numeric'
-            ];
-
-            $this->validate($request, $rules);
-
-            $follower_id = $request->follower_id;
-
-            $user_id = get_auth_id();
-
-            $follower = check_follower_or_not($follower_id, $user_id);
-
-            $delete = $follower->delete();
-
-            return ($delete) ? response(['ok' => 1], 200) : response(null, 404);
-        }
-
+        return ($delete) ? response(['ok' => 1], 200) : response(null, 404);
     }
 
     /**
      * Cancal sended OR accept
      */
 
-    public function cancel(Request $request)
+    public function cancel(StoreFollow $request)
     {
-        if($request->ajax()){
 
-            $rules = [
-                'follower_id' => 'required|numeric'
-            ];
+        $follower_id = $request->follower_id;
 
-            $this->validate($request, $rules);
+        if ($request->check) {
 
-            $follower_id = $request->follower_id;
-
-            if($request->check){
-
-                $delete = Notify::where('to',$follower_id)
-                                ->delete();
-            }else{
-
-                $delete = Notify::where('notifiable_id',$follower_id)
-                                ->delete();
-            }
-
-            return ($delete) ? response(['ok' => 1], 200) : response(null, 404);
+            $notification = Notify::where('to', $follower_id)
+                                    ->first();
+        } else {
+            $notification = Notify::where('notifiable_id', $follower_id)
+                                    ->first();
         }
+
+        if (!is_null($notification)) {
+
+            $remove = $notification->delete();
+
+            if ($remove) {
+
+                return response(['status' => 'success'], 200);
+            } else {
+                return response([
+                    'status' => 'fail',
+                    'message' => 'Error with deleting notification.'
+                ], 404);
+            }
+        }
+
+        return response([
+            'status' => 'fail',
+            'message' => 'Notification does not exists.'
+        ], 422);
+
     }
 
     /**
      * Accept follow Request
      */
-    public function accept(Request $request)
+    public function accept(StoreFollow $request)
     {
-        if($request->ajax()){
 
-            $rules = [
-                'follower_id' => 'required|numeric'
-            ];
-
-            $this->validate($request, $rules);
-
-            $follower_id = $request->follower_id;
-
-            $user = \Auth::user();
-
-            $data = [];
-
-            $user_notifications = Notify::where('to',$follower_id)
-                                        ->get();
-
-            foreach ($user_notifications as $notification) {
-                $decode_data = json_decode($notification->data);
-                $data['follower_name']  = $decode_data->follower_name;
-                $data['follower_id']    = $decode_data->follower_id;
-            }
+        $data = array();
+        $user_notification = Notify::where('to', $request->follower_id)->first();
 
 
-            $delete = Notify::where('to',$follower_id)
-                            ->delete();
+        if (isset($user_notification)) {
 
-            if($delete){
+            $decode_data = json_decode($user_notification->data);
+            $data['follower_name'][] = $decode_data->follower_name;
+            $data['follower_id'][] = $decode_data->follower_id;
+        }
+
+        $notification = Notify::where('to', $request->follower_id)->first();
+
+
+        if ($notification) {
+
+            $remove = $notification->delete();
+
+            if ($remove) {
+
                 $follow = new Follow();
 
-                $follow->user_id = $user->id;
+                $follow->user_id = get_auth_id();
                 $follow->follower_id = $data['follower_id'];
-                $avatar = User::find($follower_id);
 
-                $data = [
-                    "ok" => 1,
-                    "name" => $data['follower_name'],
-                    "id" => $data['follower_id'],
-                    "avatar" => $avatar->avatar
-                ];
+                $user_info = User::find($request->follower_id);
 
-                return $follow->save() ? response($data, 200) : response(null, 404);
+                if (!is_null($user_info)) {
+                    $user_avatar = $user_info->avatar;
+                } else {
+                    $user_avatar = null;
+                }
+
+                if ($follow->save()) {
+
+                    return response([
+                        "status" => 'success',
+                        "name" => $data['follower_name'],
+                        "id" => $data['follower_id'],
+                        "avatar" => $user_avatar
+                    ], 200);
+                } else {
+
+                    return response([
+                        'status' => 'fail',
+                        'message' => 'Follower not accepted. Connection error!'
+                    ], 404);
+                }
+
+
+            } else {
+
+                return response([
+                    'status' => 'fail',
+                    'message' => 'Error with deleting notification.'
+                ], 404);
             }
+
         }
+
+        return response([
+            'status' => 'fail',
+            'message' => 'Notification does not exists.'
+        ], 422);
 
 
     }

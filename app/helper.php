@@ -5,6 +5,7 @@ use App\Follow;
 use Carbon\Carbon;
 
 if( !function_exists('check_follower_or_not') ){
+
     function check_follower_or_not($follower_id, $followed_id){
 
         $follow = Follow::where(function ($query) use ($follower_id, $followed_id) {
@@ -19,15 +20,30 @@ if( !function_exists('check_follower_or_not') ){
                     ]);
         })->first();
 
-        return $follow;
+        if(!is_null($follow)){
+
+            return $follow;
+        }
+
+        return null;
+
     }
 }
 
 if( !function_exists('get_auth_id') ){
 
-    function get_auth_id() {
+    function get_auth($id = null) {
 
-        return Auth::user()->id;
+        $user   =   Auth::user();
+
+        if(!is_null($user)){
+
+            if($id == 'id'){
+                return $user->id;
+            }
+            return $user;
+        }
+        return null;
     }
 }
 

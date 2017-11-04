@@ -27,7 +27,6 @@ $(() => {
     let responseMessage = () => {
 
         $.post('/notifications', {
-            '_token' : data.token,
             'get_id' : data.get_id
         }, res => {
             if(res.message){
@@ -55,7 +54,6 @@ $(() => {
         data.messageText = data.messageBody.find('.message-text');
         if(data.messageText.last().hasClass('text-left')){
             $.post('/seen', {
-                '_token'    : data.token,
                 'id'        : data.get_id
             })
         }
@@ -69,7 +67,6 @@ $(() => {
 
         if(event.keyCode == 13 && data.val != ""){
             $.post("/send",{
-                '_token'    :   data.token,
                 'message'   :   data.val,
                 'user_id'   :   data.id
             }, res => {

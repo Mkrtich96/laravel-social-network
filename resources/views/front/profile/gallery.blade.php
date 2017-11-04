@@ -34,7 +34,7 @@
                             <span class="delete-img fa fa-trash-o" data-id="{{ $image['id'] }}"></span>
                             <img class="card-img-top gallery-img" src="{{ asset('images/' . $image['user_id'] . "/gallery/" . $image['image']) }}" >
                             <div class="card-body">
-                                <form action="{{ url('/gallery/' . $image['id']) }}" method="POST">
+                                <form action="{{ route('make.profile.photo', $image['id']) }}" method="POST">
                                     {{ csrf_field() }}
                                     <input name="_method" value="PUT" type="hidden">
                                     <button type="submit" class="btn btn-outline-primary make-profile-pic">Make Profile Photo</button>

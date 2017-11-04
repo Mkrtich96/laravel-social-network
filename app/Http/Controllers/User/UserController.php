@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\User;
 
 use Auth;
+use App\Post;
 use App\User;
 use App\Follow;
 use App\Notify;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use GrahamCampbell\GitHub\GitHubManager;
@@ -159,10 +159,12 @@ class UserController extends Controller
     public function userPage($id){
 
         $user       =   User::find($id);
-
-        $authId     =   get_auth_id();
-
+        $authId     =   get_auth('id');
         $requested  =   0;
+
+
+
+        dd($user->posts()->comments);
 
 
         if(is_null($user) || !is_null($user->provider)){
@@ -179,7 +181,6 @@ class UserController extends Controller
         if(!is_null($notifications)){
 
             $requested = 1;
-
         }
 
         $follow = check_follower_or_not($id,$authId);
@@ -218,6 +219,27 @@ class UserController extends Controller
     }
 
 
+    public function updateProfilePhoto(Request $request) {
+        /**
+         *  Update profile photo with profile
+         */
+        if($request->hasFile('avatar')){
+
+            $file = $request->file('avatar');
+            $ext  = $file->guessClientExtension();
+            $user = Auth::user();
+
+            if(!is_null($user->avatar)){
+                unlink(storage_path('app/public/'. $user->id . '/' . $user->avatar));
+            }
+
+            $name = $request->avatar->storeAs('public/' . $user->id,'avatar.' . $ext);
+            // insert avatar
+            $user->avatar = basename($name);
+            return ($user->save()) ? redirect()->back() : null;
+        }
+    }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -237,21 +259,7 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        /**
-         *  Update profile photo
-         */
-        if($request->hasFile('avatar')){
-            $file = $request->file('avatar');
-            $ext  = $file->guessClientExtension();
-            $user = Auth::user();
-            if(!is_null($user->avatar)){
-                unlink(storage_path('app/public/'. $user->id . '/' . $user->avatar));
-            }
-            $name = $request->avatar->storeAs('public/' . $user->id,'avatar.' . $ext);
-            // insert avatar
-            $user->avatar = basename($name);
-            return ($user->save()) ? redirect()->back() : null;
-        }
+
     }
 
     /**
