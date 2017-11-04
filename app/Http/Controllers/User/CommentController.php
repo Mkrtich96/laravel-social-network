@@ -22,7 +22,7 @@ class CommentController extends Controller
 
             $this->validate($request,$rules);
 
-            $post_id        =   $request->on_post;
+            $post_id        =   $request->post_id;
 
             $from_user      =   $request->from_user;
 
@@ -32,7 +32,7 @@ class CommentController extends Controller
 
             $send->comment  =   $text;
 
-            $send->post_id  =   $post_id;
+            $send->on_post  =   $post_id;
 
             $send->from_user =   $from_user;
 
