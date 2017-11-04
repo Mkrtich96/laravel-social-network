@@ -301,18 +301,13 @@ class UserController extends Controller
         return $avatar;
     }
 
-    public function parseCreatedAt($data){
-
-        return Carbon::parse($data)->format('M-d-Y, H:i');
-    }
-
     public function createUserPostList($user_posts) {
 
         $posts = [];
 
         foreach ($user_posts as $body) {
 
-            $date_time  =   $this->parseCreatedAt($body->created_at);
+            $date_time  =   parseCreatedAt($body->created_at);
 
             $posts[] = [
                 'id'    =>  $body->id,

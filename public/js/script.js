@@ -239,17 +239,17 @@ $(() => {
 
                 if (item.follow) {
                     data.button.addClass('btn btn-secondary unfollow')
-                        .attr("data-id", item.id)
-                        .html("Unfollow");
+                                .attr("data-id", item.id)
+                                .html("Unfollow");
                 } else if (item.requested){
                     data.button.removeClass('btn-outline-primary follow')
-                        .attr("data-id", item.id)
-                        .addClass('btn btn-secondary cancel')
-                        .html("Cancel Request");
+                                .attr("data-id", item.id)
+                                .addClass('btn btn-secondary cancel')
+                                .html("Cancel Request");
                 } else {
                     data.button.addClass('btn btn-outline-primary follow')
-                        .attr("data-id", item.id)
-                        .html("Follow");
+                                .attr("data-id", item.id)
+                                .html("Follow");
                 }
                 data.textDiv.append(data.button);
                 data.cards3.append(data.avatar);
@@ -283,7 +283,7 @@ $(() => {
         return element.scrollTop(element[0].scrollHeight);
     };
 
-    createFollowButton = (clasS,data_id) => {
+    createFollowButton = (clasS, data_id) => {
 
         return $('<a class="fa '+ clasS +' text-right">').attr('data-id',data_id);
     };
@@ -318,7 +318,6 @@ $(() => {
                     data.position   = "left";
                 }
                 data.date   = item.date.date.toString();
-                data.date   = data.date.substring(0,19);
                 data.create = createMessage(item.message, data.date, data.color, data.position);
                 data.messageBody.append(data.create);
                 scrollDown(data.messageBody);

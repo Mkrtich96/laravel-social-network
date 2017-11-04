@@ -153,6 +153,7 @@ class MessageController extends Controller
 
 
     public function select(Request $request){
+
         if($request->ajax()){
 
             $data   = [];
@@ -165,7 +166,7 @@ class MessageController extends Controller
                     'from'      => $message->from,
                     'to'        => $message->to,
                     'message'   => strip_tags($message->message),
-                    'date'      => $message->created_at,
+                    'date'      => parseCreatedAt($message->created_at)
                 ];
                 $seen = $message->seen;
             }

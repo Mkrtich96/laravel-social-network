@@ -34,11 +34,11 @@ class CommentController extends Controller
 
             $send->post_id  =   $post_id;
 
-            $send->from_user=   $from_user;
+            $send->from_user =   $from_user;
 
             $data   =   [
                 'ok'    =>  1,
-                'com_id'=>$send->id
+                'com_id' =>  $send->id
             ];
 
             return  ($send->save()) ? response($data, 200) : response(null, 404);

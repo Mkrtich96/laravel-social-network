@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use App\Follow;
+use Carbon\Carbon;
 
 if( !function_exists('check_follower_or_not') ){
     function check_follower_or_not($follower_id, $followed_id){
@@ -27,6 +28,13 @@ if( !function_exists('get_auth_id') ){
     function get_auth_id() {
 
         return Auth::user()->id;
+    }
+}
+
+if( !function_exists('parseCreatedAt') ){
+
+    function parseCreatedAt($data){
+        return Carbon::parse($data)->format('M-d-Y, H:i');
     }
 }
 
