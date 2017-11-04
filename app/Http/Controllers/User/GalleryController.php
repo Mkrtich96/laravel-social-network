@@ -138,14 +138,14 @@ class GalleryController extends Controller
             $this->validate($request, $rules);
 
             $src = basename($request->src);
-            $user_id = \Auth::user()->id;
+
+            $user_id = get_auth_id();
+
             unlink(storage_path('app/public/'. $user_id . '/gallery/' . $src));
+
             $image = Gallery::find($id);
-            if($image->delete()){
-                return response(['ok' => 1],200);
-            }else{
-                return response(null, 404);
-            }
+
+            return ($image->delete()) ? response(['ok' => 1],200) : response(null, 404);
         }
     }
 }

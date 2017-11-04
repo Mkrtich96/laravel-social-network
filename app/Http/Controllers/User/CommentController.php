@@ -15,8 +15,8 @@ class CommentController extends Controller
         if($request->ajax()){
 
             $rules = [
-                'post_id'   =>  'required',
-                'from_user' =>  'required',
+                'from_user' =>  'required|numeric',
+                'post_id'   =>  'required|numeric',
                 'text'      =>  'required|regex:/^([a-zA-Z1-9\.]+)$/'
             ];
 

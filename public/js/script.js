@@ -322,10 +322,11 @@ $(() => {
                 data.messageBody.append(data.create);
                 scrollDown(data.messageBody);
             });
+
             if(res.seen == 1){
                 data.messageText    = data.messageBody.find('.message-text').last();
                 if(data.messageText.hasClass('text-right')){
-                    data.messageText.find('.cite').last().append(data.seenText)
+                    data.messageText.find('.cite').last().append(data.seenText);
                 }
             }
 

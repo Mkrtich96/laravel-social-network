@@ -18,7 +18,7 @@ class FollowController extends Controller
         if($request->ajax()){
 
             $rules = [
-                'follower_id' => 'required'
+                'follower_id' => 'required|numeric'
             ];
 
             $this->validate($request, $rules);
@@ -49,7 +49,7 @@ class FollowController extends Controller
         if($request->ajax()){
 
             $rules = [
-                'follower_id' => 'required'
+                'follower_id' => 'required|numeric'
             ];
 
             $this->validate($request, $rules);
@@ -76,7 +76,7 @@ class FollowController extends Controller
         if($request->ajax()){
 
             $rules = [
-                'follower_id' => 'required'
+                'follower_id' => 'required|numeric'
             ];
 
             $this->validate($request, $rules);
@@ -105,7 +105,7 @@ class FollowController extends Controller
         if($request->ajax()){
 
             $rules = [
-                'follower_id' => 'required'
+                'follower_id' => 'required|numeric'
             ];
 
             $this->validate($request, $rules);
