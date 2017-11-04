@@ -63,15 +63,16 @@ $(() => {
 
     $(document).on('keyup','.send-message', e => {
 
-        data.val = $(e.target).val().trim().replace(/(<([^>]+)>)/ig,"");
-        data.id  = $(e.target).data('id');
+        data.this   =   $(e.target);
+        data.val = data.this.val().trim().replace(/(<([^>]+)>)/ig,"");
+        data.id  = data.this.data('id');
 
         if(event.keyCode == 13 && data.val != ""){
             $.post("/send",{
                 '_token'    :   data.token,
                 'message'   :   data.val,
                 'user_id'   :   data.id
-            },(res) => {
+            }, res => {
                 if(res.ok){
                     $('.send-message').val("");
                     data.messageText    = data.messageBody.find('.message-text').last();
