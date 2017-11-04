@@ -231,10 +231,11 @@ $(() => {
                                             .attr('src', item.avatar);
                 data.button     = $('<button>');
                 data.textDiv    = $('<div>').addClass('card-text');
-                data.cardTitle.html('<a>').attr({
-                                            'href' : "http://github.dev/user/"+ item.id,
-                                            'target' : '_blank'
-                                            }).html(item.value);
+                data.cardLink   = $('<a>').attr({
+                                        'href' : "http://github.dev/user/"+ item.id,
+                                        'target' : '_blank'
+                                    }).html(item.value);
+                data.cardTitle.append(data.cardLink);
 
                 if (item.follow) {
                     data.button.addClass('btn btn-secondary unfollow')

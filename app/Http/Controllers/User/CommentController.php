@@ -17,7 +17,7 @@ class CommentController extends Controller
             $rules = [
                 'post_id'   =>  'required',
                 'from_user' =>  'required',
-                'text'      =>  'required|regex:/^([a-zA-Z1-9]+)$/'
+                'text'      =>  'required|regex:/^([a-zA-Z1-9\.]+)$/'
             ];
 
             $this->validate($request,$rules);
