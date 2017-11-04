@@ -26,7 +26,7 @@ $(() => {
 
     let responseMessage = () => {
 
-        $.post('/generate_message', {
+        $.post('/notifications', {
             '_token' : data.token,
             'get_id' : data.get_id
         }, res => {

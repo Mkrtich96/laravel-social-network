@@ -52,7 +52,7 @@ Route::group(['middleware'=>['auth']],function(){
     Route::post('/selmessages','User\MessageController@select');
     Route::post('/seen','User\MessageController@seen');
     Route::post('/send','User\MessageController@send');
-    Route::post('/generate_message','User\MessageController@generate');
+    Route::post('/notifications','User\MessageController@generate');
 
     /**
      * Post system

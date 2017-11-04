@@ -27,7 +27,7 @@
             </div>
         </div><br>
         <div class="row">
-            @if(count($data) > 0)
+            @if(isset($data))
                 @foreach($data as $image)
                     <div class="col-3 images">
                         <div class="card" style="width: 15rem;">

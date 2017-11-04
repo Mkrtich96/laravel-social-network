@@ -29,6 +29,8 @@ class GalleryController extends Controller
                     'user_id'   => $user_id,
                 ];
             }
+        }else{
+            $data = null;
         }
 
         return view('front.profile.gallery', compact('data'));
