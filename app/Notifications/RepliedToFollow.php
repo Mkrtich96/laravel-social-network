@@ -29,7 +29,7 @@ class RepliedToFollow extends Notification
      */
     public function via($notifiable)
     {
-        return ['database'];
+        return [CustomChannel::class];
     }
 
     /**

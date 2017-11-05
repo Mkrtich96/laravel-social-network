@@ -12,12 +12,12 @@ class Comment extends Model
 
     public function user(){
 
-        return $this->belongsTo('App\User');
+        return $this->belongsTo('App\User','from_user');
     }
 
     public function posts(){
 
-        return $this->belongsTo('App\Post');
+        return $this->belongsTo('App\Post','on_post');
     }
 
 }

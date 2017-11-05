@@ -163,9 +163,23 @@ class UserController extends Controller
         $requested  =   0;
 
 
+//        $comments   =   $user->with(['posts','comments'])->get();
+        $posts       =   $user->posts;
 
-        dd($user->posts()->comments);
 
+        foreach ($posts as $post) {
+            $users      =   $post->comments()->with('user')->get();
+            dump($users);
+            /*foreach ($users as $user) {
+                dump($user->user);
+            }*/
+
+        }
+
+
+
+
+        dd();
 
         if(is_null($user) || !is_null($user->provider)){
             return redirect('404');

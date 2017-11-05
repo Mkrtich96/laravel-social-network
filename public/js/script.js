@@ -198,7 +198,6 @@ $(() => {
                 "notifiable_id" : data.notifiable_id,
             },
             success : response => {
-                console.log(response.status);
                 if(response.status == "success"){
                     data.this.removeClass('btn-outline-primary follow')
                                     .attr("data-id",response.id)
@@ -211,14 +210,6 @@ $(() => {
                     try{
                         throw res.responseJSON.message;
                     }catch(err){
-                        console.log(err);
-                    }
-                },
-                422: res  =>  {
-                    try{
-                        throw res.responseJSON.message;
-
-                    }catch(err) {
                         console.log(err);
                     }
                 }

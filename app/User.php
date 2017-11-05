@@ -27,17 +27,17 @@ class User extends Authenticatable
 
     public function galleries()
     {
-        return $this->hasMany('App\Gallery','user_id');
+        return $this->hasMany('App\Gallery');
     }
 
     public function posts()
     {
-        return $this->hasMany('App\Post','user_id');
+        return $this->hasMany('App\Post');
     }
 
     public function comments(){
 
-        return $this->hasMany('App\Comment','from_user');
+        return $this->hasMany('App\Comment', 'from_user');
     }
 
 }

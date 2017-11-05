@@ -16,31 +16,23 @@ class FollowController extends Controller
 
     public function follow(StoreFollow $request)
     {
+
         $follower_id    = $request->notifiable_id;
         $auth_user      = get_auth();
-
         $user = User::find($follower_id);
 
-        $user->notify(new RepliedToFollow($auth_user));
-        $change = Notify::where('notifiable_id', $follower_id)->first();
+        if(!is_null($user)){
 
-
-        if(!is_null($change)){
-
-            $change->to =   $auth_user->id;
-            $update     =   $change->save();
-            if($update){
-                return response(['status' => 'fail','message'   => 'Notification doesn\'t created.'], 404);
-            }
+            $user->notify(new RepliedToFollow($auth_user));
 
             return response([
-                'message'   => 'Notification doesn\'t created.'
-            ], 404);
-
+               'status' =>  'success',
+            ], 200);
         }
 
         return response([
-            'status'    => 'fail',
+            'status'    =>  'fail',
+            'message'   =>  'User not finded.'
         ], 404);
 
     }
