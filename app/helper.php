@@ -54,3 +54,22 @@ if( !function_exists('parseCreatedAt') ){
     }
 }
 
+if( !function_exists('generate_avatar') ){
+
+    function generate_avatar($data){
+
+        $avatar = null;
+
+        if(is_null($data->avatar)) {
+            if (!$data->gender){
+                $avatar = asset('images/avatars/male.gif');
+            }else{
+                $avatar = asset('images/avatars/female.gif');
+            }
+        }else{
+            $avatar = asset('images/' .$data->id . '/' . $data->avatar);
+        }
+
+        return $avatar;
+    }
+}

@@ -116,7 +116,7 @@ class UserController extends Controller
             /**
              * Auth user Avatar
              */
-            $avatar = $this->generate_avatar($data);
+            $avatar = generate_avatar($data);
 
             return view('front.user',compact("data","avatar", 'replyFollowers', 'followers_list', 'posts'));
         }
@@ -190,7 +190,6 @@ class UserController extends Controller
         }
 
         $notifications = Notify::where('to', $authId)->first();
-
 
         if(!is_null($notifications)){
 

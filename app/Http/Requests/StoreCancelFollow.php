@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreUnfollow extends FormRequest
+class StoreCancelFollow extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,8 @@ class StoreUnfollow extends FormRequest
     public function rules()
     {
         return [
-            'follower_id'   =>  'required|exists:followers'
+            'accidentally'  =>  'required|regex:/^([0,1])$/',
+            'follower_id'   =>  'required|exists:notifications'
         ];
     }
 }

@@ -38,6 +38,16 @@ $(() => {
     });
 
     let searchRes = null;
+
+    try_catch   =   message  => {
+        try{
+            throw message;
+        }catch(error){
+            console.log(error);
+        }
+    };
+
+
     /**
      * Search autocompleate
      */
@@ -62,7 +72,7 @@ $(() => {
                 "follower_id": data.follower_id
             },
             success : response => {
-                if(response.ok){
+                if(response.status == "success"){
                     data.unfllwBtn = $("<a class='btn btn-secondary float-right unfollow'>").html("Unfollow");
                     data.crtFollow = $("<li class='list-group-item'>");
                     data.badge = data.dropdowns.find(".badge-danger");
@@ -80,15 +90,17 @@ $(() => {
                                     .append(data.unfllwBtn);
                     data.followers.prepend(data.crtFollow);
                     setTimeout( () => {
-                        "use strict";
                         data.parent.remove();
                         data.menu.remove();
                     },3000);
                 }
             },
             statusCode: {
-                404: () => {
-                    console.log('Accept follow response not found. Error 404.');
+                404: res => {
+                    try_catch(res.responseJSON.message);
+                },
+                422: () =>  {
+
                 }
             }
         })
@@ -98,20 +110,19 @@ $(() => {
     $(document).on('click',".cancel", e => {
 
         e.preventDefault();
-        data.button = $(e.target);
-        data.parent = $(e.target).parent();
-        data.follower_id = $(e.target).data('id');
+        data.this   = $(e.target);
+        data.parent = data.this.parent();
+        data.follower_id = data.this.data('id');
 
         $.ajax({
             method : "POST",
             url    : "/cancel",
             data   : {
-                "check"  : (data.parent.hasClass('header-request')) ? 1 : 0,
+                "accidentally"  : data.parent.hasClass('header-request') ? 1 : 0,
                 "follower_id" : data.follower_id
             },
             success : response => {
-
-                if(response.ok){
+                if(response.status == "success"){
                     if(data.parent.hasClass('header-request')){
                         data.badge      = data.dropdowns.find(".badge-danger");
                         data.countNot   = parseInt(data.dropdowns.find(".badge-danger").text());
@@ -123,13 +134,12 @@ $(() => {
                         }
 
                         data.parent.html("Request canceled!");
-                        setTimeout(function () {
-                            "use strict";
+                        setTimeout(() => {
                             data.parent.remove();
                             data.menu.remove();
                         },3000)
                     }else{
-                        data.button.removeClass()
+                        data.this.removeClass()
                             .addClass('btn btn-outline-primary follow')
                             .attr("data-id",response.id)
                             .html("Follow");
@@ -137,11 +147,10 @@ $(() => {
                 }
             },
             statusCode: {
-                404:    ()  =>  {
-                    console.log('Cancel follow response not found. Error 404.');
+                404:    res  =>  {
+                    try_catch(res.responseJSON.message);
                 },
                 422:    ()  =>  {
-                    "use strict";
 
                 }
             }
@@ -162,7 +171,7 @@ $(() => {
                 "follower_id" : data.follower_id,
             },
             success : response => {
-                if(response.ok){
+                if(response.status == "success"){
                         if(data.parent.hasClass('list-group-item')){
                             data.parent.remove();
                         }else{
@@ -174,12 +183,11 @@ $(() => {
                 }
             },
             statusCode: {
-                404:    ()  => {
-                    console.log('Unfollow response not found. Error 404.');
+                404:    res  => {
+                    try_catch(res.responseJSON.message);
                 },
-                422:    ()  =>  {
-                    "use strict";
-
+                422:    res  =>  {
+                    try_catch(res.responseJSON.message);
                 }
             }
         });
@@ -207,11 +215,10 @@ $(() => {
             },
             statusCode: {
                 404: res  =>  {
-                    try{
-                        throw res.responseJSON.message;
-                    }catch(err){
-                        console.log(err);
-                    }
+                    try_catch(res.responseJSON.message);
+                },
+                422: () =>  {
+
                 }
             }
         })

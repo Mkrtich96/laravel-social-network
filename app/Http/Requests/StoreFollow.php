@@ -13,7 +13,7 @@ class StoreFollow extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return get_auth() ? true : false;
     }
 
     /**

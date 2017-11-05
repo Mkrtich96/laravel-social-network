@@ -16,7 +16,9 @@ $(() => {
                 data.text = item.name +  " send follow request. ";
                 data.accept = createFollowButton('fa-check check',item.followerId);
                 data.cancel = createFollowButton('fa-times cancel',item.followerId);
-                data.notifLi.append(data.text).append(data.accept).append(data.cancel);
+                data.notifLi.append(data.text)
+                            .append(data.accept)
+                            .append(data.cancel);
                 data.notifMenu.append(data.notifLi);
                 data.notif.append(data.notifMenu);
             });
