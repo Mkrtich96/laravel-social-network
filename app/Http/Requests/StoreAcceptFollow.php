@@ -13,7 +13,7 @@ class StoreAcceptFollow extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return get_auth() ? true : false;
     }
 
     /**
@@ -24,7 +24,7 @@ class StoreAcceptFollow extends FormRequest
     public function rules()
     {
         return [
-            'follower_id'   =>  'required|exists:notifications'
+            'to'   =>  'required|exists:notifications'
         ];
     }
 }

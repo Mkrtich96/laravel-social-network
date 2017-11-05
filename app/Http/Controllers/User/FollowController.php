@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Requests\StoreAcceptFollow;
-use App\Http\Requests\StoreCancelFollow;
-use App\Http\Requests\StoreUnfollow;
-use Auth;
 use App\User;
 use App\Follow;
 use App\Notify;
-use Illuminate\Http\Request;
 use App\Http\Requests\StoreFollow;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreUnfollow;
 use App\Notifications\RepliedToFollow;
+use App\Http\Requests\StoreAcceptFollow;
+use App\Http\Requests\StoreCancelFollow;
 
 class FollowController extends Controller
 {
@@ -74,10 +72,10 @@ class FollowController extends Controller
 
         if ($request->accidentally) {
 
-            $notification = Notify::where('to', $request->follower_id)
+            $notification = Notify::where('to', $request->to)
                                     ->first();
         } else {
-            $notification = Notify::where('notifiable_id', $request->follower_id)
+            $notification = Notify::where('notifiable_id', $request->to)
                                     ->first();
         }
 
@@ -100,7 +98,7 @@ class FollowController extends Controller
     public function accept(StoreAcceptFollow $request)
     {
 
-        $user_notification = Notify::where('to', $request->follower_id)->first();
+        $user_notification = Notify::where('to', $request->to)->first();
 
         $decode_data    = json_decode($user_notification->data);
         $follower_name  = $decode_data->follower_name;
@@ -114,7 +112,7 @@ class FollowController extends Controller
 
             $follow->user_id        = get_auth('id');
             $follow->follower_id    = $follower_id;
-            $user_info      = User::find($request->follower_id);
+            $user_info      = User::find($request->to);
             $user_avatar    =   generate_avatar($user_info);
 
             if ($follow->save()) {

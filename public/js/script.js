@@ -39,12 +39,27 @@ $(() => {
 
     let searchRes = null;
 
-    try_catch   =   message  => {
+
+    try_catch   =   message => {
+
         try{
             throw message;
         }catch(error){
             console.log(error);
         }
+    };
+
+    log   =   data  => {
+
+        if(typeof data.message !== undefined) {
+            try_catch(data.message);
+
+        }else{
+            for(let key in data){
+                try_catch(data[key][0]);
+            }
+        }
+
     };
 
 
@@ -69,12 +84,15 @@ $(() => {
             method : "POST",
             url    : "/accept",
             data   : {
-                "follower_id": data.follower_id
+                "to": data.follower_id
             },
             success : response => {
                 if(response.status == "success"){
-                    data.unfllwBtn = $("<a class='btn btn-secondary float-right unfollow'>").html("Unfollow");
-                    data.crtFollow = $("<li class='list-group-item'>");
+
+                    data.unfllwBtn = $("<a>").addClass('btn btn-secondary float-right unfollow')
+                                                .html("Unfollow");
+
+                    data.crtFollow = $("<li>").addClass('list-group-item');
                     data.badge = data.dropdowns.find(".badge-danger");
                     data.countNot = parseInt(data.dropdowns.find(".badge-danger").text());
                     if(data.countNot > 1){
@@ -83,10 +101,17 @@ $(() => {
                         data.badge.remove();
                     }
                     data.parent.html("Request accepted!");
-                    data.unfllwBtn.attr("data-id",response.id);
-                    data.avatar = "<img src='http://github.dev/images/"+ data.follower_id +"/"+ response.avatar +"' class='rounded-circle followers-avatar'>";
+
+                    data.unfllwBtn.attr("data-id", response.id);
+
+                    data.avatar = $('<img>').addClass('rounded-circle followers-avatar')
+                                            .attr('src', response.avatar);
+
+                    data.openMessage    =   $('<a>').addClass('open-message text-primary')
+                                                    .attr('data-id', data.follower_id)
+                                                    .text(response.name);
                     data.crtFollow.append(data.avatar)
-                                    .append("<a class='open-message text-primary' data-id='"+data.follower_id+"'>"+response.name+"</a>")
+                                    .append(data.openMessage)
                                     .append(data.unfllwBtn);
                     data.followers.prepend(data.crtFollow);
                     setTimeout( () => {
@@ -97,10 +122,10 @@ $(() => {
             },
             statusCode: {
                 404: res => {
-                    try_catch(res.responseJSON.message);
+                    log(res.responseJSON);
                 },
-                422: () =>  {
-
+                422: res =>  {
+                    log(res.responseJSON);
                 }
             }
         })
@@ -119,7 +144,7 @@ $(() => {
             url    : "/cancel",
             data   : {
                 "accidentally"  : data.parent.hasClass('header-request') ? 1 : 0,
-                "follower_id" : data.follower_id
+                "to"            : data.follower_id
             },
             success : response => {
                 if(response.status == "success"){
@@ -148,10 +173,10 @@ $(() => {
             },
             statusCode: {
                 404:    res  =>  {
-                    try_catch(res.responseJSON.message);
+                    log(res.responseJSON);
                 },
-                422:    ()  =>  {
-
+                422:    res  =>  {
+                    log(res.responseJSON);
                 }
             }
         })
@@ -184,10 +209,10 @@ $(() => {
             },
             statusCode: {
                 404:    res  => {
-                    try_catch(res.responseJSON.message);
+                    log(res.responseJSON);
                 },
                 422:    res  =>  {
-                    try_catch(res.responseJSON.message);
+                    log(res.responseJSON);
                 }
             }
         });
@@ -215,10 +240,10 @@ $(() => {
             },
             statusCode: {
                 404: res  =>  {
-                    try_catch(res.responseJSON.message);
+                    log(res.responseJSON);
                 },
-                422: () =>  {
-
+                422: res =>  {
+                    log(res.responseJSON);
                 }
             }
         })

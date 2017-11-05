@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{{asset('css/user.css') }}">
     <link rel="stylesheet" href="{{asset('css/profile.css') }}">
     <link rel="stylesheet" href="{{asset('css/gallery.css') }}">
+    <link rel="stylesheet" href="{{asset('css/font-awesome/font-awesome.min.css') }}">
 </head>
 <body>
     @yield('content')
@@ -25,5 +26,4 @@
     <script src="{{ asset('js/gallery.js') }}"></script>
     <script src="{{ asset('js/message.js') }}"></script>
     <script src="{{ asset('js/post.js') }}"></script>
-    <script src="https://use.fontawesome.com/cf1e7fe2e3.js"></script>
 </html>
