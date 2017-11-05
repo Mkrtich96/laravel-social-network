@@ -48,19 +48,28 @@ class FollowController extends Controller
         $user_id = get_auth('id');
         $follower = check_follower_or_not($request->follower_id, $user_id);
 
-        $delete = $follower->delete();
+        if(!is_null($follower)){
+            $delete = $follower->delete();
 
-        if($delete){
+            if($delete){
+
+                return response([
+                    'status'    =>  'success'
+                ], 200);
+            }
 
             return response([
-                'status'    =>  'success'
-            ], 200);
+                'status'    =>  'fail',
+                'message'   =>  'Unfollow failed. Error 404!'
+            ], 404);
+        }else{
+            return response([
+                'status'    =>  'fail',
+                'message'   =>  'Request failed. Connection error!'
+            ], 404);
         }
 
-        return response([
-            'status'    =>  'fail',
-            'message'   =>  'Unfollow failed. Error 404!'
-        ], 404);
+
     }
 
     /**
@@ -69,14 +78,22 @@ class FollowController extends Controller
 
     public function cancel(StoreCancelFollow $request)
     {
+        $notification = null;
 
         if ($request->accidentally) {
 
-            $notification = Notify::where('to', $request->to)
+            $notification = Notify::where('notifiable_id', $request->follower_id)
                                     ->first();
         } else {
-            $notification = Notify::where('notifiable_id', $request->to)
+            $notification = Notify::where('to', $request->follower_id)
                                     ->first();
+        }
+
+        if(is_null($notification)){
+           return response([
+               'status'  => 'fail',
+               'message' => 'Follow cancel request failed.'
+           ], 404);
         }
 
         $delete = $notification->delete();

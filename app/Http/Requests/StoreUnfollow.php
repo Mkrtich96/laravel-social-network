@@ -24,7 +24,7 @@ class StoreUnfollow extends FormRequest
     public function rules()
     {
         return [
-            'follower_id'   =>  'required|exists:followers'
+            'follower_id'   =>  'required|numeric',
         ];
     }
 }

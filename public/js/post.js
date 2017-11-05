@@ -1,5 +1,6 @@
 $(() => {
 
+
     $(document).on('click','.post', e => {
 
         e.preventDefault();
@@ -28,25 +29,20 @@ $(() => {
                 },
                 success : res => {
 
-                    if(res.ok){
+                    if(res.status === "success"){
 
                         $('.post-text').val("");
-
                         data.sendButton.removeClass('btn-secondary')
                             .addClass('btn-primary')
                             .prop('disabled',false)
                             .html("Post");
 
                         data.cards1     =   $('<div>').addClass('parent-card users-res card col-12 col-sm-12');
-
                         data.cards2     =   $('<div>').addClass('card-body');
                         data.cards3     =   $('<div>').addClass('card-text');
-
                         data.commInFil  =   $('<div>').addClass('card-text float-right w-75 comments-body');
                         data.commApply  =   $('<div>').addClass('input-group input-group-sm mt-2 apply-comment');
-
                         data.clearfix   =   $('<div>').addClass('clearfix');
-
                         data.commInput  =   $('<input>').attr({
                                                             "type"              : "text",
                                                             "placeholder"       : "Comment..",
@@ -54,31 +50,24 @@ $(() => {
                                                         }).addClass('rounded-0 form-control');
 
                         data.commField  =   $('<div>').addClass('card-text mt-3');
-
                         data.commBtn    =   $('<a>').addClass('btn comment badge badge-primary text-light float-right')
                                                     .attr('data-id', res.post_id)
                                                     .html('Comments');
 
                         data.cardTitle  =   $('<h5>').addClass('card-title');
-
                         data.avatar     =   $('<img>').addClass('rounded-circle followers-avatar float-left')
                                                         .attr('src', data.profile_photo);
 
                         data.textDiv    =   $('<div>').addClass('card-text mt-3');
-
                         data.textCon    =   $('<p>').addClass('text-justify');
-
                         data.date       =   $('<small>').addClass('form-text text-muted');
 
                         data.textCon.text(data.post);
                         data.textDiv.append(data.textCon);
                         data.cardTitle.text(data.profile_name);
                         data.date.text(res.date);
-
                         data.commField.append(data.commBtn);
-
                         data.commApply.append(data.commInput);
-
                         data.commInFil.append(data.commApply);
 
                         data.cards3.append(data.avatar)
@@ -96,15 +85,18 @@ $(() => {
                         data.cards1.fadeIn();
 
                         $('.alert-post-success').fadeIn();
+                    }else{
+                        console.log("Invalid post response! Connection error.");
                     }
                 },
                 statusCode : {
-                    404 :   ()  =>  {
+                    404 : res =>  {
 
+                        arrangeResponse(res.responseJSON, 404, "post");
                     },
-                    422 :   ()  =>  {
-                        "use strict";
+                    422 : res =>  {
 
+                        arrangeResponse(res.responseJSON[0], 422, "post");
                     }
                 }
             });

@@ -17,7 +17,7 @@
 <body>
     @yield('content')
 </body>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="{{ asset('js/jquery.js') }}"></script>
     <script src="{{ asset('js/jquery-ui.js') }}"></script>
     <script src="{{ asset('js/popper.min.js') }}"></script>
     <script src="{{ asset('bootstrap4/js/bootstrap.min.js') }}"></script>

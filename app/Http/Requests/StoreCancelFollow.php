@@ -24,8 +24,8 @@ class StoreCancelFollow extends FormRequest
     public function rules()
     {
         return [
-            'accidentally'  =>  'required|regex:/^([0,1])$/',
-            'to'            =>  'required|exists:notifications'
+            'follower_id'   =>  'required|numeric',
+            'accidentally'  =>  'required|regex:/^([1,0])$/'
         ];
     }
 }
