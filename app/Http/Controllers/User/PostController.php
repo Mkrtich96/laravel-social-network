@@ -3,52 +3,99 @@
 namespace App\Http\Controllers\User;
 
 use App\Post;
+use App\Http\Requests\StorePost;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class PostController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+    }
 
-    public function post(Request $request){
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
 
-        if($request->ajax()){
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(StorePost $request)
+    {
 
-            $rules = [
-                'post'  =>  'required|max:100',
-                'get_id'=>  'required'
-            ];
+        $post = Post::create($request->all());
 
-            $validate = $this->validate($request, $rules);
-
-            if(!is_null($validate)){
-                return response(null, 404);
-            }
-
-            $body   =   $request->post;
-
-            $status =   ($request->status != "false") ? 1 : 0;
-
-            $get_id =   $request->get_id;
-
-            $post = new Post();
-
-            $post->user_id  =   $get_id;
-
-            $post->text     =   $body;
-
-            $post->status   =   $status;
-
-            if($post->save()){
-                return response([
-                    'ok'    => 1,
-                    'date'  => date('M-d-Y, H:i'),
-                    'post_id' => $post->id
-                ], 200);
-            }else{
-                return response(null, 404);
-            }
-
+        if($post){
+            return response([
+                'status'    => 'success',
+                'date'      => parseCreatedAt($post->created_at),
+                'post_id'   => $post->id
+            ], 200);
         }
 
+        return response([
+            'status'    =>  'fail',
+            'message'   =>  'Post don\'t created, connection error!'
+        ], 404);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
     }
 }

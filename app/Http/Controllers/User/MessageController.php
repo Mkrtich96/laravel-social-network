@@ -152,7 +152,7 @@ class MessageController extends Controller
     }
 
 
-    public function select(Request $request){
+    public function selectMessages(Request $request){
 
         if($request->ajax()){
 

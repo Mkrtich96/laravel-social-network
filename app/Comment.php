@@ -9,6 +9,8 @@ class Comment extends Model
 
     protected $table = "comments";
 
+    protected $fillable = ['comment','on_post','from_user'];
+
 
     public function user(){
 

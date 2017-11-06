@@ -2,46 +2,100 @@
 
 namespace App\Http\Controllers\User;
 
-
 use App\Comment;
+use App\Http\Requests\StoreComments;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Input;
 
 class CommentController extends Controller
 {
-
-    public function comment(Request $request){
-
-        if($request->ajax()){
-
-            $rules = [
-                'from_user' =>  'required|numeric',
-                'post_id'   =>  'required|numeric',
-                'text'      =>  'required|regex:/^([a-zA-Z1-9\.]+)$/'
-            ];
-
-            $this->validate($request,$rules);
-
-            $post_id        =   $request->post_id;
-
-            $from_user      =   $request->from_user;
-
-            $text           =   $request->text;
-
-            $send           =   new Comment();
-
-            $send->comment  =   $text;
-
-            $send->on_post  =   $post_id;
-
-            $send->from_user =   $from_user;
-
-
-            return  ($send->save()) ? response(['ok' => 1, 'com_id' => $send->id], 200)
-                                    : response(null, 404);
-
-        }
-
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
     }
 
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(StoreComments $request)
+    {
+
+        $comment = Comment::create($request->all());
+
+        if($comment){
+            return response([
+                'status' => 'success',
+                'com_id' => $comment->id
+            ], 200);
+        }
+
+        return  response([
+            'status'  =>    'fail',
+            'message' =>    'Comment don\'t created, connection error!'
+        ], 404);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
 }

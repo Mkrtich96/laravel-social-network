@@ -37,12 +37,12 @@ $(() => {
         }
     });
 
-    arrangeResponse = (data, status, type) => {
+    arrangeResponse = (data, status = null, type = null) => {
 
         if(data.status === "fail"){
-            console.log(data.message);
-        }else {
-            console.log("Invalid "+ type +" "+ status +" request.")
+            console.error(data.message);
+        }else if(data[0].status === "fail"){
+            console.error("Invalid "+ type +" "+ status +" response.")
         }
 
     };
@@ -107,36 +107,41 @@ $(() => {
                         data.menu.remove();
                     }, 3000);
                 }else{
-                    console.log("Invalid accept response! Connection error.")
+                    console.error("Invalid accept response! Connection error.")
                 }
 
             },
             statusCode: {
                 404: res => {
-                    arrangeResponse(res.responseJSON, 404, "accept");
+                    arrangeResponse(res.responseJSON);
                 },
                 422: res =>  {
 
-                    arrangeResponse(res.responseJSON[0], 422, "accept");
+                    arrangeResponse(res.responseJSON, 422, "accept");
                 }
             }
         })
     });
 
-    let cancel = e => {
+
+
+    $(document).on('click',".cancel", e => {
 
         e.preventDefault();
         data.this   = $(e.target);
         data.parent = data.this.parent();
         data.follower_id = data.this.data('id');
+        data.accidentally = data.parent.hasClass('header-request') ? 'to' : 'notifiable_id';
+
+        data.ajaxData = {};
+
+        data.ajaxData[data.accidentally] = data.follower_id;
+
 
         $.ajax({
             method  :   "POST",
             url     :   "/cancel",
-            data    :   {
-                "accidentally"  :   data.parent.hasClass('header-request') ? 0 : 1,
-                "follower_id"   :   data.follower_id
-            },
+            data    :   data.ajaxData,
             success :  response => {
                 if(response.status === "success"){
                     if(data.parent.hasClass('header-request')){
@@ -161,24 +166,21 @@ $(() => {
                             .html("Follow");
                     }
                 }else{
-                    console.log("Invalid cancel response! Connection error.")
+                    console.error("Invalid cancel response! Connection error.")
                 }
             },
             statusCode  :   {
                 404 : res => {
 
-                    arrangeResponse(res.responseJSON, 404, "cancel");
+                    arrangeResponse(res.responseJSON);
                 },
                 422 : res => {
 
-                    arrangeResponse(res.responseJSON[0], 422, "cancel");
+                    arrangeResponse(res.responseJSON, 422, "cancel");
                 }
             }
         });
-
-    };
-
-    $(document).on('click',".cancel", cancel);
+    });
 
     $(document).on('click',".unfollow", e => {
 
@@ -204,15 +206,15 @@ $(() => {
                         $('.list-group-item').find("[data-id="+data.follower_id+"]").parent().remove();
                     }
                 }else{
-                    console.log("Invalid unfollow response! Connection error.")
+                    console.error("Invalid unfollow response! Connection error.")
                 }
             },
             statusCode: {
                 404:    res  => {
-                    arrangeResponse(res.responseJSON, 404, "unfollow");
+                    arrangeResponse(res.responseJSON);
                 },
                 422:    res  =>  {
-                    arrangeResponse(res.responseJSON[0], 422, "unfollow");
+                    arrangeResponse(res.responseJSON, 422, "unfollow");
                 }
             }
         });
@@ -244,10 +246,10 @@ $(() => {
             },
             statusCode: {
                 404:    res  => {
-                    arrangeResponse(res.responseJSON, 404, "follow");
+                    arrangeResponse(res.responseJSON);
                 },
                 422:    res  =>  {
-                    arrangeResponse(res.responseJSON[0], 422, "follow");
+                    arrangeResponse(res.responseJSON, 422, "follow");
                 }
             }
         })
@@ -334,15 +336,19 @@ $(() => {
         data.name   = $(e.target).text();
         data.avatar = $(e.target).parent().find('.followers-avatar');
 
-        $.post('/selmessages',{
+        $.post('/select-messages',{
             'from'  : data.get_id,
             'to'    : data.to
         }, res => {
             data.message.fadeIn();
             data.sendInput  = $('.send-message');
-            data.xsUserAvatar = "<img src='"+ data.avatar.attr('src') +"' class='rounded-circle xs-avatar'>";
-            data.toFriendProfile    = data.xsUserAvatar + "<a href='http://github.dev/user/"+ data.to +"' target='_blank' >" + data.name + "</a>";
-            data.userName.html(data.toFriendProfile);
+            data.xsUserAvatar = $('<img>').addClass('rounded-circle xs-avatar').attr('src', data.avatar.attr('src'));
+            data.toFriendProfile    = $('<a>').attr({
+                                                'href'  :   'http://github.dev/user/' + data.to,
+                                                'target':   '_blank'
+                                            }).text(data.name);
+            data.userName.append(data.xsUserAvatar)
+                            .append(data.toFriendProfile);
             data.sendInput.attr("data-id",data.to);
             data.messageBody.html("");
             res.item.map( item => {

@@ -49,6 +49,7 @@ class FollowController extends Controller
         $follower = check_follower_or_not($request->follower_id, $user_id);
 
         if(!is_null($follower)){
+
             $delete = $follower->delete();
 
             if($delete){
@@ -69,7 +70,6 @@ class FollowController extends Controller
             ], 404);
         }
 
-
     }
 
     /**
@@ -80,20 +80,13 @@ class FollowController extends Controller
     {
         $notification = null;
 
-        if ($request->accidentally) {
+        if ($request->notifiable_id) {
 
-            $notification = Notify::where('notifiable_id', $request->follower_id)
+            $notification = Notify::where('notifiable_id', $request->notifiable_id)
                                     ->first();
-        } else {
-            $notification = Notify::where('to', $request->follower_id)
+        } elseif($request->to) {
+            $notification = Notify::where('to', $request->to)
                                     ->first();
-        }
-
-        if(is_null($notification)){
-           return response([
-               'status'  => 'fail',
-               'message' => 'Follow cancel request failed.'
-           ], 404);
         }
 
         $delete = $notification->delete();

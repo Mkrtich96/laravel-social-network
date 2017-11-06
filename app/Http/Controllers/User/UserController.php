@@ -94,9 +94,7 @@ class UserController extends Controller
         if(is_null($data->provider)){
 
             $replyFollowers = [];
-
             $followers_list = $this->getFollowersList($user_id);
-
             $read_notifications =   $data->readnotifications;
 
             if(count($read_notifications) > 0){
@@ -118,7 +116,12 @@ class UserController extends Controller
              */
             $avatar = generate_avatar($data);
 
-            return view('front.user',compact("data","avatar", 'replyFollowers', 'followers_list', 'posts'));
+            return view('front.user',compact(
+                 'data',
+                      'avatar',
+                         'replyFollowers',
+                         'followers_list',
+                         'posts'));
         }
 
         /**
@@ -164,7 +167,7 @@ class UserController extends Controller
 
 
 //        $comments   =   $user->with(['posts','comments'])->get();
-        $posts       =   $user->posts;
+        /*$posts       =   $user->posts;
 
 
         foreach ($posts as $post) {
@@ -174,12 +177,12 @@ class UserController extends Controller
                 dump($user->user);
             }*/
 
-        }
 
 
 
 
-        dd();
+
+//        dd();
 
         if(is_null($user) || !is_null($user->provider)){
             return redirect('404');

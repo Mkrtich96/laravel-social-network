@@ -56,7 +56,7 @@ Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
     /**
      * Messages system
      */
-    Route::post('/selmessages','MessageController@select');
+    Route::post('/select-messages','MessageController@selectMessages');
     Route::post('/seen','MessageController@seen');
     Route::post('/send','MessageController@send');
     Route::post('/notifications','MessageController@generate');
@@ -64,11 +64,11 @@ Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
     /**
      * Post system
      */
-    Route::post('/post','PostController@post');
+    Route::resource('/post','PostController');
 
     /**
      * Comments
      */
-    Route::post('/comment', 'CommentController@comment');
+    Route::resource('/comment', 'CommentController');
 
 });

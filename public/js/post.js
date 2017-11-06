@@ -9,6 +9,12 @@ $(() => {
         data.checked    =   data.form_post.find('.checkbox').is(':checked');
         data.post       =   data.form_post.find('.post-text').val().trim();
 
+        if(data.checked){
+            data.checked = 1;
+        }else{
+            data.checked = 0;
+        }
+
         if(data.post != ""){
 
             $('.alert-post-error').fadeOut();
@@ -23,9 +29,9 @@ $(() => {
                 method  : "POST",
                 url     : "/post",
                 data    : {
-                    "get_id"    : data.get_id,
+                    "user_id"    : data.get_id,
                     "status"    : data.checked,
-                    'post'      : data.post
+                    "text"      : data.post
                 },
                 success : res => {
 
@@ -86,13 +92,13 @@ $(() => {
 
                         $('.alert-post-success').fadeIn();
                     }else{
-                        console.log("Invalid post response! Connection error.");
+                        console.error("Invalid post response! Connection error.");
                     }
                 },
                 statusCode : {
                     404 : res =>  {
 
-                        arrangeResponse(res.responseJSON, 404, "post");
+                        arrangeResponse(res.responseJSON);
                     },
                     422 : res =>  {
 
@@ -122,31 +128,29 @@ $(() => {
 
         if(e.keyCode == 13){
 
-
             if(data.value != ""){
 
                 $.ajax({
                     url     :   "/comment",
                     method  :   "POST",
                     data    :   {
-                        "text"      :   data.value.trim(),
-                        "post_id"   :   data.post_id,
+                        "comment"   :   data.value.trim(),
+                        "on_post"   :   data.post_id,
                         "from_user" :   data.user_id
                     },
                     success :   res => {
-
-                        if(res.ok){
+                        if(res.status === "success"){
                             data.this.val("");
 
                         }
 
                     },
                     statusCode: {
-                        404 :   () => {
-
+                        404 : res => {
+                            arrangeResponse(res.responseJSON);
                         },
-                        422 :   () => {
-
+                        422 : res => {
+                            arrangeResponse(res.responseJSON[0]);
                         }
                     }
                 })

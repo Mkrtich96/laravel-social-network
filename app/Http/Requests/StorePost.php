@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreCancelFollow extends FormRequest
+class StorePost extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class StoreCancelFollow extends FormRequest
      */
     public function authorize()
     {
-        return get_auth() ? true : false;
+        return (get_auth()) ? true : false;
     }
 
     /**
@@ -23,14 +23,10 @@ class StoreCancelFollow extends FormRequest
      */
     public function rules()
     {
-        if($this->input('to')){
-            $field = 'to';
-        }else{
-            $field = 'notifiable_id';
-        }
-
         return [
-            $field => 'required|exists:notifications'
+            'user_id' => 'required|exists:users,id',
+            'text'   => 'required|max:100',
+            'status' => 'required|regex:/^([0,1])$/',
         ];
     }
 }

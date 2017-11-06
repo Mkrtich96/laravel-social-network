@@ -23,6 +23,8 @@ class StoreAcceptFollow extends FormRequest
      */
     public function rules()
     {
+
+
         return [
             'to'   =>  'required|exists:notifications'
         ];
