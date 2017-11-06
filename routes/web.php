@@ -14,7 +14,7 @@ Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
     /**
      * Search Routes
      */
-    Route::get('/search','SearchController@search');
+    Route::resource('/search','SearchController');
 
     /**
      * Profile photo

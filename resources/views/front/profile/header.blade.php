@@ -32,9 +32,9 @@
                                     <li class="dropdown-item text-primary form-group header-request">
                                         {{ $replyFollowers['message'][$id] }}
                                         <a data-id="{{ $replyFollowers['follower'][$id] }}"
-                                            class="fa fa-check text-right check"></a>
+                                            class="fa fa-check text-right accept-follow"></a>
                                         <a data-id="{{ $replyFollowers['follower'][$id] }}"
-                                           class="fa fa-times text-right cancel"></a>
+                                           class="fa fa-times text-right cancel-follow"></a>
                                     </li>
                                 @endforeach
                             </ul>

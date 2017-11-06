@@ -14,7 +14,7 @@ $(() => {
             array.map( item => {
                 data.notifLi = $('<li class="dropdown-item text-primary form-group header-request">');
                 data.text = item.name +  " send follow request. ";
-                data.accept = createFollowButton('fa-check check',item.followerId);
+                data.accept = createFollowButton('fa-check accept-follow',item.followerId);
                 data.cancel = createFollowButton('fa-times cancel',item.followerId);
                 data.notifLi.append(data.text)
                             .append(data.accept)

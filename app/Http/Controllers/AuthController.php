@@ -81,6 +81,7 @@ class AuthController extends Controller
     public function findOrCreateUser($user, $provider)
     {
         $authUser = User::find($user->id);
+
         if ($authUser) {
             return $authUser;
         }
@@ -96,7 +97,7 @@ class AuthController extends Controller
 
         $user   =   User::create($data);
 
-        if(!is_null($user)){
+        if($user){
 
             return $user;
         }

@@ -1,67 +1,19 @@
 $(() => {
 
 
-    data = {
-        "token"         : $('meta[name="csrf-token"]').attr('content'),
-        "cards"         : $('.cards'),
-        "search_win"    : $('.modal').find('.modal-body'),
-        "cardTitle"     : $('<h4 class="card-title">'),
-        "button"        : $('<button>'),
-        "lists"         : $('.list-group-item'),
-        "dropdowns"     : $('.dropdowns'),
-        "menu"          : $('.dropdown-menu'),
-        "input"         : $('<input>'),
-        "search"        : $(".search-input"),
-        "followers"     : $(".list-group"),
-        "message"       : $('.message'),
-        "userName"      : $('.user-name'),
-        'get_id'        : $('.get-id').data('id'),
-        'images'        : $('.gallery-img'),
-        'row'           : $('.images'),
-        'cite'          : $("<cite>"),
-        'messageBody'   : $('.anyClass'),
-        'citeElements'  : $('.cite'),
-        'seenText'      : $('<cite>').addClass('cite last').text(' Seen!'),
-        'notifMenu'     : $('<ul>').addClass('dropdown-menu').attr('aria-labelledby', "navbarDropdownMenuLink"),
-        'notif'         : $('li.dropdown'),
-        'form_post'     : $('.form-post'),
-        'profile_photo' : $('.card-img-top').attr('src'),
-        'profile_name'  : $('.navbar-brand').text(),
-    };
-
-
-
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': data.token
-        }
-    });
-
-    arrangeResponse = (data, status = null, type = null) => {
-
-        if(data.status === "fail"){
-            console.error(data.message);
-        }else if(data[0].status === "fail"){
-            console.error("Invalid "+ type +" "+ status +" response.")
-        }
-
-    };
-
-
     let searchRes = null;
-
 
     /**
      * Search autocompleate
      */
     data.search.autocomplete({
-        source : "/search",
-        response : (event,ui) => {
+        source  : '/search',
+        response: (event,ui) => {
             searchRes = ui.content;
         }
     });
 
-    $(document).on('click',".check", e => {
+    $(document).on('click',".accept-follow", e => {
 
         e.preventDefault();
         data.this           =   $(e.target);
@@ -93,14 +45,14 @@ $(() => {
                     data.unfllwBtn.attr("data-id", response.id);
 
                     data.avatar = $('<img>').addClass('rounded-circle followers-avatar')
-                        .attr('src', response.avatar);
+                                            .attr('src', response.avatar);
 
                     data.openMessage = $('<a>').addClass('open-message text-primary')
-                        .attr('data-id', data.follower_id)
-                        .text(response.name);
+                                                .attr('data-id', data.follower_id)
+                                                .text(response.name);
                     data.crtFollow.append(data.avatar)
-                        .append(data.openMessage)
-                        .append(data.unfllwBtn);
+                                    .append(data.openMessage)
+                                    .append(data.unfllwBtn);
                     data.followers.prepend(data.crtFollow);
                     setTimeout(() => {
                         data.parent.remove();
@@ -109,7 +61,6 @@ $(() => {
                 }else{
                     console.error("Invalid accept response! Connection error.")
                 }
-
             },
             statusCode: {
                 404: res => {
@@ -125,7 +76,7 @@ $(() => {
 
 
 
-    $(document).on('click',".cancel", e => {
+    $(document).on('click',".cancel-follow", e => {
 
         e.preventDefault();
         data.this   = $(e.target);
@@ -261,7 +212,8 @@ $(() => {
         e.preventDefault();
 
         if(!$.isEmptyObject(searchRes)){
-            $('.modal').modal('show');
+
+            $('.modal-search-users').modal('show');
             data.search_win.html("");
             searchRes.map( item => {
 
@@ -270,29 +222,29 @@ $(() => {
                 data.cards3     = $('<div>').addClass('card-text');
                 data.cardTitle  = $('<h4>').addClass('card-title');
                 data.avatar     = $('<img>').addClass('search-avatar rounded float-left')
-                    .attr('src', item.avatar);
+                                            .attr('src', item.avatar);
                 data.button     = $('<button>');
                 data.textDiv    = $('<div>').addClass('card-text');
                 data.cardLink   = $('<a>').attr({
-                    'href' : "http://github.dev/user/"+ item.id,
-                    'target' : '_blank'
-                }).html(item.value);
+                                                'href' : "http://github.dev/user/"+ item.id,
+                                                'target' : '_blank'
+                                            }).html(item.value);
                 data.cardTitle.append(data.cardLink);
 
-                if (item.follow) {
-                    data.button.addClass('btn btn-secondary unfollow')
-                        .attr("data-id", item.id)
-                        .html("Unfollow");
-                } else if (item.requested){
-                    data.button.removeClass('btn-outline-primary follow')
-                        .attr("data-id", item.id)
-                        .addClass('btn btn-secondary cancel')
-                        .html("Cancel Request");
-                } else {
-                    data.button.addClass('btn btn-outline-primary follow')
-                        .attr("data-id", item.id)
-                        .html("Follow");
+                switch(item.follow) {
+                    case 1: data.button.addClass('btn btn-secondary unfollow')
+                                        .attr("data-id", item.id)
+                                        .html("Unfollow"); break;
+                    case 2: data.button.removeClass('btn-outline-primary follow')
+                                        .attr("data-id", item.id)
+                                        .addClass('btn btn-secondary cancel-follow')
+                                        .html("Cancel Request"); break;
+                    default: data.button.addClass('btn btn-outline-primary follow')
+                                            .attr("data-id", item.id)
+                                            .html("Follow");
+
                 }
+
                 data.textDiv.append(data.button);
                 data.cards3.append(data.avatar);
                 data.cards3.append(data.cardTitle);
@@ -300,38 +252,21 @@ $(() => {
                 data.cards2.append(data.cards3);
                 data.cards1.append(data.cards2);
                 data.search_win.append(data.cards1);
-
             });
+        }else{
+            console.error('Error with searching. Please revise jquery ui--autocomplete function!')
         }
     });
 
     /**
      * Message Window
      */
-    createMessage = (value, date, color, sender)  => {
 
-        data.li     =   "<li class='list-group-item list-group-item-"+ color +" text-"+ sender +" message-text'>"
-                            + value +
-                            "<br>" +
-                            "<cite class='cite' title='" + date + "'>" + date + "</cite>" +
-                        "</li>";
-        return data.li;
-    };
-
-    scrollDown = element => {
-
-        return element.scrollTop(element[0].scrollHeight);
-    };
-
-    createFollowButton = (clasS, data_id) => {
-
-        return $('<a class="fa '+ clasS +' text-right">').attr('data-id', data_id);
-    };
 
     $(document).on('click','.open-message', e => {
 
         e.preventDefault();
-
+        data.this   = $(e.target);
         data.to     = $(e.target).data('id');
         data.name   = $(e.target).text();
         data.avatar = $(e.target).parent().find('.followers-avatar');
@@ -342,7 +277,8 @@ $(() => {
         }, res => {
             data.message.fadeIn();
             data.sendInput  = $('.send-message');
-            data.xsUserAvatar = $('<img>').addClass('rounded-circle xs-avatar').attr('src', data.avatar.attr('src'));
+            data.xsUserAvatar = $('<img>').addClass('rounded-circle xs-avatar')
+                                            .attr('src', data.avatar.attr('src'));
             data.toFriendProfile    = $('<a>').attr({
                                                 'href'  :   'http://github.dev/user/' + data.to,
                                                 'target':   '_blank'
@@ -372,7 +308,6 @@ $(() => {
                     data.messageText.find('.cite').last().append(data.seenText);
                 }
             }
-
         });
     });
 

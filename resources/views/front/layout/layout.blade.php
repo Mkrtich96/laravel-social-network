@@ -21,6 +21,7 @@
     <script src="{{ asset('js/jquery-ui.js') }}"></script>
     <script src="{{ asset('js/popper.min.js') }}"></script>
     <script src="{{ asset('bootstrap4/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('js/helpers.js') }}"></script>
     <script src="{{ asset('js/providers.js') }}"></script>
     <script src="{{ asset('js/script.js') }}"></script>
     <script src="{{ asset('js/gallery.js') }}"></script>
