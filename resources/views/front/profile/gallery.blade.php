@@ -7,36 +7,44 @@
             </div>
         </div>
     </div>
+    <input type="hidden" class="get-id" data-id="{{ get_auth('id') }}">
     <div class="container">
-        @if (session('status_200'))
+        @if( $errors->any() )
+            @foreach($errors->all() as $error)
+                <div class="alert alert-danger text-center">
+                    <strong>{{ $error }}</strong>
+                </div>
+            @endforeach
+        @endif
+        @if (session('success'))
             <div class="alert alert-success text-center">
-                {{ session('status_200') }}
+                {{ session('success') }}
             </div>
-        @elseif(session('status_404'))
+        @elseif(session('fail'))
             <div class="alert alert-danger text-center">
-                {{ session('status_400') }}
+                <strong>{{ session('fail') }}</strong>
             </div>
         @endif
         <div class="row">
             <div class="col">
                 <form action="{{ route('gallery.store') }}" method="post" enctype="multipart/form-data">
                     <button type="submit" class="btn btn-success">Upload</button>
-                    <input type="file" name="gallery[]" multiple>
+                    <input type="file" name="gallery[]" multiple="multiple">
                     {{ csrf_field() }}
                 </form>
             </div>
         </div><br>
         <div class="row">
-            @if(isset($data))
-                @foreach($data as $image)
-                    <div class="col-3 images">
+            @if(isset($gallery))
+                @foreach($gallery as $image)
+                    <div class="col-3 images" data-id="{{ $image['id'] }}">
                         <div class="card" style="width: 15rem;">
                             <span class="delete-img fa fa-trash-o" data-id="{{ $image['id'] }}"></span>
                             <img class="card-img-top gallery-img" src="{{ asset('images/' . $image['user_id'] . "/gallery/" . $image['image']) }}" >
                             <div class="card-body">
-                                <form action="{{ route('make.profile.photo', $image['id']) }}" method="POST">
+                                <form action="{{ route('make.profile.photo') }}" method="POST">
                                     {{ csrf_field() }}
-                                    <input name="_method" value="PUT" type="hidden">
+                                    <input type="hidden" name="image_id" value="{{ $image['id'] }}">
                                     <button type="submit" class="btn btn-outline-primary make-profile-pic">Make Profile Photo</button>
                                 </form>
                             </div>

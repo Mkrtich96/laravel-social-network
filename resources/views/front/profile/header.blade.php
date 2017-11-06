@@ -17,7 +17,7 @@
                         <input class="get-id" type="hidden" data-id="{{ $data['id'] }}">
                     </li>
                     <li class="nav-item">
-                        <a href="{{ url('/gallery') }}"  class="nav-link text-left">Gallery</a>
+                        <a href="{{ route("gallery.show", $data['id']) }}"  class="nav-link text-left">Gallery</a>
                     </li>
                     <li class="nav-item dropdown">
                         @if(isset($replyFollowers))

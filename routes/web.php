@@ -48,7 +48,7 @@ Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
      * Gallery page
      */
     Route::resource('gallery','GalleryController');
-    Route::post('/make-profile-photo',[
+    Route::post('/make-profile-photo/',[
         'uses'  =>  'GalleryController@makeProfilePhoto',
         'as'    =>  'make.profile.photo'
     ]);

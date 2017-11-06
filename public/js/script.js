@@ -30,7 +30,7 @@ $(() => {
 
                 if(response.status === "success") {
                     data.unfllwBtn = $("<a>").addClass('btn btn-secondary float-right unfollow')
-                        .html("Unfollow");
+                                                .text("Unfollow");
 
                     data.crtFollow = $("<li>").addClass('list-group-item');
                     data.badge = data.dropdowns.find(".badge-danger");
@@ -40,7 +40,7 @@ $(() => {
                     } else {
                         data.badge.remove();
                     }
-                    data.parent.html("Request accepted!");
+                    data.parent.text("Request accepted!");
 
                     data.unfllwBtn.attr("data-id", response.id);
 
@@ -114,7 +114,7 @@ $(() => {
                         data.this.removeClass()
                             .addClass('btn btn-outline-primary follow')
                             .attr("data-id",response.id)
-                            .html("Follow");
+                            .text("Follow");
                     }
                 }else{
                     console.error("Invalid cancel response! Connection error.")
@@ -153,7 +153,7 @@ $(() => {
                     }else{
                         data.this.removeClass('btn-primary unfollow').addClass('btn-outline-primary follow')
                             .attr("data-id",response.id)
-                            .html("Follow");
+                            .text("Follow");
                         $('.list-group-item').find("[data-id="+data.follower_id+"]").parent().remove();
                     }
                 }else{
@@ -189,11 +189,10 @@ $(() => {
                     data.this.removeClass('btn-outline-primary follow')
                         .attr("data-id", response.id)
                         .addClass('btn-secondary cancel')
-                        .html("Cancel Request");
+                        .text("Cancel Request");
                 }else{
                     console.log("Invalid follow response. Connection error.")
                 }
-
             },
             statusCode: {
                 404:    res  => {
@@ -228,20 +227,22 @@ $(() => {
                 data.cardLink   = $('<a>').attr({
                                                 'href' : "http://github.dev/user/"+ item.id,
                                                 'target' : '_blank'
-                                            }).html(item.value);
+                                            }).text(item.value);
                 data.cardTitle.append(data.cardLink);
 
                 switch(item.follow) {
                     case 1: data.button.addClass('btn btn-secondary unfollow')
                                         .attr("data-id", item.id)
-                                        .html("Unfollow"); break;
+                                        .text("Unfollow");
+                                        break;
                     case 2: data.button.removeClass('btn-outline-primary follow')
                                         .attr("data-id", item.id)
                                         .addClass('btn btn-secondary cancel-follow')
-                                        .html("Cancel Request"); break;
+                                        .text("Cancel Request");
+                                        break;
                     default: data.button.addClass('btn btn-outline-primary follow')
                                             .attr("data-id", item.id)
-                                            .html("Follow");
+                                            .text("Follow");
 
                 }
 
@@ -254,7 +255,7 @@ $(() => {
                 data.search_win.append(data.cards1);
             });
         }else{
-            console.error('Error with searching. Please revise jquery ui--autocomplete function!')
+            console.error('Error with searching. Please revise jquery ui autocomplete function!')
         }
     });
 
@@ -267,9 +268,9 @@ $(() => {
 
         e.preventDefault();
         data.this   = $(e.target);
-        data.to     = $(e.target).data('id');
-        data.name   = $(e.target).text();
-        data.avatar = $(e.target).parent().find('.followers-avatar');
+        data.to     = data.this.data('id');
+        data.name   = data.this.text();
+        data.avatar = data.this.parent().find('.followers-avatar');
 
         $.post('/select-messages',{
             'from'  : data.get_id,

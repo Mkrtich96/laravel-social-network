@@ -2,38 +2,24 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Http\Requests\GalleriesDestroy;
+use App\Http\Requests\GalleryProfilePhoto;
+use App\Http\Requests\StoreGalleries;
 use File;
 use App\User;
 use App\Gallery;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-
 class GalleryController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $data = [];
-        $user_id = get_auth_id();
-        $images = Gallery::where('user_id', $user_id)->get();
-        if (count($images) > 0) {
-            foreach ($images as $image) {
-                $data[] = [
-                    'id' => $image->id,
-                    'image' => $image->image,
-                    'user_id' => $user_id,
-                ];
-            }
-        } else {
-            $data = null;
-        }
 
-        return view('front.profile.gallery', compact('data'));
     }
 
     /**
@@ -52,23 +38,28 @@ class GalleryController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreGalleries $request)
     {
-        $user_id = get_auth_id();
 
-        $data = [];
-        if ($request->hasFile('gallery')) {
-            $files = $request->file('gallery');
-            foreach ($files as $file) {
-                $name = $file->store('public/' . $user_id . '/gallery');
-                $data[] = ['user_id' => $user_id, 'image' => basename($name)];
-            }
-            if (Gallery::insert($data)) {
-                return redirect()->back()->with('status_200', 'Gallery updated!');
-            } else {
-                return redirect()->back()->with('status_404', 'Connection error');
-            }
+        $data = array();
+        $user_id = get_auth('id');
+        $files = $request->file('gallery');
+
+        foreach ($files as $file) {
+            $name = $file->store('public/' . $user_id . '/gallery');
+            $data[] = [
+                'user_id'   => $user_id,
+                'image'     => basename($name)
+            ];
         }
+        $user_galleries = Gallery::insert($data);
+
+        if ($user_galleries) {
+            return redirect()->back()->with('success', 'Gallery updated!');
+        } else {
+            return redirect()->back()->with('fail', 'Connection error');
+        }
+
     }
 
     /**
@@ -79,7 +70,23 @@ class GalleryController extends Controller
      */
     public function show($id)
     {
-        //
+        $gallery = array();
+        $user = User::find($id);
+        $galleries = $user->galleries;
+
+        if (count($galleries) > 0) {
+            foreach ($galleries as $image) {
+                $gallery[] = [
+                    'id' => $image->id,
+                    'image' => $image->image,
+                    'user_id' => $id,
+                ];
+            }
+        } else {
+            $gallery = null;
+        }
+
+        return view('front.profile.gallery', compact('gallery'));
     }
 
     /**
@@ -105,21 +112,23 @@ class GalleryController extends Controller
 
     }
 
-    public function makeProfilePhoto($id)
+    public function makeProfilePhoto(GalleryProfilePhoto $request)
     {
 
-        $user_id = get_auth_id();
-        $image = Gallery::find($id);
-        $user = User::find($user_id);
+        $user_id = get_auth('id');
+        $user   = User::find($user_id);
+
+        $gallery  = $user->galleries()->find($request->image_id);
+
         unlink(storage_path('app/public/' . $user_id . "/" . $user->avatar));
-        $copy = storage_path('app/public/' . $user_id . "/gallery/" . $image->image);
-        $to = storage_path('app/public/' . $user_id . "/" . $image->image);
+        $copy   = storage_path('app/public/' . $user_id . "/gallery/" . $gallery->image);
+        $to     = storage_path('app/public/' . $user_id . "/" . $gallery->image);
 
         File::copy($copy, $to);
+        $user->avatar = $gallery->image;
+        $user_profile_photo_change = $user->save();
 
-        $user->avatar = $image->image;
-
-        if ($user->save()) {
+        if ($user_profile_photo_change) {
             return redirect('/')->with('status_202', 'Profile photo updated!');
         } else {
             return redirect()->back()->with('status_404', 'Connection error!');
@@ -132,22 +141,26 @@ class GalleryController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $id)
+    public function destroy(GalleriesDestroy $request, $id)
     {
 
-        $rules = [
-            'src' => 'regex:/^([a-zA-Z1-9]+)\.([a-z]{3,5})$/',
-        ];
-
-        $this->validate($request, $rules);
-
         $src = basename($request->src);
-        $user_id = get_auth_id();
+        $user_id = get_auth('id');
         unlink(storage_path('app/public/' . $user_id . '/gallery/' . $src));
 
-        $image = Gallery::find($id);
+        $user = User::find($user_id);
 
-        return ($image->delete()) ? response(['ok' => 1], 200) : response(null, 404);
+        $delete = $user->galleries()->find($id)->delete();
 
+        if($delete){
+            return response([
+                'status' => 'success'
+            ], 200);
+        }
+
+        return response([
+            'status' => 'fail',
+            'message'=> 'Gallery delete response not found. Error 404.'
+        ], 404);
     }
 }

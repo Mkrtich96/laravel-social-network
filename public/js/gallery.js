@@ -5,37 +5,49 @@ $(() => {
      */
 
     $(document).on('click','.delete-img', e => {
-        data.this = $(e.target);
-        data.id = data.this.data('id');
-        data.src = data.this.parent().find('.gallery-img').attr('src');
+        data.this   = $(e.target);
+        data.id     = data.this.data('id');
+        data.src    = data.this.parent().find('.gallery-img').attr('src');
+
         $.ajax({
+
             method  : "DELETE",
             url     : "/gallery/" + data.id,
             data    : {
-                'src'       : data.src
+                'id'    :   data.id,
+                'src'   :   data.src
             },
-            success   : data => {
+            success   : res => {
 
-                if(data.ok){
-                    data.this.parent().parent().remove();
+                if(res.status === "success"){
+                    data.this.parents(".images").remove();
+                }else{
+                    console.error("Connection error!")
                 }
             },
             statusCode : {
-                404: () => {
-                    console.log('Gallery delete response not found. Error 404.');
+                404: res => {
+                    arrangeResponse(res.responseJSON);
+                },
+                422: res => {
+                    arrangeResponse(res.responseJSON[0], 422, "gallery delete");
                 }
             }
         });
     });
 
+    let showDeleteIcon = e => {
 
+        $(e.target).parent().find('.delete-img').fadeIn();
+    };
 
-    $(document).on("mousemove",'.images', e => {
-        $(e.target).find('.delete-img').css({'display' : 'block'});
-    });
+    $(document).on("mousemove",'.delete-img', showDeleteIcon);
 
-    $(document).on("mouseout",'.images', e => {
-        $(e.target).find('.delete-img').css({'display' : 'none'});
+    $(document).on("mousemove",'.gallery-img', showDeleteIcon);
+
+    $(document).on("mouseout",'.gallery-img', e => {
+
+        $(e.target).parent().find('.delete-img').fadeOut();
     })
 
 });
