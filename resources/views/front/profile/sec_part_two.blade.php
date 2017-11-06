@@ -5,6 +5,11 @@
     <div class="alert alert-success alert-post-success" role="alert">
         <strong>Complete!</strong> Posted successfully.
     </div>
+    @if(session('fail'))
+        <div class="alert alert-danger">
+            {{ session('fail') }}
+        </div>
+    @endif
     <div class="align-items-center">
         <h3> Make Post <i class="fa fa-pencil" aria-hidden="true"></i></h3>
         <form class="form-post">
@@ -28,7 +33,7 @@
 
         </form>
         <div class="cards">
-            @if( $posts )
+            @if( isset($posts) )
                 @foreach( $posts as $post )
                     <div class="parent-card users-res card col-12 col-sm-12">
                         <div class="card-body">

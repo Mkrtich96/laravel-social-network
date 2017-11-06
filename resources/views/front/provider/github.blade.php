@@ -17,6 +17,11 @@
     </div>
 </nav>
 <div class="container-fluid">
+    @if(session('fail'))
+        <div class="alert alert-danger">
+            <strong>{{ session('fail') }}</strong>
+        </div>
+    @endif
     <div class="card" style="width: 20rem;">
         <img class="card-img-top" src="{{ $data['avatar'] }}">
         <div class="card-body">
@@ -86,14 +91,14 @@
             </div>
         </div>
     </div>
-    @if(count($repos) > 0)
-        @foreach($repos['name'] as $key => $value)
+    @if(count($repositories) > 0)
+        @foreach($repositories as $repository)
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">{{ $repos['name'][$key] }}</h4>
-                    <a href="{{ $repos['url'][$key] }}" class="btn btn-primary" target="_blank">View Repository</a>
+                    <h4 class="card-title">{{ $repository['name'] }}</h4>
+                    <a href="{{ $repository['url'] }}" class="btn btn-primary" target="_blank">View Repository</a>
                     <div class="input-group">
-                        <input type="text" class="form-control copy-val" value="{{ $repos['clone'][$key] }}"
+                        <input type="text" class="form-control copy-val" value="{{ $repository['clone'] }}"
                                aria-label="Recipient's username" aria-describedby="basic-addon2">
                         <button type="button" class="input-group-addon clone-copy" id="basic-addon2"><i
                                     class="fa fa-github" aria-hidden="true"></i></button>

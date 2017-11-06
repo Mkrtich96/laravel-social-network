@@ -25,15 +25,15 @@
                                id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
                                aria-expanded="false">
                                 Notification <span
-                                        class="badge badge-danger">{{ count($replyFollowers) - 1 }}</span>
+                                        class="badge badge-danger">{{ count($replyFollowers) }}</span>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                @foreach($replyFollowers['message'] as $id => $value)
+                                @foreach($replyFollowers as $follower)
                                     <li class="dropdown-item text-primary form-group header-request">
-                                        {{ $replyFollowers['message'][$id] }}
-                                        <a data-id="{{ $replyFollowers['follower'][$id] }}"
+                                        {{ $follower['message'] }}
+                                        <a data-id="{{ $follower['follower'] }}"
                                             class="fa fa-check text-right accept-follow"></a>
-                                        <a data-id="{{ $replyFollowers['follower'][$id] }}"
+                                        <a data-id="{{ $follower['follower'] }}"
                                            class="fa fa-times text-right cancel-follow"></a>
                                     </li>
                                 @endforeach

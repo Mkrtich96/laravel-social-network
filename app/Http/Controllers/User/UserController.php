@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Http\Requests\UserProfilePhoto;
 use Auth;
-use App\Post;
 use App\User;
 use App\Follow;
 use App\Notify;
@@ -52,23 +52,19 @@ class UserController extends Controller
      */
     public function store(Request $request){
 
-        $rules = [
-            'reponame' => 'required|max:12',
-            'public' => 'required',
-        ];
-
-        $this->validate($request, $rules);
-
         if ($request->public == "public") {
-            $this->github->api('repo')
-                        ->create($request->reponame, $request->description, true);
-            return redirect()->back();
-        } else {
-            try {
-                throw new Exception("Please upgrade your account for private repositories.", 404);
-            } catch (Exception $e) {
-                echo "Message: " . $e->getMessage();
+
+            $user_create_repo = $this->github->api('repo')
+                                            ->create($request->reponame, $request->description, true);
+            if($user_create_repo){
+                return redirect()->back();
+            }else{
+                return redirect()->back()
+                        ->with('fail','Connection error. Doesn\'t created respository');
             }
+        } else {
+            return redirect()->back()
+                    ->with('fail', "Please upgrade your account for private repositories.");
         }
     }
 
@@ -93,23 +89,31 @@ class UserController extends Controller
          */
         if(is_null($data->provider)){
 
-            $replyFollowers = [];
+            $replyFollowers = array();
             $followers_list = $this->getFollowersList($user_id);
             $read_notifications =   $data->readnotifications;
 
             if(count($read_notifications) > 0){
                 foreach ($read_notifications as $notification) {
-                    $replyFollowers['message'][]    = $notification->data['follower_name'] . " send follow request";
-                    $replyFollowers['follower'][]   = $notification->data['follower_id'];
+                    $replyFollowers[]    = [
+                            'message'   =>  $notification->data['follower_name'] . " send follow request",
+                            'follower'  =>  $notification->data['follower_id']
+                        ];
                 }
             }else{
                 $replyFollowers = null;
             }
 
-            $user_posts  =   $data->posts()->orderBy('created_at','DESC')->get();
 
+            $user_posts  =   $data->posts()->orderBy('created_at','DESC')
+                                            ->get();
 
-            $posts = (count($user_posts) > 0) ? $this->createUserPostList($user_posts) : null;
+            if((count($user_posts) > 0)){
+
+                $posts = $this->createUserPostList($user_posts);
+            }else{
+                $posts = null;
+            }
 
             /**
              * Auth user Avatar
@@ -127,17 +131,19 @@ class UserController extends Controller
         /**
          * Providers profile
          */
-        $repos   = [];
-        $repository = $this->github->api('user')->repositories($data->name);
+        $repositories   = array();
+        $user_repositories = $this->github->api('user')->repositories($data->name);
 
-        if(count($repository) > 0){
-            foreach ($repository as $repos) {
-                $repos['name'][]  = $repos['name'];
-                $repos['url'][]   = $repos['html_url'];
-                $repos['clone'][] = $repos['clone_url'];
+        if(count($user_repositories) > 0){
+            foreach ($user_repositories as $repository) {
+                $repositories[]  = [
+                    'name'  =>  $repository['name'],
+                    'url'   =>  $repository['html_url'],
+                    'clone' =>  $repository['clone_url']
+                ];
             }
         }else{
-            $repos = null;
+            $repositories = null;
         }
 
         switch ($data['provider']) {
@@ -146,10 +152,10 @@ class UserController extends Controller
                                         'avatar'    => $data->avatar,
                                         'provider'  => $data->provider
                                     ];
-                                    return view('front.user', compact('data','repos'));
+                                    return view('front.user',
+                                        compact('data','repositories'));
                                     break;
-
-                default         :   break;
+                default:   break;
         }
     }
 
@@ -234,25 +240,29 @@ class UserController extends Controller
 
     }
 
+    /**
+     *  Update profile photo in profile page NOT FROM GALLERY
+     */
 
-    public function updateProfilePhoto(Request $request) {
-        /**
-         *  Update profile photo with profile
-         */
-        if($request->hasFile('avatar')){
+    public function updateProfilePhoto(UserProfilePhoto $request) {
 
-            $file = $request->file('avatar');
-            $ext  = $file->guessClientExtension();
-            $user = Auth::user();
+        $file = $request->file('avatar');
+        $ext  = $file->guessClientExtension();
+        $user = get_auth();
 
-            if(!is_null($user->avatar)){
-                unlink(storage_path('app/public/'. $user->id . '/' . $user->avatar));
-            }
+        if(!is_null($user->avatar)){
+            unlink(storage_path('app/public/'. $user->id . '/' . $user->avatar));
+        }
 
-            $name = $request->avatar->storeAs('public/' . $user->id,'avatar.' . $ext);
-            // insert avatar
-            $user->avatar = basename($name);
-            return ($user->save()) ? redirect()->back() : null;
+        $name = $request->avatar->storeAs('public/' . $user->id,'avatar.' . $ext);
+
+        $user->avatar = basename($name);
+        $user_update_avatar = $user->save();
+
+        if($user_update_avatar){
+            return redirect()->back();
+        }else{
+            return redirect()->back()->with('fail','Error with updating profile photo!');
         }
     }
 
@@ -327,7 +337,7 @@ class UserController extends Controller
 
     public function createUserPostList($user_posts) {
 
-        $posts = [];
+        $posts = array();
 
         foreach ($user_posts as $body) {
 
@@ -345,8 +355,7 @@ class UserController extends Controller
 
     public function getFollowersList($user_id){
 
-        $followers_list = [];
-
+        $followers_list = array();
         $followers = Follow::where('user_id',$user_id)
                             ->orWhere('follower_id',$user_id)
                             ->get();
@@ -366,17 +375,17 @@ class UserController extends Controller
                     $follower_id = $follower->user_id;
                 }
 
-                $followers_list['id'][]     = $follower_id;
-                $followers_list['name'][]   = $follow->name;
-                $followers_list['avatar'][] = $this->generate_avatar($follow);
+                $followers_list[]     = [
+                    'id'    =>  $follower_id,
+                    'name'  =>  $follow->name,
+                    'avatar'=>  $this->generate_avatar($follow)
+                ];
             }
-
         }else{
             $followers_list = null;
         }
 
         return $followers_list;
-
     }
 
 

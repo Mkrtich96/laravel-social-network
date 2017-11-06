@@ -176,6 +176,7 @@ class MessageController extends Controller
 
 
     public function get_chat_history($from,$to){
+        
         $get =  Message::where(function($query) use ($from, $to) {
             $query->where([
                         ['to','=',$to],

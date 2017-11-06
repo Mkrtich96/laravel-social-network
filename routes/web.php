@@ -12,9 +12,11 @@ Route::resource('auth', 'AuthController',['except' => [
 Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
 
     /**
-     * Search Routes
+     * Auth profile
      */
-    Route::resource('/search','SearchController');
+    Route::resource('profile', 'UserController',['except' => [
+        'destroy'
+    ]]);
 
     /**
      * Profile photo
@@ -25,24 +27,22 @@ Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
     ]);
 
     /**
+     * User profile page
+     */
+    Route::get('user/{id}','UserController@userPage');
+
+    /**
+     * Search Routes
+     */
+    Route::resource('/search','SearchController');
+
+    /**
      * Follow system
      */
     Route::post('/follow','FollowController@follow');
     Route::post('/unfollow','FollowController@unfollow');
     Route::post('/cancel','FollowController@cancel');
     Route::post('/accept','FollowController@accept');
-
-    /**
-     * Auth profile
-     */
-    Route::resource('profile', 'UserController',['except' => [
-        'destroy'
-    ]]);
-
-    /**
-     * User profile page
-     */
-    Route::get('user/{id}','UserController@userPage');
 
     /**
      * Gallery page
