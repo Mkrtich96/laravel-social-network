@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "93f9c2cd6a24d0b2b29abd0c8739f2bd",
+    "content-hash": "a5db5ec4fe23d36bdc1b068f92ef684e",
     "packages": [
         {
             "name": "barryvdh/laravel-ide-helper",
@@ -321,99 +321,6 @@
                 "parser"
             ],
             "time": "2017-05-14T14:47:48+00:00"
-        },
-        {
-            "name": "graham-campbell/flysystem",
-            "version": "v4.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/GrahamCampbell/Laravel-Flysystem.git",
-                "reference": "b2baa8b7709af1f2f074d7eb53c97ea05286b8e4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/GrahamCampbell/Laravel-Flysystem/zipball/b2baa8b7709af1f2f074d7eb53c97ea05286b8e4",
-                "reference": "b2baa8b7709af1f2f074d7eb53c97ea05286b8e4",
-                "shasum": ""
-            },
-            "require": {
-                "graham-campbell/manager": "^3.0",
-                "illuminate/cache": "5.1.*|5.2.*|5.3.*|5.4.*|5.5.*",
-                "illuminate/contracts": "5.1.*|5.2.*|5.3.*|5.4.*|5.5.*",
-                "illuminate/support": "5.1.*|5.2.*|5.3.*|5.4.*|5.5.*",
-                "league/flysystem": "^1.0",
-                "php": "^7.0"
-            },
-            "require-dev": {
-                "graham-campbell/analyzer": "^1.1",
-                "graham-campbell/testbench": "^4.0",
-                "league/flysystem-aws-s3-v3": "^1.0",
-                "league/flysystem-azure": "^1.0",
-                "league/flysystem-cached-adapter": "^1.0",
-                "league/flysystem-eventable-filesystem": "^1.0",
-                "league/flysystem-gridfs": "^1.0",
-                "league/flysystem-rackspace": "^1.0",
-                "league/flysystem-sftp": "^1.0",
-                "league/flysystem-webdav": "^1.0",
-                "league/flysystem-ziparchive": "^1.0",
-                "mockery/mockery": "dev-master#c90a17247147543081e4d00f46911e422b49e583",
-                "phpunit/phpunit": "^6.0",
-                "spatie/flysystem-dropbox": "^1.0"
-            },
-            "suggest": {
-                "league/flysystem-aws-s3-v3": "AwsS3 adapter support.",
-                "league/flysystem-azure": "Azure adapter support.",
-                "league/flysystem-cached-adapter": "Adapter caching support.",
-                "league/flysystem-eventable-filesystem": "Eventable filesystem support.",
-                "league/flysystem-gridfs": "GridFS adapter support.",
-                "league/flysystem-rackspace": "Rackspace adapter support.",
-                "league/flysystem-replicate-adapter": "Replicate adapter support.",
-                "league/flysystem-sftp": "Sftp adapter support.",
-                "league/flysystem-webdav": "WebDav adapter support.",
-                "league/flysystem-ziparchive": "ZipArchive adapter support.",
-                "spatie/flysystem-dropbox": "Dropbox adapter support."
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "4.0-dev"
-                },
-                "laravel": {
-                    "providers": [
-                        "GrahamCampbell\\Flysystem\\FlysystemServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "GrahamCampbell\\Flysystem\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Graham Campbell",
-                    "email": "graham@alt-three.com"
-                }
-            ],
-            "description": "Flysystem Is A Flysystem Bridge For Laravel 5",
-            "keywords": [
-                "Flysystem",
-                "Graham Campbell",
-                "GrahamCampbell",
-                "Laravel Flysystem",
-                "Laravel-Flysystem",
-                "aws",
-                "dropbox",
-                "files",
-                "framework",
-                "laravel",
-                "s3"
-            ],
-            "time": "2017-08-06T21:11:28+00:00"
         },
         {
             "name": "graham-campbell/github",
@@ -1016,16 +923,16 @@
         },
         {
             "name": "laravel/socialite",
-            "version": "v3.0.7",
+            "version": "v3.0.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/socialite.git",
-                "reference": "d79174513dbf14359b53e44394cf71373ae03433"
+                "reference": "fc1c8d415699e502f3e61cbc61e3250d5bd942eb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/socialite/zipball/d79174513dbf14359b53e44394cf71373ae03433",
-                "reference": "d79174513dbf14359b53e44394cf71373ae03433",
+                "url": "https://api.github.com/repos/laravel/socialite/zipball/fc1c8d415699e502f3e61cbc61e3250d5bd942eb",
+                "reference": "fc1c8d415699e502f3e61cbc61e3250d5bd942eb",
                 "shasum": ""
             },
             "require": {
@@ -1074,7 +981,7 @@
                 "laravel",
                 "oauth"
             ],
-            "time": "2017-07-22T14:44:37+00:00"
+            "time": "2017-11-06T16:02:48+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -1365,7 +1272,7 @@
         },
         {
             "name": "mtdowling/cron-expression",
-            "version": "v1.2.0",
+            "version": "v1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mtdowling/cron-expression.git",
@@ -1462,16 +1369,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v3.1.1",
+            "version": "v3.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "a1e8e1a30e1352f118feff1a8481066ddc2f234a"
+                "reference": "08131e7ff29de6bb9f12275c7d35df71f25f4d89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/a1e8e1a30e1352f118feff1a8481066ddc2f234a",
-                "reference": "a1e8e1a30e1352f118feff1a8481066ddc2f234a",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/08131e7ff29de6bb9f12275c7d35df71f25f4d89",
+                "reference": "08131e7ff29de6bb9f12275c7d35df71f25f4d89",
                 "shasum": ""
             },
             "require": {
@@ -1509,55 +1416,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2017-09-02T17:10:46+00:00"
-        },
-        {
-            "name": "overtrue/laravel-follow",
-            "version": "1.1.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/overtrue/laravel-follow.git",
-                "reference": "60cb96edf08758cee5d30fb670eb3f9c1577cfd7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/overtrue/laravel-follow/zipball/60cb96edf08758cee5d30fb670eb3f9c1577cfd7",
-                "reference": "60cb96edf08758cee5d30fb670eb3f9c1577cfd7",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.5.9"
-            },
-            "require-dev": {
-                "laravel/laravel": "5.*",
-                "mockery/mockery": "1.0.x-dev",
-                "phpunit/phpunit": "~5.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Overtrue\\LaravelFollow\\FollowServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Overtrue\\LaravelFollow\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "overtrue",
-                    "email": "i@overtrue.me"
-                }
-            ],
-            "description": "Laravel 5 User Based System",
-            "time": "2017-07-02T22:09:22+00:00"
+            "time": "2017-11-04T11:48:34+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -2220,16 +2079,16 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.8.13",
+            "version": "v0.8.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "cdb5593c3684bab74e10fcfffe4a0c8d1c39695d"
+                "reference": "91e53c16560bdb8b9592544bb38429ae00d6baee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/cdb5593c3684bab74e10fcfffe4a0c8d1c39695d",
-                "reference": "cdb5593c3684bab74e10fcfffe4a0c8d1c39695d",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/91e53c16560bdb8b9592544bb38429ae00d6baee",
+                "reference": "91e53c16560bdb8b9592544bb38429ae00d6baee",
                 "shasum": ""
             },
             "require": {
@@ -2289,7 +2148,7 @@
                 "interactive",
                 "shell"
             ],
-            "time": "2017-10-19T06:13:20+00:00"
+            "time": "2017-11-04T16:06:49+00:00"
         },
         {
             "name": "ramsey/uuid",

@@ -91,28 +91,22 @@ class UserController extends Controller
          */
         if(is_null($data->provider)){
 
-            $replyFollowers = array();
             $followers_list = $this->getFollowersList($user_id);
             $read_notifications =   $data->readnotifications;
 
             if(count($read_notifications) > 0){
-                foreach ($read_notifications as $notification) {
-                    $replyFollowers[]    = [
-                            'message'   =>  $notification->data['follower_name'] . " send follow request",
-                            'follower'  =>  $notification->data['follower_id']
-                        ];
-                }
-            }else{
-                $replyFollowers = null;
-            }
 
+                $followRequests = $read_notifications;
+            }else{
+                $followRequests = null;
+            }
 
             $user_posts  =   $data->posts()->orderBy('created_at','DESC')
                                             ->get();
 
             if((count($user_posts) > 0)){
 
-                $posts = $this->createUserPostList($user_posts);
+                $posts = $user_posts;
             }else{
                 $posts = null;
             }
@@ -125,7 +119,7 @@ class UserController extends Controller
             return view('front.user',compact(
                  'data',
                       'avatar',
-                         'replyFollowers',
+                         'followRequests',
                          'followers_list',
                          'posts'));
         }
@@ -133,30 +127,19 @@ class UserController extends Controller
         /**
          * Providers profile
          */
-        $repositories   = array();
         $user_repositories = $this->github->api('user')->repositories($data->name);
 
         if(count($user_repositories) > 0){
-            foreach ($user_repositories as $repository) {
-                $repositories[]  = [
-                    'name'  =>  $repository['name'],
-                    'url'   =>  $repository['html_url'],
-                    'clone' =>  $repository['clone_url']
-                ];
-            }
+
+            $repositories = $user_repositories;
         }else{
             $repositories = null;
         }
 
         switch ($data['provider']) {
-                case 'github'   :   $data = [
-                                        'name'      => $data->name,
-                                        'avatar'    => $data->avatar,
-                                        'provider'  => $data->provider
-                                    ];
-                                    return view('front.user',
+                case 'github':  return view('front.user',
                                         compact('data','repositories'));
-                                    break;
+                                break;
                 default:   break;
         }
     }
@@ -292,33 +275,20 @@ class UserController extends Controller
 
         if(is_null($data->avatar)) {
             if (!$data->gender){
-                $avatar = asset('images/avatars/male.gif');
+
+                $store = 'avatars/male.gif';
             }else{
-                $avatar = asset('images/avatars/female.gif');
+
+                $store = 'avatars/female.gif';
             }
         }else{
-            $avatar = asset('images/' .$data->id . '/' . $data->avatar);
+
+            $store = $data->id . '/' . $data->avatar;
         }
+
+        $avatar = asset('images/' . $store);
 
         return $avatar;
-    }
-
-    public function createUserPostList($user_posts) {
-
-        $posts = array();
-
-        foreach ($user_posts as $body) {
-
-            $date_time  =   parseCreatedAt($body->created_at);
-
-            $posts[] = [
-                'id'    =>  $body->id,
-                'text'  =>  $body->text,
-                'date'  =>  $date_time
-            ];
-        }
-
-        return $posts;
     }
 
     public function generatePostStatus($user, $status = false) {
@@ -337,7 +307,7 @@ class UserController extends Controller
 
         if(count($user_posts) > 0){
 
-            return $this->createUserPostList($user_posts);
+            return $user_posts;
         }
         return null;
     }
@@ -345,6 +315,7 @@ class UserController extends Controller
     public function getFollowersList($user_id){
 
         $followers_list = array();
+
         $followers = Follow::where('user_id',$user_id)
                             ->orWhere('follower_id',$user_id)
                             ->get();

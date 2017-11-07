@@ -23,9 +23,9 @@
         </div>
     @endif
     <div class="card" style="width: 20rem;">
-        <img class="card-img-top" src="{{ $data['avatar'] }}">
+        <img class="card-img-top" src="{{ $data->avatar }}">
         <div class="card-body">
-            <h3 class="card-text">{{ $data['name'] }}</h3>
+            <h3 class="card-text">{{ $data->name }}</h3>
         </div>
     </div>
     <div class="card">
@@ -96,9 +96,9 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">{{ $repository['name'] }}</h4>
-                    <a href="{{ $repository['url'] }}" class="btn btn-primary" target="_blank">View Repository</a>
+                    <a href="{{ $repository['html_url'] }}" class="btn btn-primary" target="_blank">View Repository</a>
                     <div class="input-group">
-                        <input type="text" class="form-control copy-val" value="{{ $repository['clone'] }}"
+                        <input type="text" class="form-control copy-val" value="{{ $repository['clone_url'] }}"
                                aria-label="Recipient's username" aria-describedby="basic-addon2">
                         <button type="button" class="input-group-addon clone-copy" id="basic-addon2"><i
                                     class="fa fa-github" aria-hidden="true"></i></button>

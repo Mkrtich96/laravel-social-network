@@ -27,7 +27,8 @@ class FollowController extends Controller
             $user->notify(new RepliedToFollow($auth_user));
 
             return response([
-               'status' =>  'success',
+                'status' => 'success',
+                'message'=> 'Follow request successfully complete.',
             ], 200);
         }
 
@@ -55,7 +56,9 @@ class FollowController extends Controller
             if($delete){
 
                 return response([
-                    'status'    =>  'success'
+                    'status' => 'success',
+                    'message' => 'Unfollow request successfully complete.'
+
                 ], 200);
             }
 
@@ -93,7 +96,10 @@ class FollowController extends Controller
 
         if ($delete) {
 
-            return response(['status' => 'success'], 200);
+            return response([
+                'status' => 'success',
+                'message'=> 'Follow cancel request successfully complete.'
+            ], 200);
         }
 
         return response([
@@ -129,6 +135,7 @@ class FollowController extends Controller
 
                 return response([
                     "status" => 'success',
+                    'message'=> 'Follow accept request successfully complete.',
                     "name" => $follower_name,
                     "id" => $follower_id,
                     "avatar" => $user_avatar

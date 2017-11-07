@@ -37,14 +37,14 @@
         <div class="row">
             @if(isset($gallery))
                 @foreach($gallery as $image)
-                    <div class="col-3 images" data-id="{{ $image['id'] }}">
+                    <div class="col-3 images" data-id="{{ $image->id }}">
                         <div class="card" style="width: 15rem;">
-                            <span class="delete-img fa fa-trash-o" data-id="{{ $image['id'] }}"></span>
-                            <img class="card-img-top gallery-img" src="{{ asset('images/' . $image['user_id'] . "/gallery/" . $image['image']) }}" >
+                            <span class="delete-img fa fa-trash-o" data-id="{{ $image->id }}"></span>
+                            <img class="card-img-top gallery-img" src="{{ asset('images/' . $image->user_id . "/gallery/" . $image->image) }}" >
                             <div class="card-body">
                                 <form action="{{ route('make.profile.photo') }}" method="POST">
                                     {{ csrf_field() }}
-                                    <input type="hidden" name="image_id" value="{{ $image['id'] }}">
+                                    <input type="hidden" name="image_id" value="{{ $image->id }}">
                                     <button type="submit" class="btn btn-outline-primary make-profile-pic">Make Profile Photo</button>
                                 </form>
                             </div>

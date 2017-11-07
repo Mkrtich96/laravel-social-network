@@ -20,20 +20,20 @@
                         <a href="{{ route("gallery.show", $data['id']) }}"  class="nav-link text-left">Gallery</a>
                     </li>
                     <li class="nav-item dropdown">
-                        @if(isset($replyFollowers))
+                        @if(isset($followRequests))
                             <a class="nav-link dropdown-toggle notification"
                                id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
                                aria-expanded="false">
                                 Notification <span
-                                        class="badge badge-danger">{{ count($replyFollowers) }}</span>
+                                        class="badge badge-danger">{{ count($followRequests) }}</span>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                @foreach($replyFollowers as $follower)
+                                @foreach($followRequests as $follower)
                                     <li class="dropdown-item text-primary form-group header-request">
-                                        {{ $follower['message'] }}
-                                        <a data-id="{{ $follower['follower'] }}"
+                                        {{ $follower->data['follower_name'] }} send follow request
+                                        <a data-id="{{ $follower->data['follower_id'] }}"
                                             class="fa fa-check text-right accept-follow"></a>
-                                        <a data-id="{{ $follower['follower'] }}"
+                                        <a data-id="{{ $follower->data['follower_id'] }}"
                                            class="fa fa-times text-right cancel-follow"></a>
                                     </li>
                                 @endforeach

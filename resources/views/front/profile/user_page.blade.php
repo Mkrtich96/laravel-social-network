@@ -46,13 +46,13 @@
                                     <div class="parent-card users-res card col-12 col-sm-12">
                                         <div class="card-body">
                                             <div class="card-text">
-                                                <img src="{{ asset('images/' . $user->id . '/' . $user->avatar) }}" class="rounded-circle followers-avatar float-left">
+                                                <img src="{{ $user_avatar }}" class="rounded-circle followers-avatar float-left">
                                                 <h5 class="card-title">{{ $user->name }}</h5>
-                                                <small class="form-text text-muted">{{ $post['date'] }}</small>
+                                                <small class="form-text text-muted">{{ parseCreatedAt($post->date) }}</small>
                                             </div>
                                             <div class="card-text mt-3">
                                                 <p class="text-justify">
-                                                    {{ $post['text'] }}
+                                                    {{ $post->text }}
                                                 </p>
                                             </div>
                                             <div class="card-text float-right w-75 comments-body">
@@ -65,14 +65,14 @@
                                                     </div>
                                                 </div>
                                                 <div class="input-group input-group-sm mt-2 apply-comment">
-                                                    <input type="text" class="rounded-0 form-control" placeholder="Comment.." aria-describedby="sizing-addon2" data-id="{{ $post['id'] }}" data-user="{{ $user->id }}">
+                                                    <input type="text" class="rounded-0 form-control" placeholder="Comment.." aria-describedby="sizing-addon2" data-id="{{ $post->id }}" data-user="{{ $user->id }}">
                                                 </div>
                                             </div>
 
                                             <div class="clearfix"></div>
 
                                             <div class="card-text mt-2">
-                                                <a class="btn comment badge badge-primary text-light float-right"  data-id="{{ $post['id'] }}" data-user="{{ $user->id }}" >Comments</a>
+                                                <a class="btn comment badge badge-primary text-light float-right"  data-id="{{ $post->id }}" data-user="{{ $user->id }}" >Comments</a>
                                             </div>
                                         </div>
                                     </div>

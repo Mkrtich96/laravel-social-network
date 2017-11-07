@@ -11,12 +11,12 @@ Route::resource('auth', 'AuthController',['except' => [
 
 Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
 
+
+
     /**
-     * Auth profile
+     * User profile page
      */
-    Route::resource('profile', 'UserController',['except' => [
-        'destroy'
-    ]]);
+    Route::get('user/{id}','UserController@guestPage');
 
     /**
      * Profile photo
@@ -27,9 +27,12 @@ Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
     ]);
 
     /**
-     * User profile page
+     * Auth profile
      */
-    Route::get('user/{id}','UserController@guestPage');
+    Route::resource('profile', 'UserController',['except' => [
+        'destroy'
+    ]]);
+
 
     /**
      * Search Routes
@@ -47,11 +50,11 @@ Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
     /**
      * Gallery page
      */
-    Route::resource('gallery','GalleryController');
     Route::post('/make-profile-photo/',[
         'uses'  =>  'GalleryController@makeProfilePhoto',
         'as'    =>  'make.profile.photo'
     ]);
+    Route::resource('gallery','GalleryController');
 
     /**
      * Messages system
@@ -64,11 +67,11 @@ Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
     /**
      * Post system
      */
-    Route::resource('/post','PostController');
+    Route::resource('post','PostController');
 
     /**
      * Comments
      */
-    Route::resource('/comment', 'CommentController');
+    Route::resource('comment', 'CommentController');
 
 });

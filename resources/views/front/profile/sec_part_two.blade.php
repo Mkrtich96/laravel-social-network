@@ -48,11 +48,11 @@
                             <div class="card-text">
                                 <img src="{{ $avatar }}" class="rounded-circle followers-avatar float-left">
                                 <h5 class="card-title">{{ $data['name'] }}</h5>
-                                <small class="form-text text-muted">{{ $post['date'] }}</small>
+                                <small class="form-text text-muted">{{ parseCreatedAt($post->date) }}</small>
                             </div>
                             <div class="card-text mt-3">
-                                <p class="text-justify" data-id="{{ $post['id'] }}">
-                                    {{ $post['text'] }}
+                                <p class="text-justify" data-id="{{ $post->id }}">
+                                    {{ $post->text }}
                                 </p>
                             </div>
                             <div class="card-text float-right w-75 comments-body">
@@ -64,7 +64,7 @@
                                     </div>
                                 </div>--}}
                                 <div class="input-group input-group-sm mt-2 apply-comment">
-                                    <input type="text" class="rounded-0 form-control" placeholder="Comment.." aria-describedby="sizing-addon2" data-id="{{ $post['id'] }}" >
+                                    <input type="text" class="rounded-0 form-control" placeholder="Comment.." aria-describedby="sizing-addon2" data-id="{{ $post->id }}" >
                                 </div>
                             </div>
 
@@ -72,7 +72,7 @@
 
                             <div class="card-text mt-3">
 
-                                <a class="btn comment badge badge-primary text-light float-right"  data-id="{{ $post['id'] }}" >Comments</a>
+                                <a class="btn comment badge badge-primary text-light float-right"  data-id="{{ $post->id }}" >Comments</a>
                             </div>
                         </div>
                     </div>

@@ -44,6 +44,7 @@ class CommentController extends Controller
         if($comment){
             return response([
                 'status' => 'success',
+                'message'=> 'Comment send request successfully complete.',
                 'com_id' => $comment->id
             ], 200);
         }

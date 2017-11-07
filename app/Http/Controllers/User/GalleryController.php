@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Requests\GalleriesDestroy;
 use App\Http\Requests\GalleryProfilePhoto;
 use App\Http\Requests\StoreGalleries;
+use App\Http\Requests\UserGalleries;
 use File;
 use App\User;
 use App\Gallery;
@@ -59,7 +60,6 @@ class GalleryController extends Controller
         } else {
             return redirect()->back()->with('fail', 'Connection error');
         }
-
     }
 
     /**
@@ -68,23 +68,12 @@ class GalleryController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(UserGalleries $request, $id)
     {
-        $gallery = array();
+
         $user = User::find($id);
         $galleries = $user->galleries;
-
-        if (count($galleries) > 0) {
-            foreach ($galleries as $image) {
-                $gallery[] = [
-                    'id' => $image->id,
-                    'image' => $image->image,
-                    'user_id' => $id,
-                ];
-            }
-        } else {
-            $gallery = null;
-        }
+        $gallery = (count($galleries)) > 0 ? $galleries : null;
 
         return view('front.profile.gallery', compact('gallery'));
     }
@@ -115,14 +104,13 @@ class GalleryController extends Controller
     public function makeProfilePhoto(GalleryProfilePhoto $request)
     {
 
-        $user_id = get_auth('id');
-        $user   = User::find($user_id);
+        $user = get_auth();
 
         $gallery  = $user->galleries()->find($request->image_id);
 
-        unlink(storage_path('app/public/' . $user_id . "/" . $user->avatar));
-        $copy   = storage_path('app/public/' . $user_id . "/gallery/" . $gallery->image);
-        $to     = storage_path('app/public/' . $user_id . "/" . $gallery->image);
+        unlink(storage_path('app/public/' . $user->id . "/" . $user->avatar));
+        $copy   = storage_path('app/public/' . $user->id . "/gallery/" . $gallery->image);
+        $to     = storage_path('app/public/' . $user->id . "/" . $gallery->image);
 
         File::copy($copy, $to);
         $user->avatar = $gallery->image;
@@ -145,16 +133,15 @@ class GalleryController extends Controller
     {
 
         $src = basename($request->src);
-        $user_id = get_auth('id');
-        unlink(storage_path('app/public/' . $user_id . '/gallery/' . $src));
-
-        $user = User::find($user_id);
+        $user = get_auth();
+        unlink(storage_path('app/public/' . $user->id . '/gallery/' . $src));
 
         $delete = $user->galleries()->find($id)->delete();
 
         if($delete){
             return response([
-                'status' => 'success'
+                'status' => 'success',
+                'message'=> 'Gallery delete successfully complete.',
             ], 200);
         }
 

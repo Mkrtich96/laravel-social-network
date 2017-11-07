@@ -25,6 +25,7 @@ class MessageController extends Controller
         if($user_message){
             return response([
                         'status' => 'success',
+                        'message'=> 'Message sended successfully complete.',
                         'date'  => parseCreatedAt($user_message->created_at)
                     ],200);
         }
@@ -64,6 +65,7 @@ class MessageController extends Controller
 
             return response([
                 'status'    => 'success',
+                'message'   => 'Follow request sended successfully.',
                 'followers' => $follow_requests
             ], 200);
         }
@@ -101,6 +103,7 @@ class MessageController extends Controller
             if(count($data) > 0){
                 return response([
                     'status'=> 'success',
+                    'message'=> 'Messages selected successfully.',
                     'info'  =>  $data
                 ], 200);
             }
@@ -110,6 +113,7 @@ class MessageController extends Controller
              */
             $messages = Message::where('from', $request->get_id)
                                 ->get()->last();
+
             if(!is_null($messages)){
                 if($messages->seen == 3){
                     $messages->seen = 1;
@@ -119,6 +123,7 @@ class MessageController extends Controller
 
                         return response([
                             'status' => 'success',
+                            'message'=> 'Message seen successfully.',
                             'seen'   =>  true
                         ],200);
                     }
@@ -155,7 +160,8 @@ class MessageController extends Controller
                 }
             }
             return response([
-                'status' => 'success'
+                'status' => 'success',
+                'message'=> 'Seen request sended successfully complete.',
             ], 200);
         }
     }
@@ -179,9 +185,10 @@ class MessageController extends Controller
             }
 
             return response([
-                'status'=>  'success',
-                'info'  =>  $data,
-                'seen'  => $seen
+                'status' => 'success',
+                'message'=> 'Messages selected successfully.',
+                'info'   => $data,
+                'seen'   => $seen
             ],200);
         }
     }

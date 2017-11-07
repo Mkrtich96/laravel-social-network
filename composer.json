@@ -7,7 +7,6 @@
     "require": {
         "php": ">=5.6.4",
         "barryvdh/laravel-ide-helper": "^2.4",
-        "graham-campbell/flysystem": "^4.0",
         "graham-campbell/github": "^6.1",
         "graham-campbell/manager": "^3.0",
         "guzzlehttp/guzzle": "~6.0",
@@ -15,7 +14,6 @@
         "laravel/framework": "5.4.*",
         "laravel/socialite": "^3.0",
         "laravel/tinker": "~1.0",
-        "overtrue/laravel-follow": "^1.1",
         "php-http/guzzle6-adapter": "^1.1"
     },
     "require-dev": {
