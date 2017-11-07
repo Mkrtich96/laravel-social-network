@@ -29,7 +29,7 @@ Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
     /**
      * User profile page
      */
-    Route::get('user/{id}','UserController@userPage');
+    Route::get('user/{id}','UserController@guestPage');
 
     /**
      * Search Routes

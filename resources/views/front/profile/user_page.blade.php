@@ -17,7 +17,7 @@
                         <a class="nav-link" href="#">Messages</a>
                     </li>
                     <li>
-                        <input class="get-id" type="hidden" data-id="{{ $authId }}">
+                        <input class="get-id" type="hidden" data-id="{{ $auth_id }}">
                     </li>
                 </ul>
                 <form class="form-inline my-2 my-lg-0">
@@ -31,24 +31,17 @@
             <div class="row">
                 <div class="col-1 col-lg-3">
                     <div class="card">
-                        @if(is_null($user->avatar))
-                            @if($user->gender)
-                                <img src="{{ asset('images/avatars/female.gif') }}" class="img-thumbnail card-img-top">
-                            @else
-                                <img src="{{ asset('images/avatars/male.gif') }}" class="img-thumbnail card-img-top">
-                            @endif
-                        @else
-                            <img src="{{ asset('images/' . $user->id . '/' . $user->avatar) }}"
-                                 class="img-thumbnail card-img-top">
-                        @endif
+
+                        <img src="{{ $user_avatar }}" class="img-thumbnail card-img-top">
+
                         <div class="card-body">
-                            {!! $followBtn !!}
+                            {!! $followButton !!}
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6 mb-4">
                     <div class="cards">
-                            @if( $posts )
+                            @if( isset($posts) )
                                 @foreach( $posts as $post )
                                     <div class="parent-card users-res card col-12 col-sm-12">
                                         <div class="card-body">

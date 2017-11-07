@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Http\Requests\IndexGuest;
+use App\Http\Requests\StoreGuest;
 use App\Http\Requests\UserProfilePhoto;
 use Auth;
 use App\User;
@@ -165,77 +167,43 @@ class UserController extends Controller
      * User profile page
      */
 
-    public function userPage($id){
+    public function guestPage(IndexGuest $request, $id){
 
-        $user       =   User::find($id);
-        $authId     =   get_auth('id');
-        $requested  =   0;
+        $user       =   User::find($request->id);
+        $auth_id     =   get_auth('id');
 
-
-//        $comments   =   $user->with(['posts','comments'])->get();
-        /*$posts       =   $user->posts;
-
-
-        foreach ($posts as $post) {
-            $users      =   $post->comments()->with('user')->get();
-            dump($users);
-            /*foreach ($users as $user) {
-                dump($user->user);
-            }*/
+        $consider_follow = $user->followers()->where('user_id',$auth_id)
+                                                ->orWhere('follower_id',$auth_id)
+                                                ->first();
 
 
+        if(!is_null($user->provider) || $id == $auth_id){
 
-
-
-
-//        dd();
-
-        if(is_null($user) || !is_null($user->provider)){
-            return redirect('404');
-        }
-
-        if($id == $authId){
             return redirect('/');
         }
 
-        $notifications = Notify::where('to', $authId)->first();
+        $notifications = Notify::where('to', $auth_id)->first();
 
-        if(!is_null($notifications)){
+        if(is_null($consider_follow)){
 
-            $requested = 1;
-        }
+            $followButton  = $this->crtFollowBtn('outline-primary follow',$id, 'Follow');
+            $posts = $this->generatePostStatus($user,false);
 
-        $follow = check_follower_or_not($id,$authId);
+        }elseif(!is_null($notifications)){
 
-        if(is_null($follow)){
-
-            $followBtn = $this->crtFollowBtn('outline-primary follow',$id, 'Follow');
-
-            $user_posts = $user->posts()->where('status',0)
-                ->orderBy('created_at','DESC')
-                ->get();
-
+            $followButton = $this->crtFollowBtn('secondary cancel-follow',$id, 'Cancel Request');
+            $posts = $this->generatePostStatus($user,false);
         }else{
 
-            $followBtn  = $this->crtFollowBtn('secondary unfollow',$id, 'Unfollow');
-
-            $user_posts = $user->posts()
-                ->orderBy('created_at','DESC')
-                ->get();
-
+            $followButton  = $this->crtFollowBtn('secondary unfollow',$id, 'Unfollow');
+            $posts = $this->generatePostStatus($user,true);
         }
 
-        if($requested){
-            $followBtn = $this->crtFollowBtn('secondary cancel',$id, 'Cancel Request');
-        }
-
-
-        $posts = (count($user_posts) > 0) ? $posts = $this->createUserPostList($user_posts) : null;
-
-        $followers_list =   $this->getFollowersList($authId);
+        $user_avatar = $this->generate_avatar($user);
+        $followers_list =   $this->getFollowersList($auth_id);
 
         return view('front.profile.user_page',
-                    compact('user','followBtn', 'posts' , 'authId', 'followers_list')
+                    compact('user','user_avatar','followButton', 'posts' , 'auth_id', 'followers_list')
                 );
 
     }
@@ -351,6 +319,27 @@ class UserController extends Controller
         }
 
         return $posts;
+    }
+
+    public function generatePostStatus($user, $status = false) {
+
+        $user_posts = null;
+
+        if($status === true){
+
+            $user_posts = $user->posts()->orderBy('created_at','DESC')
+                                        ->get();
+        }else{
+            $user_posts = $user->posts()->where('status',0)
+                                ->orderBy('created_at','DESC')
+                                ->get();
+        }
+
+        if(count($user_posts) > 0){
+
+            return $this->createUserPostList($user_posts);
+        }
+        return null;
     }
 
     public function getFollowersList($user_id){

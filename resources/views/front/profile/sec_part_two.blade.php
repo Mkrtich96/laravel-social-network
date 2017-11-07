@@ -10,6 +10,14 @@
             {{ session('fail') }}
         </div>
     @endif
+
+    @if($errors->any())
+        @foreach($errors->all() as $error)
+            <div class="alert alert-danger">
+                {{ $error }}
+            </div>
+        @endforeach
+    @endif
     <div class="align-items-center">
         <h3> Make Post <i class="fa fa-pencil" aria-hidden="true"></i></h3>
         <form class="form-post">

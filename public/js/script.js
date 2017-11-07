@@ -297,7 +297,7 @@ $(() => {
                     data.color      = "success";
                     data.position   = "left";
                 }
-                data.date   = item.date.date.toString();
+                data.date   = item.date.toString();
                 data.create = createMessage(item.message, data.date, data.color, data.position);
                 data.messageBody.append(data.create);
                 scrollDown(data.messageBody);
