@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
-use Auth;
+use App\Http\Requests\StoreMessageHistory;
 use App\User;
 use App\Message;
 use Illuminate\Http\Request;
@@ -16,11 +16,11 @@ class MessageController extends Controller
         $auth_id = get_auth('id');
 
         $user_message = Message::create([
-            'from'  =>  $auth_id,
-            'to'    =>  $request->user_id,
-            'message' =>    $request->message,
-            'seen'  =>  0
-        ]);
+                            'from'  =>  $auth_id,
+                            'to'    =>  $request->user_id,
+                            'message' =>    $request->message,
+                            'seen'  =>  0
+                        ]);
 
         if($user_message){
             return response([
@@ -46,83 +46,94 @@ class MessageController extends Controller
      *
      */
 
-    public function generate(Request $request){
+    public function notifications(Request $request){
 
-        $rules = [
-            'get_id' => 'required',
-            'message' => 'max:200'
-        ];
-        $validate = $this->validate($request, $rules);
-
-        if(!is_null($validate)){
-
-            return response(null, 404);
-        }
-
-        $get_id = $request->get_id;
-
-        $replyFollowers = [];
-
-        $notifications  = User::find($get_id);
-        $unreadNtfs = $notifications->unreadNotifications;
+        $follow_requests = array();
+        $user            = User::find($request->get_id);
+        $unreadNtfs      = $user->unreadNotifications;
 
         // Notifications
         if(count($unreadNtfs) > 0){
             foreach ($unreadNtfs as $notif) {
-                $replyFollowers['message'][]    = [
+                $follow_requests[]    = [
                     'name'          =>  $notif->data['follower_name'],
                     'followerId'    =>  $notif->data['follower_id']
                 ];
             }
             $unreadNtfs->markAsRead();
 
-            return response($replyFollowers, 200);
+            return response([
+                'status'    => 'success',
+                'followers' => $follow_requests
+            ], 200);
         }
 
-        $messages       = Message::where([
-                                        ['to','=',$get_id],
-                                        ['seen','=',0]
-                                    ])->get();
+        $user_messages = $user->messages()->where('seen',0)
+                                            ->get();
 
-        // Messages
-        if(count($messages) > 0){
-            $data = [];
-            foreach ($messages as $message) {
+        /**
+         * Select messages.
+         */
+        if(count($user_messages) > 0){
+            $data = array();
+
+            foreach ($user_messages as $message) {
+
                 $from = User::find($message->from);
-                $data['info'] = [
-                    'message'   =>  strip_tags($message->message),
+                $data[] = [
+                    'message'   =>  $message->message,
                     'id'        =>  $from->id,
                     'name'      =>  $from->name,
                     'avatar'    =>  $from->avatar,
-                    'date'      =>  date('h:i M-D-y'),
+                    'date'      =>  parseCreatedAt($from->created_at)
                 ];
-                $message->seen = 2;
-                $message->save();
+                $update_seen = $user->messages()->where('seen',0)
+                                                    ->update(['seen' => 2 ]);
+                if($update_seen){
+                    continue;
+                }else{
+                    return response([
+                                'status' => 'fail',
+                                'message'=> "'Seen don't updated. Error 404."
+                            ], 404);
+                }
             }
             if(count($data) > 0){
-
-                return response($data, 200);
+                return response([
+                    'status'=> 'success',
+                    'info'  =>  $data
+                ], 200);
             }
-
         }else{
-            // Seen Messages
-            $messages = Message::where('from', $get_id)->get()->last();
+            /**
+             * Seen messages.
+             */
+            $messages = Message::where('from', $request->get_id)
+                                ->get()->last();
             if(!is_null($messages)){
                 if($messages->seen == 3){
                     $messages->seen = 1;
-                    if($messages->save()){
+                    $seen_update = $messages->save();
 
-                        return response(['ok' => 1],200);
+                    if($seen_update){
+
+                        return response([
+                            'status' => 'success',
+                            'seen'   =>  true
+                        ],200);
                     }
-                    return response(null, 404);
+                    return response([
+                        'status' => 'fail',
+                        'message'=> 'Message seen request error.'
+                    ], 404);
                 }
             }
         }
-
-
     }
 
     public function seen(Request $request){
+
+        $this->validate($request, ['id' => 'required|exists:users']);
 
         $messages = Message::where([
                                 ['to',  '=',$request->id],
@@ -132,37 +143,53 @@ class MessageController extends Controller
         if(count($messages) > 0){
             foreach ($messages as $message) {
                 $message->seen = 3;
-                $message->save();
-            }
-        }
+                $user_message_seen = $message->save();
 
+                if($user_message_seen){
+                    continue;
+                }else{
+                    return response([
+                        'status' => 'fail',
+                        'message'=> "'Seen don't updated. Error 404."
+                    ], 404);
+                }
+            }
+            return response([
+                'status' => 'success'
+            ], 200);
+        }
     }
 
 
-    public function selectMessages(Request $request){
+    public function selectMessages(StoreMessageHistory $request){
 
-        $data   = array();
         $seen   = null;
-        $from   = $request->from;
-        $to     = $request->to;
-        $messages = $this->get_chat_history($from, $to);
-        foreach ($messages as $message) {
-            $data[] = [
-                'from'      => $message->from,
-                'to'        => $message->to,
-                'message'   => strip_tags($message->message),
-                'date'      => parseCreatedAt($message->created_at)
-            ];
-            $seen = $message->seen;
-        }
-        return response(['item' => $data,'seen' => $seen],200);
+        $data   = array();
+        $messages = $this->get_chat_history($request->from, $request->to);
 
+        if(isset($messages)){
+            foreach ($messages as $message) {
+                $data[] = [
+                    'to'        => $message->to,
+                    'from'      => $message->from,
+                    'message'   => $message->message,
+                    'date'      => parseCreatedAt($message->created_at)
+                ];
+                $seen = $message->seen;
+            }
+
+            return response([
+                'status'=>  'success',
+                'info'  =>  $data,
+                'seen'  => $seen
+            ],200);
+        }
     }
 
 
     public function get_chat_history($from,$to){
 
-        $get =  Message::where(function($query) use ($from, $to) {
+        $get_message_history =  Message::where(function($query) use ($from, $to) {
             $query->where([
                         ['to','=',$to],
                         ['from','=',$from]
@@ -174,6 +201,12 @@ class MessageController extends Controller
                     ]);
         })->get();
 
-        return $get;
+        if(count($get_message_history) > 0){
+
+            return $get_message_history;
+        }else{
+            return null;
+        }
+
     }
 }

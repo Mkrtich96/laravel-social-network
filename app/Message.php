@@ -13,4 +13,8 @@ class Message extends Model
     public $primarykey = 'to';
 
 
+    public function user() {
+        return $this->belongsTo('App\User', 'from');
+    }
+
 }

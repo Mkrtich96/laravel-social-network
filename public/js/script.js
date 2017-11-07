@@ -265,48 +265,57 @@ $(() => {
 
 
     $(document).on('click','.open-message', e => {
-
         e.preventDefault();
         data.this   = $(e.target);
         data.to     = data.this.data('id');
         data.name   = data.this.text();
         data.avatar = data.this.parent().find('.followers-avatar');
 
-        $.post('/select-messages',{
-            'from'  : data.get_id,
-            'to'    : data.to
-        }, res => {
-            data.message.fadeIn();
-            data.sendInput  = $('.send-message');
-            data.xsUserAvatar = $('<img>').addClass('rounded-circle xs-avatar')
-                                            .attr('src', data.avatar.attr('src'));
-            data.toFriendProfile    = $('<a>').attr({
-                                                'href'  :   'http://github.dev/user/' + data.to,
-                                                'target':   '_blank'
-                                            }).text(data.name);
-            data.userName.append(data.xsUserAvatar)
-                            .append(data.toFriendProfile);
-            data.sendInput.attr("data-id",data.to);
-            data.messageBody.html("");
-            res.item.map( item => {
+        $.ajax({
+            url:    '/select-messages',
+            method: 'POST',
+            data:   {
+                'from'  : data.get_id,
+                'to'    : data.to
+            },
+            success: res => {
+                if(res.status === 'success'){
+                    data.message.fadeIn();
+                    data.sendInput  = $('.send-message');
+                    data.xsUserAvatar = '<img class="rounded-circle xs-avatar" src="'+data.avatar.attr('src')+'">';
+                    data.toFriendProfile  = '<a href="http://github.dev/user/'+data.to+'" target="_blank">'
+                                                +data.name+
+                                            '</a>';
+                    data.userName.html(data.xsUserAvatar + " " + data.toFriendProfile);
+                    data.sendInput.attr("data-id",data.to);
+                    res.info.map( item => {
 
-                if(item.from == data.get_id){
-                    data.color      = "info";
-                    data.position   = "right";
-                }else{
-                    data.color      = "success";
-                    data.position   = "left";
+                        if(item.from == data.get_id){
+                            data.color      = "info";
+                            data.position   = "right";
+                        }else{
+                            data.color      = "success";
+                            data.position   = "left";
+                        }
+                        data.create = createMessage(item.message, item.date, data.color, data.position);
+                        data.messageBody.append(data.create);
+                        scrollDown(data.messageBody);
+                    });
+
+                    if(res.seen == 1){
+                        data.messageText    = data.messageBody.find('.message-text').last();
+                        if(data.messageText.hasClass('text-right')){
+                            data.messageText.find('.cite').last().append(data.seenText);
+                        }
+                    }
                 }
-                data.date   = item.date.toString();
-                data.create = createMessage(item.message, data.date, data.color, data.position);
-                data.messageBody.append(data.create);
-                scrollDown(data.messageBody);
-            });
-
-            if(res.seen == 1){
-                data.messageText    = data.messageBody.find('.message-text').last();
-                if(data.messageText.hasClass('text-right')){
-                    data.messageText.find('.cite').last().append(data.seenText);
+            },
+            statusCode: {
+                404: res => {
+                    arrangeResponse(res.responseJSON);
+                },
+                422: res => {
+                    arrangeResponse(res.responseJSON, 'fail', 422);
                 }
             }
         });

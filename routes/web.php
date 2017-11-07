@@ -59,7 +59,7 @@ Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
     Route::post('/select-messages','MessageController@selectMessages');
     Route::post('/seen','MessageController@seen');
     Route::post('/send','MessageController@send');
-    Route::post('/notifications','MessageController@generate');
+    Route::post('/notifications','MessageController@notifications');
 
     /**
      * Post system

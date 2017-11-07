@@ -28,35 +28,74 @@ $(() => {
 
     let responseMessage = () => {
 
-        $.post('/notifications', {
-            'get_id' : data.get_id
-        }, res => {
-            if(res.message){
-                createNotification(res.message.length, res.message);
+        $.ajax({
+            url     : '/notifications',
+            method  : 'POST',
+            data    : {
+                'get_id' : data.get_id
+            },
+            success: res => {
+
+                if(res.status === "success"){
+                    if(res.followers){
+                        createNotification(res.followers.length, res.followers);
+                    }
+                    if(res.info){
+                        res.info.map( item => {
+                            data.sendInput = $('.send-message');
+                            data.message.show();
+                            data.text = createMessage(item.message, item.date, "success", "left");
+                            data.messageBody.append(data.text);
+                            data.toFriendProfile =  "<a href='http://github.dev/user/"+ item.id +"' target='_blank' >"
+                                + item.name +
+                                "</a>";
+                            data.userName.html(data.toFriendProfile);
+                            data.sendInput.attr('data-id',item.id);
+                            scrollDown(data.messageBody);
+                        });
+                    }
+                    if(res.seen){
+                        data.messageText    = data.messageBody.find('.message-text');
+                        data.messageText.last().append(data.seenText);
+                    }
+                }
+            },
+            statusCode:{
+                404: res => {
+                    arrangeResponse(res.responseJSON)
+                },
+                422: res => {
+                    arrangeResponse(res.responseJSON, 'fail', 422);
+                }
             }
-            if(res.info){
-                data.sendInput = $('.send-message');
-                data.message.css('display','block');
-                data.text = createMessage(res.info.message, res.info.date, "success", "left");
-                data.messageBody.append(data.text);
-                data.toFriendProfile =  "<a href='http://github.dev/user/"+ res.info.id +"' target='_blank' >"
-                                            + res.info.name +
-                                        "</a>";
-                data.userName.html(data.toFriendProfile);
-                data.sendInput.attr('data-id',res.info.id);
-                scrollDown(data.messageBody);
-            }else if(res.ok){
-                data.messageText    = data.messageBody.find('.message-text');
-                data.messageText.last().append(data.seenText);
-            }
+
         })
     };
 
     $(document).on('click','.message', () => {
         data.messageText = data.messageBody.find('.message-text');
         if(data.messageText.last().hasClass('text-left')){
-            $.post('/seen', {
-                'id'        : data.get_id
+            $.ajax({
+                url:    '/seen',
+                method: 'POST',
+                data:{
+                    'id' : data.get_id
+                },
+                success: res => {
+                    if(res.status === 'success'){
+                        return true;
+                    }else{
+                        console.error("Error with (/seen) request. StatusCode 200.")
+                    }
+                },
+                statusCode: {
+                    404: res => {
+                        arrangeResponse(res.responseJSON)
+                    },
+                    422: res => {
+                        arrangeResponse(res.responseJSON, 'fail', 422)
+                    }
+                }
             })
         }
     });
@@ -87,7 +126,7 @@ $(() => {
                         data.messageBody.append(data.text);
                         scrollDown(data.messageBody);
                     } else {
-                        console.error("Message dones't sended route('/send').");
+                        console.error("Message dones't sended route('/send'). StatusCode: 200");
                     }
                 },
                 statusCode : {
@@ -95,7 +134,7 @@ $(() => {
                         arrangeResponse(res.responseJSON);
                     },
                     422 : res => {
-                        arrangeResponse(res.responseJSON);
+                        arrangeResponse(res.responseJSON, 'fail', 422);
                     }
                 }
 
