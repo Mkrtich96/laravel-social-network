@@ -8,6 +8,8 @@ class Message extends Model
 {
     protected $table = 'messages';
 
+    protected $fillable = ['from', 'to', 'seen', 'message'];
+
     public $primarykey = 'to';
 
 

@@ -64,27 +64,45 @@ $(() => {
     $(document).on('keyup','.send-message', e => {
 
         data.this   =   $(e.target);
-        data.val = data.this.val().trim().replace(/(<([^>]+)>)/ig,"");
+        data.val = data.this.val().trim();
         data.id  = data.this.data('id');
 
         if(event.keyCode == 13 && data.val != ""){
-            $.post("/send",{
-                'message'   :   data.val,
-                'user_id'   :   data.id
-            }, res => {
-                if(res.ok){
-                    $('.send-message').val("");
-                    data.messageText    = data.messageBody.find('.message-text').last();
+            $.ajax({
+                url : "/send",
+                method : "POST",
+                data : {
+                    'message'   :   data.val,
+                    'user_id'   :   data.id
+                },
+                success : res => {
+                    if (res.status === "success") {
+                        $('.send-message').val("");
+                        data.messageText = data.messageBody.find('.message-text').last();
 
-                    if(data.messageText.find('.cite').last().hasClass('last')){
-                        data.messageText.find('.cite').last().remove();
+                        if (data.messageText.find('.cite').last().hasClass('last')) {
+                            data.messageText.find('.cite').last().remove();
+                        }
+                        data.text = createMessage(data.val, res.date, "info", "right");
+                        data.messageBody.append(data.text);
+                        scrollDown(data.messageBody);
+                    } else {
+                        console.error("Message dones't sended route('/send').");
                     }
-                    data.text = createMessage(data.val, res.date, "info", "right");
-                    data.messageBody.append(data.text);
-                    scrollDown(data.messageBody);
+                },
+                statusCode : {
+                    404 : res => {
+                        arrangeResponse(res.responseJSON);
+                    },
+                    422 : res => {
+                        arrangeResponse(res.responseJSON);
+                    }
                 }
+
             });
         }
+
+        return false;
     });
 
     setInterval(responseMessage,5000);
