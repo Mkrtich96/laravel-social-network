@@ -17,7 +17,7 @@
                         <a class="nav-link" href="#">Messages</a>
                     </li>
                     <li>
-                        <input class="get-id" type="hidden" data-id="{{ $auth_id }}">
+                        <input class="get-id" type="hidden" data-id="{{ get_auth('id') }}">
                     </li>
                 </ul>
                 <form class="form-inline my-2 my-lg-0">
@@ -58,17 +58,29 @@
                                             <div class="card-text float-right w-75 comments-body">
                                                     @foreach($post->comments as $comment)
                                                         <div class="card">
-                                                            <div class="card-body p-1">
-                                                                <h5 class="card-title">
+                                                            <div class="card-body p-2">
+                                                                <h5 class="card-title" data-id="{{ $comment->user->id }}">
                                                                     {{ $comment->user->name }}
                                                                 </h5>
+                                                                @if(!is_null($comment->parent_id))
+                                                                    @php
+                                                                        $comment_parent = $comment->parent()->with('user')->first();
+                                                                        $parent_id = $comment_parent->user->id;
+                                                                    @endphp
+
+                                                                    <a href="{{ url("/user/$parent_id") }}" target="_blank">
+                                                                        {{ $comment_parent->user->name }}
+                                                                    </a>
+                                                                @endif
                                                                     {{ $comment->comment }}
                                                             </div>
-                                                            <a href="" class="reply-comment" data-id="{{ $comment->id }}">Reply</a>
+                                                            @if($comment->user->name != $auth->name)
+                                                                <a href="" class="reply-comment" data-id="{{ $comment->id }}">Reply</a>
+                                                            @endif
                                                         </div>
                                                     @endforeach
-                                                <div class="input-group input-group-sm mt-2 apply-comment">
-                                                    <input type="text" class="rounded-0 form-control" placeholder="Comment.." aria-describedby="sizing-addon2" data-id="{{ $post->id }}" data-user="{{ get_auth('id') }}">
+                                                <div class="input-group input-group-sm mt-2 apply-comment" id="comment">
+                                                    <input type="text" class="rounded-0 form-control send-comment" placeholder="Comment.." aria-describedby="sizing-addon2" data-id="{{ $post->id }}" data-user="{{ get_auth('id') }}">
                                                 </div>
                                             </div>
 

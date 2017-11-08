@@ -1,6 +1,6 @@
 @extends('front.layout.layout')
 @section('content')
-    @if( $data['provider'] == 'github' )
+    @if( $auth['provider'] == 'github' )
         @include('front.provider.github')
     @else
         @include('front.profile.profile')

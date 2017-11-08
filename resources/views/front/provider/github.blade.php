@@ -23,9 +23,9 @@
         </div>
     @endif
     <div class="card" style="width: 20rem;">
-        <img class="card-img-top" src="{{ $data->avatar }}">
+        <img class="card-img-top" src="{{ $auth->avatar }}">
         <div class="card-body">
-            <h3 class="card-text">{{ $data->name }}</h3>
+            <h3 class="card-text">{{ $auth->name }}</h3>
         </div>
     </div>
     <div class="card">

@@ -23,7 +23,7 @@
         <form class="form-post">
             <div class="form-row">
                 <div class="col-9">
-                    <textarea class="form-control post-text" aria-describedby="emailHelp" placeholder="What's on your mind, {{ $data['name'] }}?"></textarea>
+                    <textarea class="form-control post-text" aria-describedby="emailHelp" placeholder="What's on your mind, {{ $auth['name'] }}?"></textarea>
                 </div>
                 <div class="col">
                     <div class="form-check">
@@ -46,8 +46,8 @@
                     <div class="parent-card users-res card col-12 col-sm-12">
                         <div class="card-body">
                             <div class="card-text">
-                                <img src="{{ $avatar }}" class="rounded-circle followers-avatar float-left">
-                                <h5 class="card-title">{{ $data['name'] }}</h5>
+                                <img src="{{ $user_avatar }}" class="rounded-circle followers-avatar float-left">
+                                <h5 class="card-title">{{ $auth['name'] }}</h5>
                                 <small class="form-text text-muted">{{ parseCreatedAt($post->date) }}</small>
                             </div>
                             <div class="card-text mt-3">
@@ -56,13 +56,19 @@
                                 </p>
                             </div>
                             <div class="card-text float-right w-75 comments-body">
-                                {{--<div class="card">
-                                    <div class="card-body">
-                                        <div class="card-text">
-                                            Hello vasil
+                                @foreach($post->comments as $comment)
+                                    <div class="card">
+                                        <div class="card-body p-1">
+                                            <h5 class="card-title">
+                                                {{ $comment->user->name }}
+                                            </h5>
+                                            {{ $comment->comment }}
                                         </div>
+                                        @if($comment->user->name != $auth->name)
+                                            <a href="" class="reply-comment" data-id="{{ $comment->id }}">Reply</a>
+                                        @endif
                                     </div>
-                                </div>--}}
+                                @endforeach
                                 <div class="input-group input-group-sm mt-2 apply-comment">
                                     <input type="text" class="rounded-0 form-control" placeholder="Comment.." aria-describedby="sizing-addon2" data-id="{{ $post->id }}" >
                                 </div>
@@ -72,7 +78,10 @@
 
                             <div class="card-text mt-3">
 
-                                <a class="btn comment badge badge-primary text-light float-right"  data-id="{{ $post->id }}" >Comments</a>
+                                <a class="btn comment badge badge-primary text-light float-right"  data-id="{{ $post->id }}" >
+                                    Comments
+                                    <span class="badge badge-light">{{ count($post->comments) }}</span>
+                                </a>
                             </div>
                         </div>
                     </div>

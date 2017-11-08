@@ -125,6 +125,7 @@ $(() => {
         data.value      =   data.this.val();
         data.post_id    =   data.this.data('id');
         data.user_id    =   data.this.data('user');
+        data.parent_id  =   data.this.attr('parent-id');
 
         if(e.keyCode == 13){
 
@@ -136,14 +137,36 @@ $(() => {
                     data    :   {
                         "comment"   :   data.value.trim(),
                         "post_id"   :   data.post_id,
-                        "user_id"   :   data.user_id
+                        "user_id"   :   data.user_id,
+                        "parent_id" :   data.parent_id
                     },
                     success :   res => {
                         if(res.status === "success"){
+                            console.log(res);
+                            data.commentable = false;
+
+                            if(res.comment_to){
+                                console.log(res.comment_to);
+                                data.to = $('<a>').attr('href', 'http://github.dev/user/' + res.comment_to.id).text(res.comment_to.name+" ");
+                                data.commentable = true;
+                            }
+
                             data.this.val("");
+                            data.this.removeAttr('parent-id');
+                            data.card = $('<div>').addClass('card');
+                            data.card_body = $('<div>').addClass('card-body p-2');
+                            data.card_title = $('<h5>').addClass('card-title');
+                            data.card_title.text(res.commentator.name);
+
+                            if(data.commentable){
+                                data.card_body.append(data.card_title).append(data.to).append(res.comment);
+                            }else{
+                                data.card_body.append(data.card_title).append(res.comment);
+                            }
+                            data.card.append(data.card_body);
+                            data.this.parent().before(data.card);
 
                         }
-
                     },
                     statusCode: {
                         404 : res => {
@@ -156,6 +179,15 @@ $(() => {
                 })
             }
         }
+    });
+
+    $(document).on('click', '.reply-comment', e => {
+        e.preventDefault();
+        data.this = $(e.target);
+        data.comment_id = data.this.data('id');
+        data.replyCommentTo = data.this.parent().find('.card-title');
+        data.applyComment = data.this.parents('.comments-body').find('.send-comment');
+        data.applyComment.attr('parent-id', data.comment_id).focus().val(data.replyCommentTo.text().trim());
 
     })
 

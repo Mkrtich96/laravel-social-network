@@ -1,7 +1,7 @@
 <header class="header">
     <div class="container-fluid">
         <nav class="navbar navbar-expand-lg navbar-light bg-light header-navbar">
-            <a class="navbar-brand" href="{{ url('/') }}">{{ $data['name'] }}</a>
+            <a class="navbar-brand" href="{{ url('/') }}">{{ $auth['name'] }}</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -14,10 +14,10 @@
                 </form>
                 <ul class="navbar-nav mr-auto navbar-list float-right dropdowns">
                     <li class="nav-item">
-                        <input class="get-id" type="hidden" data-id="{{ $data['id'] }}">
+                        <input class="get-id" type="hidden" data-id="{{ $auth['id'] }}">
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route("gallery.show", $data['id']) }}"  class="nav-link text-left">Gallery</a>
+                        <a href="{{ route("gallery.show", $auth['id']) }}"  class="nav-link text-left">Gallery</a>
                     </li>
                     <li class="nav-item dropdown">
                         @if(isset($followRequests))

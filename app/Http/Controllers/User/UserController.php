@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Comment;
-use Auth;
-use App\Post;
 use App\User;
 use App\Follow;
 use App\Notify;
@@ -81,19 +78,19 @@ class UserController extends Controller
     public function show($user_id)
     {
 
-        $data = User::find($user_id);
+        $auth = User::find($user_id);
 
-        if (is_null($data)) {
+        if (is_null($auth)) {
             return redirect('404');
         }
 
         /**
          * Registered Users
          */
-        if(is_null($data->provider)){
+        if(is_null($auth->provider)){
 
             $followers_list = $this->getFollowersList($user_id);
-            $read_notifications =   $data->readnotifications;
+            $read_notifications =   $auth->readnotifications;
 
             if(count($read_notifications) > 0){
 
@@ -102,8 +99,7 @@ class UserController extends Controller
                 $followRequests = null;
             }
 
-            $user_posts  =   $data->posts()->orderBy('created_at','DESC')
-                                            ->get();
+            $user_posts  =   $this->generatePostStatus($auth,true);
 
             if((count($user_posts) > 0)){
 
@@ -115,11 +111,11 @@ class UserController extends Controller
             /**
              * Auth user Avatar
              */
-            $avatar = generate_avatar($data);
+            $user_avatar = generate_avatar($auth);
 
             return view('front.user',compact(
-                 'data',
-                      'avatar',
+                 'auth',
+                      'user_avatar',
                          'followRequests',
                          'followers_list',
                          'posts'));
@@ -128,7 +124,7 @@ class UserController extends Controller
         /**
          * Providers profile
          */
-        $user_repositories = $this->github->api('user')->repositories($data->name);
+        $user_repositories = $this->github->api('user')->repositories($auth->name);
 
         if(count($user_repositories) > 0){
 
@@ -137,9 +133,9 @@ class UserController extends Controller
             $repositories = null;
         }
 
-        switch ($data['provider']) {
+        switch ($auth['provider']) {
                 case 'github':  return view('front.user',
-                                        compact('data','repositories'));
+                                        compact('auth','repositories'));
                                 break;
                 default:   break;
         }
@@ -154,20 +150,20 @@ class UserController extends Controller
     public function guestPage(IndexGuest $request, $id){
 
         $user = User::find($request->id);
-        $auth_id = get_auth('id');
+        $auth = get_auth();
         $post_status = false;
 
-        $consider_follow = $user->followers()->where('user_id',$auth_id)
-                                                ->orWhere('follower_id',$auth_id)
+        $consider_follow = $user->followers()->where('user_id',$auth->id)
+                                                ->orWhere('follower_id',$auth->id)
                                                 ->first();
 
 
-        if(!is_null($user->provider) || $id == $auth_id){
+        if(!is_null($user->provider) || $id == $auth->id){
 
             return redirect('/');
         }
 
-        $notifications = Notify::where('to', $auth_id)->first();
+        $notifications = Notify::where('to', $auth->id)->first();
 
         if(is_null($consider_follow)){
 
@@ -189,13 +185,12 @@ class UserController extends Controller
 
 
         $user_avatar = $this->generate_avatar($user);
-        $followers_list =   $this->getFollowersList($auth_id);
+        $followers_list =   $this->getFollowersList($auth->id);
 
 
         return view('front.profile.user_page',
-                    compact('user','user_avatar','user_comments','followButton', 'posts' , 'auth_id', 'followers_list')
+                    compact('user','user_avatar','user_comments','followButton', 'posts', 'auth', 'followers_list')
                 );
-
     }
 
     /**

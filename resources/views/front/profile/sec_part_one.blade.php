@@ -1,6 +1,6 @@
 <div class="col-md-2">
     <div class="card" style="width: 13rem;">
-        <img class='card-img-top' src="{{ $avatar }}">
+        <img class='card-img-top' src="{{ $user_avatar }}">
 
     </div>
     <div class="form-group">
