@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Comment;
 use App\Http\Requests\StoreComments;
+use App\Notifications\CommentNotify;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Input;
@@ -54,7 +55,13 @@ class CommentController extends Controller
                     'user_id' => $request->user_id,
                     'parent_id' => $request->parent_id
                 ]);
-                $commantable = false;
+
+                if($user_comment){
+
+                    $parent_notify = $user_comment->parent()->with('user')->first();
+                    $parent_notify->user->notify(new CommentNotify(get_auth()));
+                    $commantable = false;
+                }
             }
         }
 

@@ -49,24 +49,37 @@ class MessageController extends Controller
 
     public function notifications(Request $request){
 
-        $follow_requests = array();
+        $notify = array();
         $user            = User::find($request->get_id);
-        $unreadNtfs      = $user->unreadNotifications;
+        $notifications   = $user->unreadNotifications;
 
         // Notifications
-        if(count($unreadNtfs) > 0){
-            foreach ($unreadNtfs as $notif) {
-                $follow_requests[]    = [
-                    'name'          =>  $notif->data['follower_name'],
-                    'followerId'    =>  $notif->data['follower_id']
-                ];
+        if(count($notifications) > 0){
+            $notify_name = null;
+            foreach ($notifications as $notif) {
+                switch($notif->system){
+                    case 'follow' : $notify[] = [
+                                        'name' =>  $notif->data['follower_name'],
+                                        'follower_id' =>  $notif->data['follower_id']
+                                    ];
+                                    $notify_name = 'follow';
+                                    break;
+                    case 'comment': $notify[] = [
+                                        'name' =>  $notif->data['commentator_name'],
+                                        'commentator_id' =>  $notif->data['commentator_id']
+                                    ];
+                                    $notify_name = 'comment';
+                                    break;
+                    default: break;
+                }
+
             }
-            $unreadNtfs->markAsRead();
+            $notifications->markAsRead();
 
             return response([
                 'status'    => 'success',
-                'message'   => 'Follow request sended successfully.',
-                'followers' => $follow_requests
+                'message'   => 'Notify request sended successfully.',
+                $notify_name => $notify
             ], 200);
         }
 

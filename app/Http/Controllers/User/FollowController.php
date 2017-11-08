@@ -22,20 +22,12 @@ class FollowController extends Controller
         $auth_user      = get_auth();
         $user = User::find($follower_id);
 
-        if(!is_null($user)){
-
-            $user->notify(new RepliedToFollow($auth_user));
-
-            return response([
-                'status' => 'success',
-                'message'=> 'Follow request successfully complete.',
-            ], 200);
-        }
+        $user->notify(new RepliedToFollow($auth_user));
 
         return response([
-            'status'    =>  'fail',
-            'message'   =>  'User not finded. Error 404.'
-        ], 404);
+            'status' => 'success',
+            'message'=> 'Follow request successfully complete.',
+        ], 200);
 
     }
 
@@ -49,30 +41,21 @@ class FollowController extends Controller
         $user_id = get_auth('id');
         $follower = check_follower_or_not($request->follower_id, $user_id);
 
-        if(!is_null($follower)){
+        $delete = $follower->delete();
 
-            $delete = $follower->delete();
-
-            if($delete){
-
-                return response([
-                    'status' => 'success',
-                    'message' => 'Unfollow request successfully complete.'
-
-                ], 200);
-            }
+        if($delete){
 
             return response([
-                'status'    =>  'fail',
-                'message'   =>  'Unfollow failed. Error 404!'
-            ], 404);
-        }else{
-            return response([
-                'status'    =>  'fail',
-                'message'   =>  'Request failed. Connection error!'
-            ], 404);
+                'status' => 'success',
+                'message' => 'Unfollow request successfully complete.'
+
+            ], 200);
         }
 
+        return response([
+            'status'    =>  'fail',
+            'message'   =>  'Unfollow failed. Error 404!'
+        ], 404);
     }
 
     /**
@@ -129,7 +112,7 @@ class FollowController extends Controller
             $follow->user_id        = get_auth('id');
             $follow->follower_id    = $follower_id;
             $user_info      = User::find($request->to);
-            $user_avatar    =   generate_avatar($user_info);
+            $user_avatar    = generate_avatar($user_info);
 
             if ($follow->save()) {
 

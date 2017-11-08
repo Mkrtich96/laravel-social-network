@@ -10,18 +10,28 @@ $(() => {
         }
 
         if(Array.isArray(array)){
+            switch (array){
+                case res.follow : array.map( item => {
+                                    data.notifLi = $('<li class="dropdown-item text-primary form-group header-request">');
+                                    data.text = item.name +  " send follow request. ";
+                                    data.accept = createFollowButton('fa-check accept-follow',item.followerId);
+                                    data.cancel = createFollowButton('fa-times cancel',item.followerId);
+                                    data.notifLi.append(data.text)
+                                        .append(data.accept)
+                                        .append(data.cancel);
+                                    data.notifMenu.append(data.notifLi);
+                                    data.notif.append(data.notifMenu);
+                                    });
+                                break;
+                case res.comment : array.map( item => {
+                                        data.notifLi = $('<li class="dropdown-item text-primary form-group header-request">');
+                                        data.text = item.name +  " applied on your comment. ";
+                                        data.notifLi.append(data.text);
+                                        data.notifMenu.append(data.notifLi);
+                                        data.notif.append(data.notifMenu);
+                                    });
+            }
 
-            array.map( item => {
-                data.notifLi = $('<li class="dropdown-item text-primary form-group header-request">');
-                data.text = item.name +  " send follow request. ";
-                data.accept = createFollowButton('fa-check accept-follow',item.followerId);
-                data.cancel = createFollowButton('fa-times cancel',item.followerId);
-                data.notifLi.append(data.text)
-                            .append(data.accept)
-                            .append(data.cancel);
-                data.notifMenu.append(data.notifLi);
-                data.notif.append(data.notifMenu);
-            });
         }
     };
 
@@ -37,8 +47,12 @@ $(() => {
             success: res => {
 
                 if(res.status === "success"){
-                    if(res.followers){
-                        createNotification(res.followers.length, res.followers);
+
+                    if(res.follow){
+                        createNotification(res.follow.length, res.follow);
+                    }else if(res.comment){
+                        console.log(res.comment);
+                        createNotification(res.comment.length, res.comment);
                     }
                     if(res.info){
                         res.info.map( item => {

@@ -25,7 +25,7 @@ class StoreUnfollow extends FormRequest
     {
 
         return [
-            'follower_id'   =>  'required|numeric',
+            'follower_id'   =>  'required|exists:followers',
         ];
     }
 }

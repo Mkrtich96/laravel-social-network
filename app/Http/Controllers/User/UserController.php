@@ -94,9 +94,9 @@ class UserController extends Controller
 
             if(count($read_notifications) > 0){
 
-                $followRequests = $read_notifications;
+                $notifications = $read_notifications;
             }else{
-                $followRequests = null;
+                $notifications = null;
             }
 
             $user_posts  =   $this->generatePostStatus($auth,true);
@@ -116,7 +116,7 @@ class UserController extends Controller
             return view('front.user',compact(
                  'auth',
                       'user_avatar',
-                         'followRequests',
+                         'notifications',
                          'followers_list',
                          'posts'));
         }

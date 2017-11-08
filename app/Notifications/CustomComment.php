@@ -7,9 +7,8 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class CustomChannel
+class CustomComment extends Notification
 {
-
     public function send($notifiable, Notification $notification)
     {
         $data = $notification->toDatabase($notifiable);
@@ -18,10 +17,9 @@ class CustomChannel
             'id' => $notification->id,
             'type' => get_class($notification),
             'to'    =>  get_auth('id'),
-            'system' => 'follow',
+            'system'=> 'comment',
             'data' => $data,
             'read_at' => null,
         ]);
     }
-
 }

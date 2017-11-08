@@ -51,10 +51,10 @@ $(() => {
     createMessage = (value, date, color, sender)  => {
 
         data.li     =   "<li class='list-group-item list-group-item-"+ color +" text-"+ sender +" message-text'>"
-            + value +
-            "<br>" +
-            "<cite class='cite' title='" + date + "'>" + date + "</cite>" +
-            "</li>";
+                            + value +
+                            "<br>" +
+                            "<cite class='cite' title='" + date + "'>" + date + "</cite>" +
+                        "</li>";
         return data.li;
     };
 

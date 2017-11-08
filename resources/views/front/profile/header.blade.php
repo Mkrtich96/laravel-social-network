@@ -20,22 +20,28 @@
                         <a href="{{ route("gallery.show", $auth['id']) }}"  class="nav-link text-left">Gallery</a>
                     </li>
                     <li class="nav-item dropdown">
-                        @if(isset($followRequests))
+                        @if(isset($notifications))
                             <a class="nav-link dropdown-toggle notification"
                                id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
                                aria-expanded="false">
                                 Notification <span
-                                        class="badge badge-danger">{{ count($followRequests) }}</span>
+                                        class="badge badge-danger">{{ count($notifications) }}</span>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                @foreach($followRequests as $follower)
+                                @foreach($notifications as $notify)
+                                    @if($notify->system == 'follow')
                                     <li class="dropdown-item text-primary form-group header-request">
-                                        {{ $follower->data['follower_name'] }} send follow request
-                                        <a data-id="{{ $follower->data['follower_id'] }}"
+                                        {{ $notify->data['follower_name'] }} send follow request
+                                        <a data-id="{{ $notify->data['follower_id'] }}"
                                             class="fa fa-check text-right accept-follow"></a>
-                                        <a data-id="{{ $follower->data['follower_id'] }}"
+                                        <a data-id="{{ $notify->data['follower_id'] }}"
                                            class="fa fa-times text-right cancel-follow"></a>
                                     </li>
+                                    @elseif($notify->system == 'comment')
+                                        <li class="dropdown-item text-primary form-group header-request">
+                                            {{ $notify->data['commentator_name'] }} applied to your comment.
+                                        </li>
+                                    @endif
                                 @endforeach
                             </ul>
                         @else

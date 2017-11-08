@@ -23,7 +23,7 @@ class StoreFollow extends FormRequest
     public function rules()
     {
         return [
-            'notifiable_id' => 'required|numeric',
+            'notifiable_id' => 'required|exists:users,id',
         ];
     }
 }
