@@ -183,14 +183,14 @@ class MessageController extends Controller
                 ];
                 $seen = $message->seen;
             }
-
-            return response([
-                'status' => 'success',
-                'message'=> 'Messages selected successfully.',
-                'info'   => $data,
-                'seen'   => $seen
-            ],200);
         }
+
+        return response([
+            'status' => 'success',
+            'message'=> 'Messages selected successfully.',
+            'info'   => $data,
+            'seen'   => $seen
+        ],200);
     }
 
 

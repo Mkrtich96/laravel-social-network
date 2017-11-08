@@ -135,8 +135,8 @@ $(() => {
                     method  :   "POST",
                     data    :   {
                         "comment"   :   data.value.trim(),
-                        "on_post"   :   data.post_id,
-                        "from_user" :   data.user_id
+                        "post_id"   :   data.post_id,
+                        "user_id"   :   data.user_id
                     },
                     success :   res => {
                         if(res.status === "success"){

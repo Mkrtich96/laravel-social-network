@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Requests\IndexGuest;
-use App\Http\Requests\StoreGuest;
-use App\Http\Requests\UserProfilePhoto;
+use App\Comment;
 use Auth;
+use App\Post;
 use App\User;
 use App\Follow;
 use App\Notify;
 use Illuminate\Http\Request;
+use App\Http\Requests\IndexGuest;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserProfilePhoto;
 use GrahamCampbell\GitHub\GitHubManager;
 
 
@@ -152,8 +153,9 @@ class UserController extends Controller
 
     public function guestPage(IndexGuest $request, $id){
 
-        $user       =   User::find($request->id);
-        $auth_id     =   get_auth('id');
+        $user = User::find($request->id);
+        $auth_id = get_auth('id');
+        $post_status = false;
 
         $consider_follow = $user->followers()->where('user_id',$auth_id)
                                                 ->orWhere('follower_id',$auth_id)
@@ -170,20 +172,28 @@ class UserController extends Controller
         if(is_null($consider_follow)){
 
             $followButton  = $this->crtFollowBtn('outline-primary follow',$id, 'Follow');
-            $posts = $this->generatePostStatus($user,false);
-
         }elseif(!is_null($notifications)){
 
             $followButton = $this->crtFollowBtn('secondary cancel-follow',$id, 'Cancel Request');
-            $posts = $this->generatePostStatus($user,false);
         }else{
 
             $followButton  = $this->crtFollowBtn('secondary unfollow',$id, 'Unfollow');
-            $posts = $this->generatePostStatus($user,true);
+            $post_status = true;
         }
+
+        if($post_status){
+            $posts = $this->generatePostStatus($user,true);
+        }else{
+            $posts = $this->generatePostStatus($user,false);
+        }
+
+        /*$comment = Comment::find(1);
+
+        dd($comment->user);*/
 
         $user_avatar = $this->generate_avatar($user);
         $followers_list =   $this->getFollowersList($auth_id);
+
 
         return view('front.profile.user_page',
                     compact('user','user_avatar','followButton', 'posts' , 'auth_id', 'followers_list')
@@ -297,10 +307,12 @@ class UserController extends Controller
 
         if($status === true){
 
-            $user_posts = $user->posts()->orderBy('created_at','DESC')
+            $user_posts = $user->posts()->with('comments')
+                                        ->orderBy('created_at','DESC')
                                         ->get();
         }else{
             $user_posts = $user->posts()->where('status',0)
+                                ->with('comments')
                                 ->orderBy('created_at','DESC')
                                 ->get();
         }

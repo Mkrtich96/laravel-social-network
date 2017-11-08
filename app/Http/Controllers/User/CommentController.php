@@ -50,8 +50,8 @@ class CommentController extends Controller
         }
 
         return  response([
-            'status'  =>    'fail',
-            'message' =>    'Comment don\'t created, connection error!'
+            'status'  => 'fail',
+            'message' => 'Comment don\'t created, connection error!'
         ], 404);
     }
 

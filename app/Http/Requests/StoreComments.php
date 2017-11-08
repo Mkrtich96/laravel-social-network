@@ -24,9 +24,9 @@ class StoreComments extends FormRequest
     public function rules()
     {
         return [
-            'on_post'   =>  'required|exists:posts,id',
-            'comment'   =>  'required|regex:/^([a-zA-Z1-9\.]+)$/',
-            'from_user' =>  'required|exists:users,id',
+            'post_id'   =>  'required|exists:posts,id',
+            'comment'   =>  'required|string',
+            'user_id'   =>  'required|exists:users,id',
         ];
     }
 }

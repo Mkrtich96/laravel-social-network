@@ -56,23 +56,29 @@
                                                 </p>
                                             </div>
                                             <div class="card-text float-right w-75 comments-body">
-                                                <div class="card">
-                                                    <div class="card-body p-1">
-                                                        <h5 class="card-title">
-                                                            Hakob
-                                                        </h5>
-                                                            Hello vasil
-                                                    </div>
-                                                </div>
+                                                @if(isset($post->comments))
+                                                    @foreach($post->comments as $comment)
+                                                        <div class="card">
+                                                            <div class="card-body p-1">
+                                                                <h5 class="card-title">
+                                                                    {{ $comment->name }}
+                                                                </h5>
+                                                                    {{ $comment->comment }}
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                @endif
                                                 <div class="input-group input-group-sm mt-2 apply-comment">
-                                                    <input type="text" class="rounded-0 form-control" placeholder="Comment.." aria-describedby="sizing-addon2" data-id="{{ $post->id }}" data-user="{{ $user->id }}">
+                                                    <input type="text" class="rounded-0 form-control" placeholder="Comment.." aria-describedby="sizing-addon2" data-id="{{ $post->id }}" data-user="{{ get_auth('id') }}">
                                                 </div>
                                             </div>
 
                                             <div class="clearfix"></div>
 
                                             <div class="card-text mt-2">
-                                                <a class="btn comment badge badge-primary text-light float-right"  data-id="{{ $post->id }}" data-user="{{ $user->id }}" >Comments</a>
+                                                <a class="btn comment badge badge-primary text-light float-right"  data-id="{{ $post->id }}" data-user="{{ $user->id }}" >
+                                                    Comments
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
