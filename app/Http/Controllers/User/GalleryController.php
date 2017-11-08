@@ -43,22 +43,20 @@ class GalleryController extends Controller
     {
 
         $data = array();
-        $user_id = get_auth('id');
+        $user = get_auth();
         $files = $request->file('gallery');
 
         foreach ($files as $file) {
-            $name = $file->store('public/' . $user_id . '/gallery');
-            $data[] = [
-                'user_id'   => $user_id,
-                'image'     => basename($name)
-            ];
+            $name = $file->store('public/' . $user->id . '/gallery');
+            $data[] = new Gallery(['image'  => basename($name)]);
         }
-        $user_galleries = Gallery::insert($data);
+
+        $user_galleries = $user->galleries()->saveMany($data);
 
         if ($user_galleries) {
             return redirect()->back()->with('success', 'Gallery updated!');
         } else {
-            return redirect()->back()->with('fail', 'Connection error');
+            return redirect()->back()->with('fail', 'Connection error.');
         }
     }
 

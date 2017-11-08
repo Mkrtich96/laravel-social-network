@@ -8,7 +8,8 @@ class Follow extends Model
 {
     protected $table = "followers";
 
-    public function users(){
+    public function user(){
+
         return $this->belongsTo('App\User');
     }
 
