@@ -56,18 +56,17 @@
                                                 </p>
                                             </div>
                                             <div class="card-text float-right w-75 comments-body">
-                                                @if(isset($post->comments))
                                                     @foreach($post->comments as $comment)
                                                         <div class="card">
                                                             <div class="card-body p-1">
                                                                 <h5 class="card-title">
-                                                                    {{ $comment->name }}
+                                                                    {{ $comment->user->name }}
                                                                 </h5>
                                                                     {{ $comment->comment }}
                                                             </div>
+                                                            <a href="" class="reply-comment" data-id="{{ $comment->id }}">Reply</a>
                                                         </div>
                                                     @endforeach
-                                                @endif
                                                 <div class="input-group input-group-sm mt-2 apply-comment">
                                                     <input type="text" class="rounded-0 form-control" placeholder="Comment.." aria-describedby="sizing-addon2" data-id="{{ $post->id }}" data-user="{{ get_auth('id') }}">
                                                 </div>
@@ -78,6 +77,7 @@
                                             <div class="card-text mt-2">
                                                 <a class="btn comment badge badge-primary text-light float-right"  data-id="{{ $post->id }}" data-user="{{ $user->id }}" >
                                                     Comments
+                                                    <span class="badge badge-light">{{ count($post->comments) }}</span>
                                                 </a>
                                             </div>
                                         </div>

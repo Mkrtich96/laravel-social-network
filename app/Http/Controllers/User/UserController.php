@@ -187,16 +187,13 @@ class UserController extends Controller
             $posts = $this->generatePostStatus($user,false);
         }
 
-        /*$comment = Comment::find(1);
-
-        dd($comment->user);*/
 
         $user_avatar = $this->generate_avatar($user);
         $followers_list =   $this->getFollowersList($auth_id);
 
 
         return view('front.profile.user_page',
-                    compact('user','user_avatar','followButton', 'posts' , 'auth_id', 'followers_list')
+                    compact('user','user_avatar','user_comments','followButton', 'posts' , 'auth_id', 'followers_list')
                 );
 
     }
@@ -307,12 +304,12 @@ class UserController extends Controller
 
         if($status === true){
 
-            $user_posts = $user->posts()->with('comments')
+            $user_posts = $user->posts()->with('comments.user')
                                         ->orderBy('created_at','DESC')
                                         ->get();
         }else{
             $user_posts = $user->posts()->where('status',0)
-                                ->with('comments')
+                                ->with('comments.user')
                                 ->orderBy('created_at','DESC')
                                 ->get();
         }
