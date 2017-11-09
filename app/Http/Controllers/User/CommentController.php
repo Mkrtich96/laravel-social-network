@@ -40,6 +40,7 @@ class CommentController extends Controller
                                     ['to' ,'=', $request->to],
                                     ['system' ,'=', 'comment']
                                 ])->delete();
+
         if($notifications_delete){
             return response([
                 'status' => 'success',

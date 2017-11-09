@@ -1,3 +1,14 @@
+"use strict";
+
+var languages = ['Danish', 'Norwegian', 'Swedish'];
+
+// Pollutes global namespace. Ew!
+for (var i = 0; i < languages.length; i += 1) {
+    console.log(`${languages[i]} is a Scandinavian language.`);
+}
+
+
+
 $(() => {
 
     data = {

@@ -211,7 +211,7 @@ $(() => {
             },
             success: res => {
                 if(res.status === 'success'){
-
+                    console.log("Comment seened!");
                 }else{
                     console.error('Comment seen response not success.');
                 }
