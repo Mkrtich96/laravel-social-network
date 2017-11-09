@@ -16,7 +16,7 @@ Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
     /**
      * User profile page
      */
-    Route::get('user/{id}','UserController@guestPage');
+    Route::get('user/{id}',['uses' => 'UserController@guestPage','as' => 'user.guest']);
 
     /**
      * Profile photo
@@ -72,6 +72,9 @@ Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
     /**
      * Comments
      */
+
+    Route::post('/comment-seen', 'CommentController@commentSeen');
+
     Route::resource('comment', 'CommentController');
 
 });

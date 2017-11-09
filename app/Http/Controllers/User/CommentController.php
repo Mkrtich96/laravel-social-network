@@ -4,7 +4,9 @@ namespace App\Http\Controllers\User;
 
 use App\Comment;
 use App\Http\Requests\StoreComments;
+use App\Http\Requests\StoreCommentSeen;
 use App\Notifications\CommentNotify;
+use App\Notify;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Input;
@@ -31,9 +33,28 @@ class CommentController extends Controller
         //
     }
 
+    public function commentSeen(StoreCommentSeen $request) {
+
+        $notifications_delete = Notify::where([
+                                    ['notifiable_id' ,'=', $request->notifiable_id],
+                                    ['to' ,'=', $request->to],
+                                    ['system' ,'=', 'comment']
+                                ])->delete();
+        if($notifications_delete){
+            return response([
+                'status' => 'success',
+                'message'=> 'Notifications deleted successfully.'
+            ], 200);
+        }
+
+        return response([
+            'status' => 'fail',
+            'message'=> 'Notification doesn\'t deleted. Connection error.'
+        ], 404);
+    }
+
     /**
      * Store a newly created resource in storage.
-     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */

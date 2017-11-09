@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\User;
 use App\Follow;
 use App\Notify;
+use App\Comment;
 use Illuminate\Http\Request;
 use App\Http\Requests\IndexGuest;
 use App\Http\Controllers\Controller;
@@ -94,7 +95,29 @@ class UserController extends Controller
 
             if(count($read_notifications) > 0){
 
-                $notifications = $read_notifications;
+                foreach ($read_notifications as $notification) {
+                    switch($notification->system){
+                        case 'follow' :
+                            $notifications[] = [
+                                'system' => 'follow',
+                                'follower_name' => $notification->data['follower_name'],
+                                'follower_id' => $notification->data['follower_id'],
+                            ];
+                            break;
+                        case 'comment':
+                            $comment = Comment::where('parent_id',$notification->notifiable_id)->first();
+                            $post =  $comment->post->with('user')->first();
+                            $notifications[] = [
+                                'system' => 'comment',
+                                'commentator_name' => $notification->data['commentator_name'],
+                                'commentator_id' => $notification->data['commentator_id'],
+                                'notifiable_id' =>  $notification->notifiable_id,
+                                'in_user_post' => $post->user->id,
+                            ];
+                            break;
+                        default: break;
+                    }
+                }
             }else{
                 $notifications = null;
             }

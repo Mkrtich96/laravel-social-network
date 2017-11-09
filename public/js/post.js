@@ -15,7 +15,7 @@ $(() => {
             data.checked = 0;
         }
 
-        if(data.post != ""){
+        if(data.post !== ""){
 
             $('.alert-post-error').fadeOut();
 
@@ -39,9 +39,9 @@ $(() => {
 
                         $('.post-text').val("");
                         data.sendButton.removeClass('btn-secondary')
-                            .addClass('btn-primary')
-                            .prop('disabled',false)
-                            .html("Post");
+                                        .addClass('btn-primary')
+                                        .prop('disabled',false)
+                                        .html("Post");
 
                         data.cards1     =   $('<div>').addClass('parent-card users-res card col-12 col-sm-12');
                         data.cards2     =   $('<div>').addClass('card-body');
@@ -102,7 +102,7 @@ $(() => {
                     },
                     422 : res =>  {
 
-                        arrangeResponse(res.responseJSON[0], 422, "post");
+                        arrangeResponse(res.responseJSON, 422, "post");
                     }
                 }
             });
@@ -127,9 +127,9 @@ $(() => {
         data.user_id    =   data.this.data('user');
         data.parent_id  =   data.this.attr('parent-id');
 
-        if(e.keyCode == 13){
+        if(e.keyCode === 13){
 
-            if(data.value != ""){
+            if(data.value !== ""){
 
                 $.ajax({
                     url     :   "/comment",
@@ -146,6 +146,7 @@ $(() => {
                             data.commentable = false;
 
                             if(res.comment_to){
+
                                 console.log(res.comment_to);
                                 data.to = $('<a>').attr('href', 'http://github.dev/user/' + res.comment_to.id).text(res.comment_to.name+" ");
                                 data.commentable = true;
@@ -159,7 +160,9 @@ $(() => {
                             data.card_title.text(res.commentator.name);
 
                             if(data.commentable){
-                                data.card_body.append(data.card_title).append(data.to).append(res.comment);
+                                data.card_body.append(data.card_title)
+                                                .append(data.to)
+                                                .append(res.comment);
                             }else{
                                 data.card_body.append(data.card_title).append(res.comment);
                             }
@@ -173,7 +176,7 @@ $(() => {
                             arrangeResponse(res.responseJSON);
                         },
                         422 : res => {
-                            arrangeResponse(res.responseJSON[0]);
+                            arrangeResponse(res.responseJSON, 'fail', 422);
                         }
                     }
                 })
@@ -182,14 +185,49 @@ $(() => {
     });
 
     $(document).on('click', '.reply-comment', e => {
+
         e.preventDefault();
         data.this = $(e.target);
         data.comment_id = data.this.data('id');
         data.replyCommentTo = data.this.parent().find('.card-title');
         data.applyComment = data.this.parents('.comments-body').find('.send-comment');
-        data.applyComment.attr('parent-id', data.comment_id).focus().val(data.replyCommentTo.text().trim());
+        data.applyComment.attr('parent-id', data.comment_id)
+                            .focus()
+                            .val(data.replyCommentTo.text().trim());
+    });
 
-    })
+    $(document).on('click', '.comment-seen', e => {
+        data.this = $(e.target);
+        data.commentator_id = data.this.data('id');
+        data.parent_id = data.this.attr('parent-id');
+
+        $.ajax({
+            url: '/comment-seen',
+            method: "POST",
+            data: {
+                'notifiable_id' : data.parent_id,
+                'to' : data.commentator_id,
+                'system' : 'comment'
+            },
+            success: res => {
+                if(res.status === 'success'){
+
+                }else{
+                    console.error('Comment seen response not success.');
+                }
+            },
+            statusCode: {
+                404: res => {
+                    arrangeResponse(res.responseJSON);
+                },
+                422: res => {
+                    arrangeResponse(res.responseJSON, 'fail', 422);
+                }
+            }
+
+        })
+
+    });
 
 
 });

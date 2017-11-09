@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserGalleries extends FormRequest
+class StoreCommentSeen extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -16,11 +16,6 @@ class UserGalleries extends FormRequest
         return get_auth() ? true : false;
     }
 
-
-    public function all()
-    {
-        return array_merge(parent::all(), $this->route()->parameters());
-    }
     /**
      * Get the validation rules that apply to the request.
      *
@@ -29,7 +24,8 @@ class UserGalleries extends FormRequest
     public function rules()
     {
         return [
-            'gallery' => 'required|exists:users,id'
+            'notifiable_id' => 'required|exists:notifications',
+            'to' => 'required|exists:notifications'
         ];
     }
 }

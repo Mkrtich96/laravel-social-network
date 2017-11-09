@@ -62,6 +62,16 @@
                                             <h5 class="card-title">
                                                 {{ $comment->user->name }}
                                             </h5>
+                                            @if(!is_null($comment->parent_id))
+                                                @php
+                                                    $comment_parent = $comment->parent()->with('user')->first();
+                                                    $parent_id = $comment_parent->user->id;
+                                                @endphp
+
+                                                <a href="{{ url("/user/$parent_id") }}" target="_blank">
+                                                    {{ $comment_parent->user->name }}
+                                                </a>
+                                            @endif
                                             {{ $comment->comment }}
                                         </div>
                                         @if($comment->user->name != $auth->name)
