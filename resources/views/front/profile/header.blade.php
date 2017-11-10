@@ -17,9 +17,9 @@
                         <input class="get-id" type="hidden" data-id="{{ $auth['id'] }}">
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route("gallery.show", $auth['id']) }}"  class="nav-link text-left">Gallery</a>
+                        <a href="{{ route("gallery.index") }}"  class="nav-link text-left">Gallery</a>
                     </li>
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown notifications">
                         @if(isset($notifications))
                             <a class="nav-link dropdown-toggle notification"
                                id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"

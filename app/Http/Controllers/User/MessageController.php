@@ -26,7 +26,7 @@ class MessageController extends Controller
             return response([
                         'status' => 'success',
                         'message'=> 'Message sended successfully complete.',
-                        'date'  => parseCreatedAt($user_message->created_at)
+                        'date'  => $user_message->created_at
                     ],200);
         }
 
@@ -47,39 +47,21 @@ class MessageController extends Controller
      *
      */
 
-    public function notifications(Request $request){
+    public function notifications(){
 
-        $notify = array();
-        $user            = User::find($request->get_id);
-        $notifications   = $user->unreadNotifications;
+        $user = get_auth();
+
+        $notifications = $user->unreadNotifications;
 
         // Notifications
         if(count($notifications) > 0){
-            $notify_name = null;
-            foreach ($notifications as $notif) {
-                switch($notif->system){
-                    case 'follow' : $notify[] = [
-                                        'name' =>  $notif->data['follower_name'],
-                                        'follower_id' =>  $notif->data['follower_id']
-                                    ];
-                                    $notify_name = 'follow';
-                                    break;
-                    case 'comment': $notify[] = [
-                                        'name' =>  $notif->data['commentator_name'],
-                                        'commentator_id' =>  $notif->data['commentator_id']
-                                    ];
-                                    $notify_name = 'comment';
-                                    break;
-                    default: break;
-                }
 
-            }
             $notifications->markAsRead();
 
             return response([
-                'status'    => 'success',
-                'message'   => 'Notify request sended successfully.',
-                $notify_name => $notify
+                'status' => 'success',
+                'message' => 'Notify request sended successfully.',
+                'notifications' => $notifications
             ], 200);
         }
 
@@ -90,6 +72,7 @@ class MessageController extends Controller
          * Select messages.
          */
         if(count($user_messages) > 0){
+
             $data = array();
 
             foreach ($user_messages as $message) {
@@ -100,7 +83,7 @@ class MessageController extends Controller
                     'id'        =>  $from->id,
                     'name'      =>  $from->name,
                     'avatar'    =>  $from->avatar,
-                    'date'      =>  parseCreatedAt($from->created_at)
+                    'date'      =>  $from->created_at
                 ];
                 $update_seen = $user->messages()->where('seen',0)
                                                     ->update(['seen' => 2 ]);
@@ -113,22 +96,22 @@ class MessageController extends Controller
                             ], 404);
                 }
             }
-            if(count($data) > 0){
-                return response([
-                    'status'=> 'success',
-                    'message'=> 'Messages selected successfully.',
-                    'info'  =>  $data
-                ], 200);
-            }
+
+            return response([
+                'status'=> 'success',
+                'message'=> 'Messages selected successfully.',
+                'info'  =>  $data
+            ], 200);
+
         }else{
             /**
              * Seen messages.
              */
-            $messages = Message::where('from', $request->get_id)
-                                ->get()->last();
+            $messages = Message::where('from',$user->id)->get()->last();
 
             if(!is_null($messages)){
                 if($messages->seen == 3){
+
                     $messages->seen = 1;
                     $seen_update = $messages->save();
 
@@ -149,29 +132,16 @@ class MessageController extends Controller
         }
     }
 
-    public function seen(Request $request){
+    public function seen(){
 
-        $this->validate($request, ['id' => 'required|exists:users']);
+        $user = get_auth();
 
-        $messages = Message::where([
-                                ['to',  '=',$request->id],
-                                ['seen','=',2]
-                            ])->get();
+        $messages = $user->messages()->where('seen',2)->get();
 
         if(count($messages) > 0){
-            foreach ($messages as $message) {
-                $message->seen = 3;
-                $user_message_seen = $message->save();
-
-                if($user_message_seen){
-                    continue;
-                }else{
-                    return response([
-                        'status' => 'fail',
-                        'message'=> "'Seen don't updated. Error 404."
-                    ], 404);
-                }
-            }
+            $messages_seen_update = $user->messages()->where('seen',2)
+                                            ->update(['seen' => 3]);
+            if($messages_seen_update)
             return response([
                 'status' => 'success',
                 'message'=> 'Seen request sended successfully complete.',
@@ -182,28 +152,22 @@ class MessageController extends Controller
 
     public function selectMessages(StoreMessageHistory $request){
 
-        $seen   = null;
-        $data   = array();
-        $messages = $this->get_chat_history($request->from, $request->to);
+        $from = get_auth();
+
+        $messages = $this->get_chat_history($from->id, $request->to);
 
         if(isset($messages)){
-            foreach ($messages as $message) {
-                $data[] = [
-                    'to'        => $message->to,
-                    'from'      => $message->from,
-                    'message'   => $message->message,
-                    'date'      => parseCreatedAt($message->created_at)
-                ];
-                $seen = $message->seen;
-            }
+            return response([
+                'status' => 'success',
+                'message'=> 'Messages selected successfully.',
+                'messages' => $messages,
+            ],200);
         }
-
         return response([
             'status' => 'success',
-            'message'=> 'Messages selected successfully.',
-            'info'   => $data,
-            'seen'   => $seen
-        ],200);
+            'message'=> 'Messages not found.'
+        ], 200);
+
     }
 
 

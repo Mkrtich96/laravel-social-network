@@ -124,11 +124,9 @@ $(() => {
         data.this       =   $(e.target);
         data.value      =   data.this.val();
         data.post_id    =   data.this.data('id');
-        data.user_id    =   data.this.data('user');
         data.parent_id  =   data.this.attr('parent-id');
 
         if(e.keyCode === 13){
-
             if(data.value !== ""){
 
                 $.ajax({
@@ -137,7 +135,6 @@ $(() => {
                     data    :   {
                         "comment"   :   data.value.trim(),
                         "post_id"   :   data.post_id,
-                        "user_id"   :   data.user_id,
                         "parent_id" :   data.parent_id
                     },
                     success :   res => {
@@ -147,7 +144,6 @@ $(() => {
 
                             if(res.comment_to){
 
-                                console.log(res.comment_to);
                                 data.to = $('<a>').attr('href', 'http://github.dev/user/' + res.comment_to.id).text(res.comment_to.name+" ");
                                 data.commentable = true;
                             }

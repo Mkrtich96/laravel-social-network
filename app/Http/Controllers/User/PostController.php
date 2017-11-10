@@ -44,7 +44,7 @@ class PostController extends Controller
             return response([
                 'status' => 'success',
                 'message'=> 'Post created successfully.',
-                'date'   => parseCreatedAt($post->created_at),
+                'date'   => $post->created_at,
                 'post_id'=> $post->id
             ], 200);
         }

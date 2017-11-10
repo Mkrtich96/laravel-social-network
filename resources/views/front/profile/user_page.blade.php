@@ -80,7 +80,7 @@
                                                         </div>
                                                     @endforeach
                                                 <div class="input-group input-group-sm mt-2 apply-comment" id="comment">
-                                                    <input type="text" class="rounded-0 form-control send-comment" placeholder="Comment.." aria-describedby="sizing-addon2" data-id="{{ $post->id }}" data-user="{{ get_auth('id') }}">
+                                                    <input type="text" class="rounded-0 form-control send-comment" placeholder="Comment.." aria-describedby="sizing-addon2" data-id="{{ $post->id }}">
                                                 </div>
                                             </div>
 

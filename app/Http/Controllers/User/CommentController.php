@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Post;
 use App\Comment;
 use App\Http\Requests\StoreComments;
 use App\Http\Requests\StoreCommentSeen;
@@ -42,6 +43,7 @@ class CommentController extends Controller
                                 ])->delete();
 
         if($notifications_delete){
+
             return response([
                 'status' => 'success',
                 'message'=> 'Notifications deleted successfully.'
@@ -62,6 +64,10 @@ class CommentController extends Controller
     public function store(StoreComments $request)
     {
         $commantable = true;
+        $user_comment = null;
+
+        $post = Post::find($request->post_id);
+        $data = ['user_id' => get_auth('id')];
 
         if($request->parent_id){
 
@@ -71,25 +77,25 @@ class CommentController extends Controller
             if($step[0] == $comment->user->name){
 
                 $revise_comment = ltrim($request->comment, $comment->user->name);
-                $user_comment = Comment::create([
-                    'comment' => $revise_comment,
-                    'post_id' => $request->post_id,
-                    'user_id' => $request->user_id,
-                    'parent_id' => $request->parent_id
-                ]);
+
+                $data['comment'] = $revise_comment;
+                $data['parent_id'] = $request->parent_id;
+
+                $user_comment = $post->comments()->save(new Comment($data));
 
                 if($user_comment){
-
                     $parent_notify = $user_comment->parent()->with('user')->first();
                     $parent_notify->user->notify(new CommentNotify(get_auth()));
                     $commantable = false;
                 }
+            }else{
+                $data['parent_id'] = $request->parent_id;
             }
         }
 
         if($commantable){
-
-            $user_comment = Comment::create($request->all());
+            $data['comment'] = $request->comment;
+            $user_comment = $post->comments()->save(new Comment($data));
         }
 
         if($user_comment){
@@ -99,7 +105,7 @@ class CommentController extends Controller
                 'message'=> 'Comment send request successfully complete.',
                 'comment_id' => $user_comment->id,
                 'comment'  => $user_comment->comment,
-                'comment_date' => parseCreatedAt($user_comment->created_at),
+                'comment_date' => $user_comment->created_at,
                 'commentator' => get_auth()
             ];
 

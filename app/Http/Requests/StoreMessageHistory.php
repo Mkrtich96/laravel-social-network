@@ -24,7 +24,6 @@ class StoreMessageHistory extends FormRequest
     public function rules()
     {
         return [
-            'from'  => 'required|exists:users,id',
             'to'    => 'required|exists:users,id'
         ];
     }

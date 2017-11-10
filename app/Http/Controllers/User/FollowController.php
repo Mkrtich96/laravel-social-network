@@ -40,7 +40,6 @@ class FollowController extends Controller
 
         $user_id = get_auth('id');
         $follower = check_follower_or_not($request->follower_id, $user_id);
-
         $delete = $follower->delete();
 
         if($delete){

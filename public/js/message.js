@@ -1,37 +1,37 @@
 $(() => {
 
-    let createNotification = (length, array) => {
+    let createNotification = (array) => {
 
         data.badge = data.notif.find('.badge');
+        console.log(data.badge);
         if(data.badge.is(':empty')){
-            data.badge.text(length);
+            data.badge.text(array.length);
         }else{
-            data.badge.text(parseInt(data.badge.text()) + length);
+            data.badge.text(parseInt(data.badge.text()) + array.length);
         }
 
         if(Array.isArray(array)){
-            switch (array){
-                case res.follow : array.map( item => {
-                                    data.notifLi = $('<li class="dropdown-item text-primary form-group header-request">');
-                                    data.text = item.name +  " send follow request. ";
-                                    data.accept = createFollowButton('fa-check accept-follow',item.followerId);
-                                    data.cancel = createFollowButton('fa-times cancel',item.followerId);
+            array.map( item => {
+                switch (item.system){
+                    case 'follow':  data.notifLi = $('<li class="dropdown-item text-primary form-group header-request">');
+                                    data.text = item.data.follower_name +  " send follow request. ";
+                                    data.accept = createFollowButton('fa-check accept-follow',item.data.follower_id);
+                                    data.cancel = createFollowButton('fa-times cancel-follow',item.data.follower_id);
                                     data.notifLi.append(data.text)
-                                        .append(data.accept)
-                                        .append(data.cancel);
+                                                .append(data.accept)
+                                                .append(data.cancel);
                                     data.notifMenu.append(data.notifLi);
                                     data.notif.append(data.notifMenu);
-                                    });
-                                break;
-                case res.comment : array.map( item => {
-                                        data.notifLi = $('<li class="dropdown-item text-primary form-group header-request">');
-                                        data.text = item.name +  " applied on your comment. ";
-                                        data.notifLi.append(data.text);
-                                        data.notifMenu.append(data.notifLi);
-                                        data.notif.append(data.notifMenu);
-                                    });
-            }
-
+                                    break;
+                    case 'comment': data.notifLi = $('<li class="dropdown-item text-primary form-group header-request">');
+                                    data.text = item.data.commentator_name +  " applied on your comment. ";
+                                    data.notifLi.append(data.text);
+                                    data.notifMenu.append(data.notifLi);
+                                    data.notif.append(data.notifMenu);
+                                    break;
+                    default: break;
+                }
+            });
         }
     };
 
@@ -41,19 +41,14 @@ $(() => {
         $.ajax({
             url     : '/notifications',
             method  : 'POST',
-            data    : {
-                'get_id' : data.get_id
-            },
             success: res => {
 
                 if(res.status === "success"){
+                    if(res.notifications){
 
-                    if(res.follow){
-                        createNotification(res.follow.length, res.follow);
-                    }else if(res.comment){
-                        console.log(res.comment);
-                        createNotification(res.comment.length, res.comment);
+                        createNotification(res.notifications);
                     }
+
                     if(res.info){
                         res.info.map( item => {
                             data.sendInput = $('.send-message');
@@ -92,9 +87,6 @@ $(() => {
             $.ajax({
                 url:    '/seen',
                 method: 'POST',
-                data:{
-                    'id' : data.get_id
-                },
                 success: res => {
                     if(res.status === 'success'){
                         return true;
@@ -112,6 +104,72 @@ $(() => {
                 }
             })
         }
+    });
+
+    /**
+     * Message Window
+     */
+
+    $(document).on('click','.open-message', e => {
+
+        e.preventDefault();
+        data.this   = $(e.target);
+        data.name   = data.this.text();
+        data.to     = data.this.data('id');
+        data.avatar = data.this.parent().find('.followers-avatar');
+
+        $.ajax({
+            url:    '/select-messages',
+            method: 'POST',
+            data:   {
+                'to'    : data.to
+            },
+            success: res => {
+                if(res.status === 'success'){
+                    data.message.fadeIn();
+                    data.sendInput = $('.send-message');
+                    data.xsUserAvatar = '<img class="rounded-circle xs-avatar" src="'+data.avatar.attr('src')+'">';
+                    data.toFriendProfile = '<a href="http://github.dev/user/'+data.to+'" target="_blank">'
+                                                +data.name+
+                                            '</a>';
+                    data.userName.html(data.xsUserAvatar + " " + data.toFriendProfile);
+                    data.sendInput.attr("data-id",data.to);
+
+                    if(res.messages){
+                        res.messages.map( item => {
+
+                            if(item.from == data.get_id){
+                                data.color      = "info";
+                                data.position   = "right";
+                            }else{
+                                data.color      = "success";
+                                data.position   = "left";
+                            }
+                            data.create = createMessage(item.message, item.created_at, data.color, data.position);
+                            data.messageBody.append(data.create);
+                            scrollDown(data.messageBody);
+                        });
+                    }
+                }
+            },
+            statusCode: {
+                404: res => {
+                    arrangeResponse(res.responseJSON);
+                },
+                422: res => {
+                    arrangeResponse(res.responseJSON, 'fail', 422);
+                }
+            }
+        });
+    });
+
+    /**
+     * Close message window
+     */
+    $(document).on('click','.close', () => {
+
+        data.messageBody.html("");
+        data.message.fadeOut();
     });
 
     $(document).on('keyup','.send-message', e => {

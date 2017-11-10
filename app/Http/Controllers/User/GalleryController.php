@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Requests\GalleriesDestroy;
-use App\Http\Requests\GalleryProfilePhoto;
-use App\Http\Requests\StoreGalleries;
-use App\Http\Requests\UserGalleries;
 use File;
-use App\User;
 use App\Gallery;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreGalleries;
+use App\Http\Requests\GalleriesDestroy;
+use App\Http\Requests\GalleryProfilePhoto;
 
 class GalleryController extends Controller
 {
@@ -20,7 +18,11 @@ class GalleryController extends Controller
      */
     public function index()
     {
+        $user = get_auth();
+        $galleries = $user->galleries;
+        $gallery = (count($galleries)) > 0 ? $galleries : null;
 
+        return view('front.profile.gallery', compact('gallery'));
     }
 
     /**
@@ -66,14 +68,10 @@ class GalleryController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show(UserGalleries $request, $id)
+    public function show($id)
     {
 
-        $user = User::find($id);
-        $galleries = $user->galleries;
-        $gallery = (count($galleries)) > 0 ? $galleries : null;
 
-        return view('front.profile.gallery', compact('gallery'));
     }
 
     /**
@@ -104,11 +102,11 @@ class GalleryController extends Controller
 
         $user = get_auth();
 
-        $gallery  = $user->galleries()->find($request->image_id);
+        $gallery = $user->galleries()->find($request->image_id);
 
         unlink(storage_path('app/public/' . $user->id . "/" . $user->avatar));
-        $copy   = storage_path('app/public/' . $user->id . "/gallery/" . $gallery->image);
-        $to     = storage_path('app/public/' . $user->id . "/" . $gallery->image);
+        $copy = storage_path('app/public/' . $user->id . "/gallery/" . $gallery->image);
+        $to = storage_path('app/public/' . $user->id . "/" . $gallery->image);
 
         File::copy($copy, $to);
         $user->avatar = $gallery->image;
@@ -133,14 +131,16 @@ class GalleryController extends Controller
         $src = basename($request->src);
         $user = get_auth();
         unlink(storage_path('app/public/' . $user->id . '/gallery/' . $src));
+        $galleries = $user->galleries()->find($id);
 
-        $delete = $user->galleries()->find($id)->delete();
+        if($galleries){
 
-        if($delete){
-            return response([
-                'status' => 'success',
-                'message'=> 'Gallery delete successfully complete.',
-            ], 200);
+            if($galleries->delete()){
+                return response([
+                    'status' => 'success',
+                    'message'=> 'Gallery delete successfully complete.',
+                ], 200);
+            }
         }
 
         return response([

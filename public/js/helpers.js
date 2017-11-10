@@ -1,14 +1,3 @@
-"use strict";
-
-var languages = ['Danish', 'Norwegian', 'Swedish'];
-
-// Pollutes global namespace. Ew!
-for (var i = 0; i < languages.length; i += 1) {
-    console.log(`${languages[i]} is a Scandinavian language.`);
-}
-
-
-
 $(() => {
 
     data = {
@@ -32,8 +21,8 @@ $(() => {
         'messageBody'   : $('.anyClass'),
         'citeElements'  : $('.cite'),
         'seenText'      : $('<cite>').addClass('cite last').text(' Seen!'),
+        'notif'         : $('.notifications'),
         'notifMenu'     : $('<ul>').addClass('dropdown-menu').attr('aria-labelledby', "navbarDropdownMenuLink"),
-        'notif'         : $('li.dropdown'),
         'form_post'     : $('.form-post'),
         'profile_photo' : $('.card-img-top').attr('src'),
         'profile_name'  : $('.navbar-brand').text(),

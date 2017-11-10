@@ -11,6 +11,11 @@ class Comment extends Model
 
     protected $fillable = ['comment','post_id','user_id','parent_id'];
 
+    protected function getCreatedAtAttribute()
+    {
+        return parseCreatedAt($this->attributes['created_at']);
+    }
+
     public function user(){
 
         return $this->belongsTo('App\User')->select(['id', 'name','avatar']);

@@ -9,6 +9,4 @@ class Notify extends Model{
     protected $table = 'notifications';
 
 
-
-
 }

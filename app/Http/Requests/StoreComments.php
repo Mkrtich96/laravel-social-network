@@ -27,7 +27,6 @@ class StoreComments extends FormRequest
         return [
             'post_id'   =>  'required|exists:posts,id',
             'comment'   =>  'required|string',
-            'user_id'   =>  'required|exists:users,id',
             'parent_id' =>  'exists:comments,id'
         ];
     }

@@ -12,6 +12,10 @@ class Message extends Model
 
     public $primarykey = 'to';
 
+    protected function getCreatedAtAttribute()
+    {
+        return parseCreatedAt($this->attributes['created_at']);
+    }
 
     public function user() {
 
