@@ -12,14 +12,17 @@ class CommentNotify extends Notification
 
     protected $user;
 
+    protected $post;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($user)
+    public function __construct($data)
     {
-        $this->user = $user;
+        $this->user = $data['user'];
+        $this->post = $data['post'];
     }
 
     /**
@@ -43,6 +46,7 @@ class CommentNotify extends Notification
     {
         return [
             'repliedTime' => Carbon::now(),
+            'post_id' => $this->post,
             'commentator_id'    => $this->user->id,
             'commentator_name'  => $this->user->name
         ];

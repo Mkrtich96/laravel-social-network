@@ -2,25 +2,24 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Requests\StoreMessageHistory;
-use App\User;
 use App\Message;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreMessageSend;
+use App\Http\Requests\StoreMessageHistory;
 
 class MessageController extends Controller
 {
     public function send(StoreMessageSend $request){
 
-        $auth_id = get_auth('id');
+        $user = get_auth();
 
-        $user_message = Message::create([
-                            'from'  =>  $auth_id,
-                            'to'    =>  $request->user_id,
-                            'message' =>    $request->message,
-                            'seen'  =>  0
-                        ]);
+        $message = new Message([
+                        'to'=> $request->user_id,
+                        'message' => $request->message,
+                        'seen' => 0
+                    ]);
+
+        $user_message = $user->messagesfrom()->save($message);
 
         if($user_message){
             return response([
@@ -65,55 +64,40 @@ class MessageController extends Controller
             ], 200);
         }
 
-        $user_messages = $user->messages()->where('seen',0)
+        $user_messages = $user->messages()->with('user')
+                                            ->where('seen',0)
                                             ->get();
-
         /**
          * Select messages.
          */
         if(count($user_messages) > 0){
 
-            $data = array();
+            $update_seen = $user->messages()->where('seen',0)
+                ->update(['seen' => 2 ]);
 
-            foreach ($user_messages as $message) {
+            if($update_seen){
 
-                $from = User::find($message->from);
-                $data[] = [
-                    'message'   =>  $message->message,
-                    'id'        =>  $from->id,
-                    'name'      =>  $from->name,
-                    'avatar'    =>  $from->avatar,
-                    'date'      =>  $from->created_at
-                ];
-                $update_seen = $user->messages()->where('seen',0)
-                                                    ->update(['seen' => 2 ]);
-                if($update_seen){
-                    continue;
-                }else{
-                    return response([
-                                'status' => 'fail',
-                                'message'=> "'Seen don't updated. Error 404."
-                            ], 404);
-                }
+                return response([
+                    'status'=> 'success',
+                    'message'=> 'Messages selected successfully.',
+                    'received_messages'  =>  $user_messages
+                ], 200);
             }
 
             return response([
-                'status'=> 'success',
-                'message'=> 'Messages selected successfully.',
-                'info'  =>  $data
-            ], 200);
-
+                'status' => 'fail',
+                'message'=> "'Seen don't updated. Error 404."
+            ], 404);
         }else{
             /**
              * Seen messages.
              */
-            $messages = Message::where('from',$user->id)->get()->last();
+            $messages = $user->messagesfrom()->get()->last();
 
-            if(!is_null($messages)){
+            if(isset($messages)){
                 if($messages->seen == 3){
 
-                    $messages->seen = 1;
-                    $seen_update = $messages->save();
+                    $seen_update = $user->messagesfrom()->update(['seen' => 1]);
 
                     if($seen_update){
 
@@ -194,3 +178,4 @@ class MessageController extends Controller
 
     }
 }
+

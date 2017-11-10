@@ -91,33 +91,11 @@ class UserController extends Controller
         if(is_null($auth->provider)){
 
             $followers_list = $this->getFollowersList($user_id);
-            $read_notifications =   $auth->readnotifications;
+            $readnotifications =   $auth->readnotifications;
 
-            if(count($read_notifications) > 0){
+            if(count($readnotifications) > 0){
 
-                foreach ($read_notifications as $notification) {
-                    switch($notification->system){
-                        case 'follow' :
-                            $notifications[] = [
-                                'system' => 'follow',
-                                'follower_name' => $notification->data['follower_name'],
-                                'follower_id' => $notification->data['follower_id'],
-                            ];
-                            break;
-                        case 'comment':
-                            $comment = Comment::where('parent_id',$notification->notifiable_id)->first();
-                            $post =  $comment->post->with('user')->first();
-                            $notifications[] = [
-                                'system' => 'comment',
-                                'commentator_name' => $notification->data['commentator_name'],
-                                'commentator_id' => $notification->data['commentator_id'],
-                                'notifiable_id' =>  $notification->notifiable_id,
-                                'in_user_post' => $post->user->id,
-                            ];
-                            break;
-                        default: break;
-                    }
-                }
+                $notifications = $readnotifications;
             }else{
                 $notifications = null;
             }
@@ -200,12 +178,8 @@ class UserController extends Controller
             $post_status = true;
         }
 
-        if($post_status){
-            $posts = $this->generatePostStatus($user,true);
-        }else{
-            $posts = $this->generatePostStatus($user,false);
-        }
 
+        $posts = $this->generatePostStatus($user, $post_status);
 
         $user_avatar = $this->generate_avatar($user);
         $followers_list =   $this->getFollowersList($auth->id);

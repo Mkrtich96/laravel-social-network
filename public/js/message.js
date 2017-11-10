@@ -12,6 +12,7 @@ $(() => {
 
         if(Array.isArray(array)){
             array.map( item => {
+                console.log(item.data);
                 switch (item.system){
                     case 'follow':  data.notifLi = $('<li class="dropdown-item text-primary form-group header-request">');
                                     data.text = item.data.follower_name +  " send follow request. ";
@@ -49,17 +50,17 @@ $(() => {
                         createNotification(res.notifications);
                     }
 
-                    if(res.info){
-                        res.info.map( item => {
+                    if(res.received_messages){
+                        res.received_messages.map( message => {
                             data.sendInput = $('.send-message');
                             data.message.show();
-                            data.text = createMessage(item.message, item.date, "success", "left");
+                            data.text = createMessage(message.message, message.created_at, "success", "left");
                             data.messageBody.append(data.text);
-                            data.toFriendProfile =  "<a href='http://github.dev/user/"+ item.id +"' target='_blank' >"
-                                + item.name +
-                                "</a>";
+                            data.toFriendProfile =  "<a href='http://github.dev/user/"+ message.user.id +"' target='_blank' >"
+                                                        + message.user.name +
+                                                    "</a>";
                             data.userName.html(data.toFriendProfile);
-                            data.sendInput.attr('data-id',item.id);
+                            data.sendInput.attr('data-id',message.id);
                             scrollDown(data.messageBody);
                         });
                     }
@@ -137,7 +138,6 @@ $(() => {
 
                     if(res.messages){
                         res.messages.map( item => {
-
                             if(item.from == data.get_id){
                                 data.color      = "info";
                                 data.position   = "right";
@@ -167,7 +167,6 @@ $(() => {
      * Close message window
      */
     $(document).on('click','.close', () => {
-
         data.messageBody.html("");
         data.message.fadeOut();
     });

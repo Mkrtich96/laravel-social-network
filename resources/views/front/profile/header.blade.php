@@ -29,21 +29,22 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 @foreach($notifications as $notify)
-                                    @if($notify['system'] == 'follow')
+                                    @if($notify->system == 'follow')
                                     <li class="dropdown-item text-primary form-group header-request">
-                                        {{ $notify['follower_name'] }} send follow request
-                                        <a data-id="{{ $notify['follower_id'] }}"
+                                        {{ $notify->data['follower_name'] }} send follow request
+                                        <a data-id="{{ $notify->data['follower_id'] }}"
                                             class="fa fa-check text-right accept-follow"></a>
-                                        <a data-id="{{ $notify['follower_id'] }}"
+                                        <a data-id="{{ $notify->data['follower_id'] }}"
                                            class="fa fa-times text-right cancel-follow"></a>
                                     </li>
-                                    @elseif($notify['system'] == 'comment')
+                                    @elseif($notify->system == 'comment')
+
                                         <li class="dropdown-item form-group header-request">
-                                            <a href="{{ route('user.guest',$notify['commentator_id']) }}" target="_blank">
-                                                {{ $notify['commentator_name'] }}
+                                            <a href="{{ route('user.guest',$notify->data['commentator_id']) }}" target="_blank">
+                                                {{ $notify->data['commentator_name'] }}
                                             </a>
                                             applied to your comment.
-                                            <a class="comment-seen" href="{{ route('user.guest',$notify['in_user_post']) }}" data-id="{{ $notify['commentator_id'] }}" parent-id="{{ $notify['notifiable_id'] }}" target="_blank">
+                                            <a class="comment-seen" href="{{ route('user.guest',$notify->data['post_id']) }}" data-id="{{ $notify->data['commentator_id'] }}" parent-id="{{ $notify->notifiable_id }}" target="_blank">
                                                 see.
                                             </a>
                                         </li>

@@ -37,10 +37,17 @@ class PostController extends Controller
      */
     public function store(StorePost $request)
     {
+        $user = get_auth();
 
-        $post = Post::create($request->all());
+        $new_post = new Post([
+                    'text' => $request->text,
+                    'status' => $request->status
+                ]);
+
+        $post = $user->posts()->save($new_post);
 
         if($post){
+
             return response([
                 'status' => 'success',
                 'message'=> 'Post created successfully.',

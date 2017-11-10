@@ -84,8 +84,9 @@ class CommentController extends Controller
                 $user_comment = $post->comments()->save(new Comment($data));
 
                 if($user_comment){
+                    $notification_data = ['user' => get_auth(), 'post' => $request->post_id];
                     $parent_notify = $user_comment->parent()->with('user')->first();
-                    $parent_notify->user->notify(new CommentNotify(get_auth()));
+                    $parent_notify->user->notify(new CommentNotify($notification_data));
                     $commantable = false;
                 }
             }else{

@@ -24,7 +24,6 @@ class StorePost extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required|exists:users,id',
             'text'   => 'required|max:100',
             'status' => 'required|regex:/^([0,1])$/',
         ];

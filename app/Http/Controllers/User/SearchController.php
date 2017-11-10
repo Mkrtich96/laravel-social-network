@@ -20,7 +20,7 @@ class SearchController extends Controller
     {
 
         $auth_id = get_auth('id');
-        $searchResult = [];
+        $searchResult = array();
 
         $users = User::where([
                             ['name', 'LIKE', $request->term . "%"],
@@ -32,23 +32,22 @@ class SearchController extends Controller
         if (count($users) == 0) {
             $searchResult[] = "Users not found.";
         } else {
-            foreach ($users as $user => $value) {
+            $notify = Notify::where('to', $auth_id)->first();
 
-                $query = Notify::where('to', $auth_id)->first();
+            foreach ($users as $user) {
 
-                if (!is_null($query)) {
+                if (!is_null($notify)) {
                     $follow = 2;
                 }else{
-                    $user = User::find($value->id);
                     $follow = check_follower_or_not($user->id, $auth_id);
                     $follow = (is_null($follow)) ? 0 : 1;
                 }
 
-                $user_avatar = generate_avatar($value);
+                $user_avatar = generate_avatar($user);
 
                 $searchResult[] = [
-                    'id'     => $value->id,
-                    'value'  => $value->name,
+                    'id'     => $user->id,
+                    'value'  => $user->name,
                     'follow' => $follow,
                     'avatar' => $user_avatar
                 ];
