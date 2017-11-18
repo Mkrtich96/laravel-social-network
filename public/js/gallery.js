@@ -12,7 +12,7 @@ $(() => {
         $.ajax({
 
             method  : "DELETE",
-            url     : "/gallery/" + data.id,
+            url     : `/gallery/${data.id}`,
             data    : {
                 'id'    :   data.id,
                 'src'   :   data.src
@@ -36,10 +36,8 @@ $(() => {
         });
     });
 
-    let showDeleteIcon = e => {
+    let showDeleteIcon = e => $(e.target).parent().find('.delete-img').fadeIn();
 
-        $(e.target).parent().find('.delete-img').fadeIn();
-    };
 
     $(document).on("mousemove",'.delete-img', showDeleteIcon);
 

@@ -13,15 +13,21 @@
     <link rel="stylesheet" href="{{asset('css/profile.css') }}">
     <link rel="stylesheet" href="{{asset('css/gallery.css') }}">
     <link rel="stylesheet" href="{{asset('css/font-awesome/font-awesome.min.css') }}">
-</head>
-<body>
-    @yield('content')
-</body>
     <script src="{{ asset('js/jquery.js') }}"></script>
     <script src="{{ asset('js/jquery-ui.js') }}"></script>
     <script src="{{ asset('js/popper.min.js') }}"></script>
     <script src="{{ asset('bootstrap4/js/bootstrap.min.js') }}"></script>
+</head>
+<body>
+    @yield('content')
+</body>
+    <script>
+        $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
     <script src="{{ asset('js/helpers.js') }}"></script>
+    <script src="{{ asset('js/conversation.js') }}"></script>
     <script src="{{ asset('js/providers.js') }}"></script>
     <script src="{{ asset('js/script.js') }}"></script>
     <script src="{{ asset('js/gallery.js') }}"></script>

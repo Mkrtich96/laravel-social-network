@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\User;
 
 use App\Post;
-use App\Http\Requests\StorePost;
 use Illuminate\Http\Request;
+use App\Http\Requests\StorePost;
 use App\Http\Controllers\Controller;
 
 class PostController extends Controller
@@ -24,25 +24,14 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StorePost $request)
+    public function create(StorePost $request)
     {
         $user = get_auth();
 
         $new_post = new Post([
-                    'text' => $request->text,
-                    'status' => $request->status
-                ]);
+            'text' => $request->text,
+            'status' => $request->status
+        ]);
 
         $post = $user->posts()->save($new_post);
 
@@ -60,6 +49,17 @@ class PostController extends Controller
             'status'    =>  'fail',
             'message'   =>  'Post don\'t created, connection error!'
         ], 404);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+
     }
 
     /**

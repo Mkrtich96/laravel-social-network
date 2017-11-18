@@ -1,7 +1,6 @@
-$(() => {
+(() => {
 
     data = {
-        "token"         : $('meta[name="csrf-token"]').attr('content'),
         "cards"         : $('.cards'),
         "search_win"    : $('.modal').find('.modal-body'),
         "cardTitle"     : $('<h4 class="card-title">'),
@@ -9,8 +8,9 @@ $(() => {
         "lists"         : $('.list-group-item'),
         "dropdowns"     : $('.dropdowns'),
         "menu"          : $('.dropdown-menu'),
+        "modal_friends" : $('.modal-search-users'),
         "input"         : $('<input>'),
-        "search"        : $(".search-input"),
+        "search_friends": $(".search-friends"),
         "followers"     : $(".list-group"),
         "message"       : $('.message'),
         "userName"      : $('.user-name'),
@@ -28,44 +28,44 @@ $(() => {
         'profile_name'  : $('.navbar-brand').text(),
     };
 
-
-
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': data.token
-        }
-    });
-
-
-
     arrangeResponse = (data, status = null, type = null) => {
-
         if(data.status === "fail"){
             console.error(data.message);
-        }else if(data[0].status === "fail"){
-            console.error("Invalid "+ type +" "+ status +" response.")
+        }else{
+            console.error(data[0]);
         }
-
     };
 
-    createMessage = (value, date, color, sender)  => {
+    createMessage = (value, date, user = false, color, sender)  => {
 
-        data.li     =   "<li class='list-group-item list-group-item-"+ color +" text-"+ sender +" message-text'>"
-                            + value +
-                            "<br>" +
-                            "<cite class='cite' title='" + date + "'>" + date + "</cite>" +
-                        "</li>";
+        data.li = $('<li>').addClass(`list-group-item list-group-item-${color} text-${sender} message-text`)
+            .append(value + "<br><cite class='cite' title='"+date+"'>" +date + "</cite>");
+
+        if(user === false){
+
+            return data.li;
+        }else if(user.avatar === null){
+
+            data.avatar = 'http://github.dev/images/avatars/male.gif';
+        }else{
+
+            data.avatar = `http://github.dev/images/${user.id}/${user.avatar}`;
+        }
+
+        data.img = $('<img>').addClass('rounded-circle conversations-avatar float-' + sender)
+            .attr('src', data.avatar);
+
+        data.li.prepend("<h6 class='mb-1'>"+ user.name +"</h6>").prepend(data.img);
+
         return data.li;
     };
 
-    scrollDown = element => {
+    scrollDown = element => element.scrollTop(element[0].scrollHeight);
 
-        return element.scrollTop(element[0].scrollHeight);
-    };
 
-    createFollowButton = (clasS, data_id) => {
+    createFollowButton = (clasS, data_id) => $('<a class="fa '+ clasS +' text-right">').attr('data-id', data_id);
 
-        return $('<a class="fa '+ clasS +' text-right">').attr('data-id', data_id);
-    };
-    
-});
+
+})();
+
+

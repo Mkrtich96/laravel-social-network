@@ -81,45 +81,29 @@ class UserController extends Controller
 
         $auth = User::find($user_id);
 
-        if (is_null($auth)) {
-            return redirect('404');
-        }
-
         /**
          * Registered Users
          */
         if(is_null($auth->provider)){
 
-            $followers_list = $this->getFollowersList($user_id);
-            $readnotifications =   $auth->readnotifications;
+            // Auth user followers
+            $followers_list = $this->getFollowersList($auth->id);
 
-            if(count($readnotifications) > 0){
+            // Auth user notifications
+            $notifications =   $auth->readnotifications;
 
-                $notifications = $readnotifications;
-            }else{
-                $notifications = null;
-            }
+            // Auth user posts
+            $posts  =   $this->generatePostStatus($auth,true);
 
-            $user_posts  =   $this->generatePostStatus($auth,true);
-
-            if((count($user_posts) > 0)){
-
-                $posts = $user_posts;
-            }else{
-                $posts = null;
-            }
-
-            /**
-             * Auth user Avatar
-             */
+            // Auth user avatar
             $user_avatar = generate_avatar($auth);
 
             return view('front.user',compact(
-                 'auth',
-                      'user_avatar',
-                         'notifications',
-                         'followers_list',
-                         'posts'));
+                     'auth',
+                          'user_avatar',
+                             'notifications',
+                             'followers_list',
+                             'posts'));
         }
 
         /**
@@ -168,20 +152,20 @@ class UserController extends Controller
 
         if(is_null($consider_follow)){
 
-            $followButton  = $this->crtFollowBtn('outline-primary follow',$id, 'Follow');
+            $followButton = $this->crtFollowBtn('outline-primary follow',$id, 'Follow');
         }elseif(!is_null($notifications)){
 
             $followButton = $this->crtFollowBtn('secondary cancel-follow',$id, 'Cancel Request');
         }else{
 
-            $followButton  = $this->crtFollowBtn('secondary unfollow',$id, 'Unfollow');
+            $followButton = $this->crtFollowBtn('secondary unfollow',$id, 'Unfollow');
             $post_status = true;
         }
 
 
         $posts = $this->generatePostStatus($user, $post_status);
 
-        $user_avatar = $this->generate_avatar($user);
+        $user_avatar = generate_avatar($user);
         $followers_list =   $this->getFollowersList($auth->id);
 
 
@@ -201,6 +185,7 @@ class UserController extends Controller
         $user = get_auth();
 
         if(!is_null($user->avatar)){
+
             unlink(storage_path('app/public/'. $user->id . '/' . $user->avatar));
         }
 
@@ -268,28 +253,6 @@ class UserController extends Controller
         return $button;
     }
 
-    public function generate_avatar($data){
-
-        $avatar = null;
-
-        if(is_null($data->avatar)) {
-            if (!$data->gender){
-
-                $store = 'avatars/male.gif';
-            }else{
-
-                $store = 'avatars/female.gif';
-            }
-        }else{
-
-            $store = $data->id . '/' . $data->avatar;
-        }
-
-        $avatar = asset('images/' . $store);
-
-        return $avatar;
-    }
-
     public function generatePostStatus($user, $status = false) {
 
         $user_posts = null;
@@ -313,41 +276,18 @@ class UserController extends Controller
         return null;
     }
 
-    public function getFollowersList($user_id){
+    public function getFollowersList($user_id)
+    {
 
-        $followers_list = array();
+        $followers = Follow::where('user_id', $user_id)
+            ->orWhere('follower_id', $user_id)
+            ->get();
 
-        $followers = Follow::where('user_id',$user_id)
-                            ->orWhere('follower_id',$user_id)
-                            ->get();
+        if (count($followers) > 0) {
 
-        if(count($followers) > 0){
-
-            foreach ($followers as $follower) {
-
-                if($user_id == $follower->user_id){
-
-                    $follow = User::find($follower->follower_id);
-                    $follower_id = $follower->follower_id;
-
-                }elseif($user_id == $follower->follower_id){
-
-                    $follow = User::find($follower->user_id);
-                    $follower_id = $follower->user_id;
-                }
-
-                $followers_list[]     = [
-                    'id'    =>  $follower_id,
-                    'name'  =>  $follow->name,
-                    'avatar'=>  $this->generate_avatar($follow)
-                ];
-            }
-        }else{
-            $followers_list = null;
+            return $followers;
         }
 
-        return $followers_list;
+        return null;
     }
-
-
 }

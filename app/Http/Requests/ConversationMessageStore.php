@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class GalleriesDestroy extends FormRequest
+class ConversationMessageStore extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +23,9 @@ class GalleriesDestroy extends FormRequest
      */
     public function rules()
     {
-
         return [
-            'id'  => 'required|exists:galleries',
-            'src' => 'required|string',
+            'message' => 'required|string|max:200',
+            'conversation_id' => 'required|exists:conversations,id'
         ];
     }
 }

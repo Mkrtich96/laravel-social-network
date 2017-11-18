@@ -1,15 +1,37 @@
 $(() => {
 
+    console.log(data);
 
     let searchRes = null;
 
     /**
      * Search autocompleate
      */
-    data.search.autocomplete({
-        source  : '/search',
+    $(".search-input").autocomplete({
+        source: '/search',
         response: (event,ui) => {
             searchRes = ui.content;
+        }
+    });
+
+    $(".search-friends").autocomplete({
+        source: '/search-followers',
+        select: (event,ui) => {
+
+            data.search_lists = $('<div>').addClass('form-check mt-4');
+            data.form_label = $('<label>').addClass('form-check-label');
+            data.form_input = $('<input>').addClass('form-check-input searched-users')
+                                            .attr({
+                                                'type': 'checkbox',
+                                                'data-id': ui.item.id
+                                            });
+            data.value = $('<a>').attr({
+                                    'href':`http://github.dev/user/${ui.item.id}`,
+                                    'target' : '_blank'
+                                    }).text(ui.item.value);
+            data.form_label.append(data.form_input).append(data.value);
+            data.search_lists.append(data.form_label);
+            $('.modal-search-friend .modal-body').append(data.search_lists);
         }
     });
 
@@ -41,7 +63,6 @@ $(() => {
                         data.badge.remove();
                     }
                     data.parent.text("Request accepted!");
-
                     data.unfllwBtn.attr("data-id", response.id);
 
                     data.avatar = $('<img>').addClass('rounded-circle followers-avatar')
@@ -85,9 +106,7 @@ $(() => {
         data.accidentally = data.parent.hasClass('header-request') ? 'to' : 'notifiable_id';
 
         data.ajaxData = {};
-
         data.ajaxData[data.accidentally] = data.follower_id;
-
 
         $.ajax({
             method  :   "POST",
@@ -154,7 +173,7 @@ $(() => {
                         data.this.removeClass('btn-primary unfollow').addClass('btn-outline-primary follow')
                             .attr("data-id",response.id)
                             .text("Follow");
-                        $('.list-group-item').find("[data-id="+data.follower_id+"]").parent().remove();
+                        $('.list-group-item').find(`[data-id=${data.follower_id}]`).parent().remove();
                     }
                 }else{
                     console.error("Invalid unfollow response! Connection error.")
@@ -165,7 +184,7 @@ $(() => {
                     arrangeResponse(res.responseJSON);
                 },
                 422:    res  =>  {
-                    arrangeResponse(res.responseJSON, 422, "unfollow");
+                    arrangeResponse(res.responseJSON.follower_id);
                 }
             }
         });
@@ -203,13 +222,11 @@ $(() => {
                 }
             }
         })
-
     });
 
     $(document).on("click",".search-btn", e => {
 
         e.preventDefault();
-
         if(!$.isEmptyObject(searchRes)){
 
             $('.modal-search-users').modal('show');
@@ -225,7 +242,7 @@ $(() => {
                 data.button     = $('<button>');
                 data.textDiv    = $('<div>').addClass('card-text');
                 data.cardLink   = $('<a>').attr({
-                                                'href' : "http://github.dev/user/"+ item.id,
+                                                'href' : `http://github.dev/user/${item.id}`,
                                                 'target' : '_blank'
                                             }).text(item.value);
                 data.cardTitle.append(data.cardLink);
@@ -243,7 +260,6 @@ $(() => {
                     default: data.button.addClass('btn btn-outline-primary follow')
                                             .attr("data-id", item.id)
                                             .text("Follow");
-
                 }
 
                 data.textDiv.append(data.button);
@@ -252,14 +268,11 @@ $(() => {
                 data.cards3.append(data.textDiv);
                 data.cards2.append(data.cards3);
                 data.cards1.append(data.cards2);
-                data.search_win.append(data.cards1);
+                $('.modal-search-users').find('.modal-body').append(data.cards1);
             });
         }else{
             console.error('Error with searching. Please revise jquery ui autocomplete function!')
         }
     });
-
-
-
 
 });

@@ -217,6 +217,10 @@ body {
     width: 50px;
 }
 
+.conversations-avatar {
+    width: 30px;
+}
+
 .xs-avatar {
     width: 23px; !important;
     border-radius: 10px;
@@ -226,7 +230,7 @@ body {
     cursor: pointer;
 }
 
-.message {
+.message{
     display: none;
     right: 25%;
     height: 300px;
@@ -234,6 +238,11 @@ body {
     position: fixed;
     left: inherit;
     background-color: honeydew;
+}
+
+.conversation {
+    background-color: honeydew;
+    height: 600px;
 }
 
 .message-footer {

@@ -32,7 +32,7 @@ class GalleryController extends Controller
      */
     public function create()
     {
-        //
+
     }
 
     /**
@@ -43,7 +43,6 @@ class GalleryController extends Controller
      */
     public function store(StoreGalleries $request)
     {
-
         $data = array();
         $user = get_auth();
         $files = $request->file('gallery');
@@ -70,7 +69,6 @@ class GalleryController extends Controller
      */
     public function show($id)
     {
-
 
     }
 

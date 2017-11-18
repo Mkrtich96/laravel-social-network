@@ -22,4 +22,9 @@ class Message extends Model
         return $this->belongsTo('App\User', 'from');
     }
 
+    public function conversation() {
+
+        return $this->belongsTo('App\Conversations', 'conversations_id');
+    }
+
 }

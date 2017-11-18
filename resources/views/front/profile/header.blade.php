@@ -16,11 +16,14 @@
                     <li class="nav-item">
                         <input class="get-id" type="hidden" data-id="{{ $auth['id'] }}">
                     </li>
+                    <li class="nav-item create-group">
+                        <a  class="nav-link text-left" data-toggle="modal" data-target=".bd-create-group-modal-lg">Group Chat</a>
+                    </li>
                     <li class="nav-item">
                         <a href="{{ route("gallery.index") }}"  class="nav-link text-left">Gallery</a>
                     </li>
                     <li class="nav-item dropdown notifications">
-                        @if(isset($notifications))
+                        @if(count($notifications) > 0)
                             <a class="nav-link dropdown-toggle notification"
                                id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
                                aria-expanded="false">

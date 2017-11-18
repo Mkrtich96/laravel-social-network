@@ -1,6 +1,6 @@
 $(() => {
 
-    let createNotification = (array) => {
+    let createNotification = array => {
 
         data.badge = data.notif.find('.badge');
         console.log(data.badge);
@@ -15,7 +15,7 @@ $(() => {
                 console.log(item.data);
                 switch (item.system){
                     case 'follow':  data.notifLi = $('<li class="dropdown-item text-primary form-group header-request">');
-                                    data.text = item.data.follower_name +  " send follow request. ";
+                                    data.text = `${item.data.follower_name} send follow request.`;
                                     data.accept = createFollowButton('fa-check accept-follow',item.data.follower_id);
                                     data.cancel = createFollowButton('fa-times cancel-follow',item.data.follower_id);
                                     data.notifLi.append(data.text)
@@ -25,7 +25,7 @@ $(() => {
                                     data.notif.append(data.notifMenu);
                                     break;
                     case 'comment': data.notifLi = $('<li class="dropdown-item text-primary form-group header-request">');
-                                    data.text = item.data.commentator_name +  " applied on your comment. ";
+                                    data.text = `${item.data.commentator_name} applied on your comment.`;
                                     data.notifLi.append(data.text);
                                     data.notifMenu.append(data.notifLi);
                                     data.notif.append(data.notifMenu);
@@ -56,9 +56,9 @@ $(() => {
                             data.message.show();
                             data.text = createMessage(message.message, message.created_at, "success", "left");
                             data.messageBody.append(data.text);
-                            data.toFriendProfile =  "<a href='http://github.dev/user/"+ message.user.id +"' target='_blank' >"
-                                                        + message.user.name +
-                                                    "</a>";
+                            data.toFriendProfile =  `<a href='http://github.dev/user/${message.user.id}' target='_blank' >
+                                                        ${message.user.name}
+                                                    </a>`;
                             data.userName.html(data.toFriendProfile);
                             data.sendInput.attr('data-id',message.id);
                             scrollDown(data.messageBody);
@@ -78,7 +78,6 @@ $(() => {
                     arrangeResponse(res.responseJSON, 'fail', 422);
                 }
             }
-
         })
     };
 
@@ -89,6 +88,7 @@ $(() => {
                 url:    '/seen',
                 method: 'POST',
                 success: res => {
+
                     if(res.status === 'success'){
                         return true;
                     }else{
@@ -123,22 +123,20 @@ $(() => {
             url:    '/select-messages',
             method: 'POST',
             data:   {
-                'to'    : data.to
+                'to': data.to
             },
             success: res => {
                 if(res.status === 'success'){
                     data.message.fadeIn();
                     data.sendInput = $('.send-message');
-                    data.xsUserAvatar = '<img class="rounded-circle xs-avatar" src="'+data.avatar.attr('src')+'">';
-                    data.toFriendProfile = '<a href="http://github.dev/user/'+data.to+'" target="_blank">'
-                                                +data.name+
-                                            '</a>';
-                    data.userName.html(data.xsUserAvatar + " " + data.toFriendProfile);
+                    data.xsUserAvatar = `<img class="rounded-circle xs-avatar" src="${data.avatar.attr('src')}">`;
+                    data.toFriendProfile = `<a href="http://github.dev/user/${data.to}" target="_blank">${data.name}</a>`;
+                    data.userName.html(`${data.xsUserAvatar} ${data.toFriendProfile}`);
                     data.sendInput.attr("data-id",data.to);
 
                     if(res.messages){
                         res.messages.map( item => {
-                            if(item.from == data.get_id){
+                            if(item.from === data.get_id){
                                 data.color      = "info";
                                 data.position   = "right";
                             }else{
@@ -177,7 +175,8 @@ $(() => {
         data.val = data.this.val().trim();
         data.id  = data.this.data('id');
 
-        if(event.keyCode == 13 && data.val != ""){
+        if(event.keyCode === 13 && data.val !== "" && !e.shiftKey){
+
             $.ajax({
                 url : "/send",
                 method : "POST",
@@ -214,6 +213,49 @@ $(() => {
 
         return false;
     });
+
+    $(document).on('keyup','.conversation-message', e => {
+        data.this   =   $(e.target);
+        data.conversation_id = data.this.parents('.conversation').data('id');
+        data.val = data.this.val().trim();
+        data.id  = data.this.data('id');
+        data.convers_mes_body = $('.convers-message-list');
+
+        if(event.keyCode === 13 && data.val !== "" && !e.shiftKey){
+
+            $.ajax({
+                url : "/conversation-message",
+                method : "POST",
+                data : {
+                    'message': data.val,
+                    'conversation_id': data.conversation_id
+                },
+                success : res => {
+                    if (res.status === "success") {
+                        data.this.val("");
+                        data.text = createMessage(data.val, res.date, res.auth, "info", "right");
+                        data.convers_mes_body.append(data.text);
+                        scrollDown(data.convers_mes_body);
+                    } else {
+                        console.error("Message dones't sended route('/send'). StatusCode: 200");
+                    }
+                },
+                statusCode : {
+                    404 : res => {
+                        arrangeResponse(res.responseJSON);
+                    },
+                    422 : res => {
+                        arrangeResponse(res.responseJSON, 'fail', 422);
+                    }
+                }
+            });
+        }
+    });
+
+    if($('.convers-message-list').length){
+
+        scrollDown($('.convers-message-list'));
+    }
 
     setInterval(responseMessage,5000);
 });

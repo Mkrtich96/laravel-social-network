@@ -41,7 +41,7 @@
 
         </form>
         <div class="cards">
-            @if( isset($posts) )
+            @if( count($posts) > 0 )
                 @foreach( $posts as $post )
                     <div class="parent-card users-res card col-12 col-sm-12">
                         <div class="card-body">

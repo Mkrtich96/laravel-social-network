@@ -49,8 +49,8 @@ class RepliedToFollow extends Notification
     {
         return [
             'repliedTime' => Carbon::now(),
-            'follower_id'    => $this->user->id,
-            'follower_name'  => $this->user->name
+            'follower_id' => $this->user->id,
+            'follower_name' => $this->user->name
         ];
     }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class GalleriesDestroy extends FormRequest
+class GroupCreateGet extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +23,17 @@ class GalleriesDestroy extends FormRequest
      */
     public function rules()
     {
-
-        return [
-            'id'  => 'required|exists:galleries',
-            'src' => 'required|string',
+        $rules = [
+            'name' => 'required|string'
         ];
+
+        $users = $this->input('users');
+
+        foreach ($users as $key => $value) {
+            $rules["users.{$key}"] = 'required|exists:users,id';
+        }
+
+        return $rules;
+
     }
 }

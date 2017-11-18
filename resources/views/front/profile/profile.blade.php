@@ -14,4 +14,8 @@
     </div>
     @include('front.profile.message_win')
     @include('front.profile.search_result')
+    @include('front.profile.create_group')
+
+
+
 </section>

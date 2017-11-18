@@ -3,23 +3,26 @@
 namespace App\Http\Controllers\User;
 
 use App\Message;
+use App\Conversations;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreMessageSend;
 use App\Http\Requests\StoreMessageHistory;
+use App\Http\Requests\ConversationMessageStore;
 
 class MessageController extends Controller
 {
+
+
     public function send(StoreMessageSend $request){
 
         $user = get_auth();
 
-        $message = new Message([
-                        'to'=> $request->user_id,
-                        'message' => $request->message,
-                        'seen' => 0
-                    ]);
-
-        $user_message = $user->messagesfrom()->save($message);
+        $user_message = $user->messagesfrom()->create([
+                                                    'to'=> $request->user_id,
+                                                    'message' => $request->message,
+                                                    'seen' => 0
+                                                ]);
 
         if($user_message){
             return response([
@@ -35,7 +38,77 @@ class MessageController extends Controller
         ],404);
     }
 
+    public function conversationMessage(ConversationMessageStore $request) {
 
+        $seen = array();
+        $auth = get_auth();
+        $conversation = Conversations::find($request->conversation_id);
+        $users = $conversation->users;
+
+        foreach ($users as $user) {
+            if($user->id != $auth->id){
+                $seen[$user->name] = 0;
+            }
+        }
+
+        $message = $conversation->messages()->create([
+            'from' => $auth->id,
+            'message' => $request->message,
+            'seen' => json_encode($seen)
+        ]);
+
+        if($message){
+
+            return response([
+                'status' => 'success',
+                'message' => 'Conversation message saved and sended successfuly',
+                'date' => $message->created_at,
+                'auth' => $auth
+            ], 200);
+        }
+
+        return response([
+            'status' => 'success',
+            'message' => 'Conversation message does\'t saved! conversatonMessage()'
+        ], 404);
+
+
+    }
+
+
+    public function selectGroupMessages(Request $request){
+
+        $this->validate($request, ['id' => 'required|exists:conversations']);
+
+        $auth = get_auth();
+        $conversation = $auth->conversations()->find($request->id);
+
+        $messages = $conversation->messages()->where([
+                                                    ['seen' ,'LIKE', 0],
+                                                    ['from','<>',$auth->id]
+                                                ])->with('user')->get();
+
+        if(count($messages) > 0) {
+            $update_status = $conversation->messages()
+                ->where('seen', 0)
+                ->update(['seen' => 1]);
+
+            if ($update_status) {
+
+                return response([
+                    'status' => 'success',
+                    'message' => 'Messages selected successfully.',
+                    'group_messages' => $messages
+                ], 200);
+            }
+
+            return response([
+                'status' => 'fail',
+                'message' => 'Messages selected successfully. But not updated, please see (/select-group-message)',
+                'group_messages' => $messages
+            ], 404);
+        }
+    }
     /**
      * @param $id
      * @return array|int
@@ -49,7 +122,6 @@ class MessageController extends Controller
     public function notifications(){
 
         $user = get_auth();
-
         $notifications = $user->unreadNotifications;
 
         // Notifications
@@ -72,8 +144,9 @@ class MessageController extends Controller
          */
         if(count($user_messages) > 0){
 
-            $update_seen = $user->messages()->where('seen',0)
-                ->update(['seen' => 2 ]);
+            $update_seen = $user->messages()
+                                ->where('seen',0)
+                                ->update(['seen' => 2 ]);
 
             if($update_seen){
 
@@ -175,7 +248,6 @@ class MessageController extends Controller
         }else{
             return null;
         }
-
     }
 }
 

@@ -1,6 +1,5 @@
 <?php
 
-
 Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
@@ -33,10 +32,18 @@ Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
         'destroy'
     ]]);
 
+    /**
+     *
+     */
+    Route::post('/select-groups', 'ConversationsController@selectGroups');
+    Route::resource('group', 'ConversationsController');
 
     /**
      * Search Routes
      */
+
+    Route::get('/search-followers','SearchController@searchFollowers');
+
     Route::resource('/search','SearchController');
 
     /**
@@ -59,10 +66,12 @@ Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
     /**
      * Messages system
      */
+    Route::post('/select-group-messages', 'MessageController@selectGroupMessages');
     Route::post('/select-messages','MessageController@selectMessages');
     Route::post('/seen','MessageController@seen');
     Route::post('/send','MessageController@send');
     Route::post('/notifications','MessageController@notifications');
+    Route::post('/conversation-message', 'MessageController@conversationMessage');
 
     /**
      * Post system

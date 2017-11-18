@@ -13,9 +13,14 @@ class Follow extends Model
         return parseCreatedAt($this->attributes['created_at']);
     }
 
-    public function user(){
+    public function userLeft(){
 
-        return $this->belongsTo('App\User');
+        return $this->belongsTo('App\User', 'user_id');
+    }
+
+    public function userRight(){
+
+        return $this->belongsTo('App\User', 'follower_id');
     }
 
 }

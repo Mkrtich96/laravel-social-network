@@ -20,14 +20,13 @@ body {
     position: relative;
 }
 
-.anyClass {
-    height:215px;
+.anyClass, .convers-message-list {
+    height:485px;
     overflow-y: auto;
     padding: inherit;
     width: 100%;
 
 }
-
 
 .anyClass::-webkit-scrollbar-track, .modal-body::-webkit-scrollbar-track
 {
@@ -59,6 +58,10 @@ body {
     color:currentColor
 }
 
+ul.ui-autocomplete {
+    z-index: 1100;
+}
+
 .alert-post-error, .alert-post-success {
     display: none;
 }
@@ -69,4 +72,9 @@ body {
 
 .comments-body {
     display: none;
+}
+
+.create-group {
+    width: 105px;
+    cursor: pointer;
 }

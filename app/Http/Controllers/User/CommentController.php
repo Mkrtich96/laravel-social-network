@@ -29,39 +29,7 @@ class CommentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
-    }
-
-    public function commentSeen(StoreCommentSeen $request) {
-
-        $notifications_delete = Notify::where([
-                                    ['notifiable_id' ,'=', $request->notifiable_id],
-                                    ['to' ,'=', $request->to],
-                                    ['system' ,'=', 'comment']
-                                ])->delete();
-
-        if($notifications_delete){
-
-            return response([
-                'status' => 'success',
-                'message'=> 'Notifications deleted successfully.'
-            ], 200);
-        }
-
-        return response([
-            'status' => 'fail',
-            'message'=> 'Notification doesn\'t deleted. Connection error.'
-        ], 404);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreComments $request)
+    public function create(StoreComments $request)
     {
         $commantable = true;
         $user_comment = null;
@@ -122,6 +90,38 @@ class CommentController extends Controller
             'status'  => 'fail',
             'message' => 'Comment don\'t created, connection error!'
         ], 404);
+    }
+
+    public function commentSeen(StoreCommentSeen $request) {
+
+        $notifications_delete = Notify::where([
+                                    ['notifiable_id' ,'=', $request->notifiable_id],
+                                    ['to' ,'=', $request->to],
+                                    ['system' ,'=', 'comment']
+                                ])->delete();
+
+        if($notifications_delete){
+
+            return response([
+                'status' => 'success',
+                'message'=> 'Notifications deleted successfully.'
+            ], 200);
+        }
+
+        return response([
+            'status' => 'fail',
+            'message'=> 'Notification doesn\'t deleted. Connection error.'
+        ], 404);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+
     }
 
     /**
