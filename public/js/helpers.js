@@ -36,10 +36,12 @@
         }
     };
 
-    createMessage = (value, date, user = false, color, sender)  => {
+    createMessage = (message, user = false, color, sender)  => {
+
 
         data.li = $('<li>').addClass(`list-group-item list-group-item-${color} text-${sender} message-text`)
-            .append(value + "<br><cite class='cite' title='"+date+"'>" +date + "</cite>");
+                            .attr('data-id', message.id)
+                            .append(message.message + "<br><cite class='cite' title='"+message.created_at+"'>" +message.created_at+ "</cite>");
 
         if(user === false){
 

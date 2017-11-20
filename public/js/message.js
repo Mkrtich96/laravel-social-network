@@ -192,7 +192,7 @@ $(() => {
                         if (data.messageText.find('.cite').last().hasClass('last')) {
                             data.messageText.find('.cite').last().remove();
                         }
-                        data.text = createMessage(data.val, res.date, "info", "right");
+                        data.text = createMessage(res.date, "info", "right");
                         data.messageBody.append(data.text);
                         scrollDown(data.messageBody);
                     } else {
@@ -207,10 +207,8 @@ $(() => {
                         arrangeResponse(res.responseJSON, 'fail', 422);
                     }
                 }
-
             });
         }
-
         return false;
     });
 
@@ -224,6 +222,7 @@ $(() => {
         if(event.keyCode === 13 && data.val !== "" && !e.shiftKey){
 
             $.ajax({
+                // conversationMessage method()
                 url : "/conversation-message",
                 method : "POST",
                 data : {
@@ -233,7 +232,7 @@ $(() => {
                 success : res => {
                     if (res.status === "success") {
                         data.this.val("");
-                        data.text = createMessage(data.val, res.date, res.auth, "info", "right");
+                        data.text = createMessage(res.date, res.auth, "info", "right");
                         data.convers_mes_body.append(data.text);
                         scrollDown(data.convers_mes_body);
                     } else {

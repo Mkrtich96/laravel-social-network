@@ -1,23 +1,25 @@
 $(() => {
 
     let groupResponse = () => {
+
+        data.message = $('.message-text').last();
         data.conversation = $('.group-id');
         data.conversation_id = data.conversation.data('id');
         data.convers_mes_body = $('.convers-message-list');
+        console.log(data.message.data('id'));
 
         $.ajax({
             url: '/select-group-messages',
             method: "POST",
             data: {
-                'id' : data.conversation_id
+                'id': data.conversation_id,
+                'message': data.message.data('id')
             },
             success: res => {
                 if(res.status === 'success'){
-                    console.log(res);
-                    res.group_messages.map(item => {
-                        data.message = createMessage(item.message, item.created_at, item.user, "success", "left");
-                        data.convers_mes_body.append(data.message);
-                    });
+
+                    data.message = createMessage(res.group_messages, res.group_messages.user, "success", "left");
+                    data.convers_mes_body.append(data.message);
                     scrollDown(data.convers_mes_body);
                 }
             },
@@ -38,5 +40,4 @@ $(() => {
 
         setInterval(groupResponse, 5000)
     }
-
 });

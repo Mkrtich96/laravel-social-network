@@ -27,7 +27,6 @@
         });
     </script>
     <script src="{{ asset('js/helpers.js') }}"></script>
-    <script src="{{ asset('js/conversation.js') }}"></script>
     <script src="{{ asset('js/providers.js') }}"></script>
     <script src="{{ asset('js/script.js') }}"></script>
     <script src="{{ asset('js/gallery.js') }}"></script>

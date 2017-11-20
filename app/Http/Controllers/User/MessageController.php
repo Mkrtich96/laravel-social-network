@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Http\Requests\StoreGroupMessages;
 use App\Message;
 use App\Conversations;
 use Illuminate\Http\Request;
@@ -25,10 +26,11 @@ class MessageController extends Controller
                                                 ]);
 
         if($user_message){
+
             return response([
                         'status' => 'success',
                         'message'=> 'Message sended successfully complete.',
-                        'date'  => $user_message->created_at
+                        'date'  => $user_message
                     ],200);
         }
 
@@ -40,21 +42,22 @@ class MessageController extends Controller
 
     public function conversationMessage(ConversationMessageStore $request) {
 
-        $seen = array();
+        $members = array();
         $auth = get_auth();
         $conversation = Conversations::find($request->conversation_id);
         $users = $conversation->users;
 
         foreach ($users as $user) {
             if($user->id != $auth->id){
-                $seen[$user->name] = 0;
+                $members[$user->name] = 0;
             }
         }
 
         $message = $conversation->messages()->create([
             'from' => $auth->id,
             'message' => $request->message,
-            'seen' => json_encode($seen)
+            'seen' => 0,
+            'members' => $members,
         ]);
 
         if($message){
@@ -62,7 +65,7 @@ class MessageController extends Controller
             return response([
                 'status' => 'success',
                 'message' => 'Conversation message saved and sended successfuly',
-                'date' => $message->created_at,
+                'date' => $message,
                 'auth' => $auth
             ], 200);
         }
@@ -76,37 +79,42 @@ class MessageController extends Controller
     }
 
 
-    public function selectGroupMessages(Request $request){
-
-        $this->validate($request, ['id' => 'required|exists:conversations']);
+    public function selectGroupMessages(StoreGroupMessages $request){
 
         $auth = get_auth();
         $conversation = $auth->conversations()->find($request->id);
 
         $messages = $conversation->messages()->where([
-                                                    ['seen' ,'LIKE', 0],
+                                                    ['id' ,'>', $request->message],
                                                     ['from','<>',$auth->id]
                                                 ])->with('user')->get();
 
+
         if(count($messages) > 0) {
-            $update_status = $conversation->messages()
-                ->where('seen', 0)
-                ->update(['seen' => 1]);
 
-            if ($update_status) {
+            foreach ($messages as $message) {
 
-                return response([
-                    'status' => 'success',
-                    'message' => 'Messages selected successfully.',
-                    'group_messages' => $messages
-                ], 200);
+                $members = $message->members;
+
+                if($members[$auth->name] == 0){
+                    $members[$auth->name] = 1;
+                    $message->members = $members;
+
+                    if($message->save()){
+
+                        return response([
+                            'status' => 'success',
+                            'message' => 'Messages selected successfully.',
+                            'group_messages' => $message
+                        ], 200);
+                    }
+
+                    return response([
+                        'status' => 'fail',
+                        'message' => 'Messages selected successfully. But not updated, please see (/select-group-message)',
+                    ], 404);
+                }
             }
-
-            return response([
-                'status' => 'fail',
-                'message' => 'Messages selected successfully. But not updated, please see (/select-group-message)',
-                'group_messages' => $messages
-            ], 404);
         }
     }
     /**

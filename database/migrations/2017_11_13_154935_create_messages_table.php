@@ -26,7 +26,8 @@ class CreateMessagesTable extends Migration
             $table->foreign('conversations_id')
                     ->references('id')
                     ->on('conversations');
-            $table->binary('seen');
+            $table->integer('seen');
+            $table->text('members')->nullable();
             $table->text('message');
             $table->timestamps();
         });

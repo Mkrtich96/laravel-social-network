@@ -8,9 +8,13 @@ class Message extends Model
 {
     protected $table = 'messages';
 
-    protected $fillable = ['from', 'to', 'seen', 'message'];
+    protected $fillable = ['from', 'to', 'seen', 'message','members'];
 
     public $primarykey = 'to';
+
+    protected $casts = [
+        'members' => 'array'
+    ];
 
     protected function getCreatedAtAttribute()
     {

@@ -10,8 +10,6 @@ Route::resource('auth', 'AuthController',['except' => [
 
 Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
 
-
-
     /**
      * User profile page
      */

@@ -1,3 +1,5 @@
+{{ dd(get_auth()) }}
+
 <div class="col">
     <div class="card-group">
         <div class="row w-100">
@@ -22,14 +24,14 @@
                             <ul class="convers-message-list">
                                 @foreach($conversation->messages as $message)
                                     @if($message->user->id === $auth->id)
-                                        <li class='list-group-item list-group-item-primary text-right message-text'>
+                                        <li class='list-group-item list-group-item-primary text-right message-text' data-id="{{ $message->id }}">
                                             <img src="{{ $avatar }}" class="rounded-circle conversations-avatar float-right">
                                             {{ $message->message }}
                                             <br>
                                             <cite class='cite' title='{{ $message->created_at }}'>{{ $message->created_at }}</cite>
                                         </li>
                                     @else
-                                        <li class='list-group-item list-group-item-success text-left message-text'>
+                                        <li class='list-group-item list-group-item-success text-left message-text' data-id="{{ $message->id }}">
                                             <img src="{{ generate_avatar($message->user) }}" class="rounded-circle conversations-avatar float-left">
                                             <h6 class="mb-1">{{ $message->user->name }}</h6>
                                             {{ $message->message }}
