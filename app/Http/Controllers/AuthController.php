@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as Auth;
 use Laravel\Socialite\Facades\Socialite as Socialite;
 
@@ -46,8 +46,8 @@ class AuthController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($provider)
-    {
+    public function show($provider){
+
         return Socialite::driver($provider)->redirect();
     }
 

@@ -8,22 +8,24 @@ class CreateUsersTable extends Migration
 {
     /**
      * Run the migrations.
-     *
      * @return void
      */
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('role')->default(1);
             $table->string('name');
             $table->string('email');
+            $table->boolean('admin')->default(false);
             $table->string('password')->nullable();
             $table->string('avatar')->nullable();
             $table->string('gender')->default('None');
             $table->string('provider')->nullable();
-            $table->string('api_info')->default('None');
             $table->integer('provider_id')->nullable();
+            $table->string('stripe_id')->nullable();
+            $table->string('stripe_account_id')->nullable();
+            $table->string('card_brand')->nullable();
+            $table->string('card_last_four')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

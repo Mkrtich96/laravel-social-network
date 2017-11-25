@@ -5,18 +5,21 @@ namespace App\Http\Controllers\User;
 use App\User;
 use App\Follow;
 use App\Notify;
-use App\Comment;
 use Illuminate\Http\Request;
 use App\Http\Requests\IndexGuest;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserProfilePhoto;
 use GrahamCampbell\GitHub\GitHubManager;
+use Ixudra\Curl\CurlService;
+use Ixudra\Curl\Facades\Curl;
 
 
 class UserController extends Controller
 {
 
     protected $github;
+
+    protected $disconnect_url = 'https://connect.stripe.com/oauth/deauthorize';
 
     public function __construct(GitHubManager $github)
     {
@@ -40,7 +43,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+
     }
 
 
@@ -71,15 +74,11 @@ class UserController extends Controller
 
     /**
      * Display the specified resource.
-     *
      * @param  int $id
      * @return \Illuminate\Http\Response
-     *
      */
-    public function show($user_id)
+    public function show(User $auth)
     {
-
-        $auth = User::find($user_id);
 
         /**
          * Registered Users
@@ -132,9 +131,8 @@ class UserController extends Controller
      * User profile page
      */
 
-    public function guestPage(IndexGuest $request, $id){
+    public function guestPage(User $user){
 
-        $user = User::find($request->id);
         $auth = get_auth();
         $post_status = false;
 
@@ -143,7 +141,7 @@ class UserController extends Controller
                                                 ->first();
 
 
-        if(!is_null($user->provider) || $id == $auth->id){
+        if(!is_null($user->provider) || $user->id == $auth->id || $user->admin){
 
             return redirect('/');
         }
@@ -152,22 +150,19 @@ class UserController extends Controller
 
         if(is_null($consider_follow)){
 
-            $followButton = $this->crtFollowBtn('outline-primary follow',$id, 'Follow');
+            $followButton = $this->crtFollowBtn('outline-primary follow',$user->id, 'Follow');
         }elseif(!is_null($notifications)){
 
-            $followButton = $this->crtFollowBtn('secondary cancel-follow',$id, 'Cancel Request');
+            $followButton = $this->crtFollowBtn('secondary cancel-follow',$user->id, 'Cancel Request');
         }else{
 
-            $followButton = $this->crtFollowBtn('secondary unfollow',$id, 'Unfollow');
+            $followButton = $this->crtFollowBtn('secondary unfollow',$user->id, 'Unfollow');
             $post_status = true;
         }
 
-
         $posts = $this->generatePostStatus($user, $post_status);
-
         $user_avatar = generate_avatar($user);
         $followers_list =   $this->getFollowersList($auth->id);
-
 
         return view('front.profile.user_page',
                     compact('user','user_avatar','user_comments','followButton', 'posts', 'auth', 'followers_list')
@@ -175,14 +170,84 @@ class UserController extends Controller
     }
 
     /**
+     * Connect user stripe account to platform
+     */
+
+    public function stripeConnect(Request $request)
+    {
+        if (isset($request->code)) {
+
+            $token_request_body = [
+                'grant_type' => 'authorization_code',
+                'client_id' => env('STRIPE_CLIENT_ID'),
+                'code' => $request->code,
+                'client_secret' => env('STRIPE_SECRET')
+            ];
+
+            $response = Curl::to(env('STRIPE_TOKEN_URI'))
+                                ->withData($token_request_body)
+                                ->asJson(true)
+                                ->post();
+
+            if($response){
+
+                $auth = get_auth();
+                $auth->stripe_account_id = $response['stripe_user_id'];
+
+                if($auth->save()){
+
+                    return redirect('/products')
+                                ->with('success','You are successfully connected!');
+                }
+            }
+        }
+
+        return redirect()
+                ->back()
+                ->with('error', 'Please try again later. Request failed.');
+    }
+
+    public function stripeDisconnect()
+    {
+
+        $auth = get_auth();
+
+        $response = Curl::to($this->disconnect_url)
+            ->withHeader("Authorization: Bearer " . env('STRIPE_SECRET'))
+            ->withData([
+                'client_id' => env('STRIPE_CLIENT_ID'),
+                'stripe_user_id' => $auth->stripe_account_id
+            ])->post();
+
+        if ($response) {
+
+            $update_disconnect = $auth->update(['stripe_account_id' => null]);
+
+            if ($update_disconnect) {
+
+                return redirect('/')
+                            ->with('success', 'You deauthorized from stripe account.');
+            } else {
+                return redirect('/')
+                            ->with('error', 'Your stripe account dissconneced, but not saved in server. Please try again later.');
+            }
+
+            return redirect()
+                    ->back()
+                    ->with('error', 'An error has occured. Please try again later.');
+        }
+    }
+
+
+    /**
      *  Update profile photo in profile page NOT FROM GALLERY
      */
 
     public function updateProfilePhoto(UserProfilePhoto $request) {
 
+        $user = get_auth();
         $file = $request->file('avatar');
         $ext  = $file->guessClientExtension();
-        $user = get_auth();
 
         if(!is_null($user->avatar)){
 
@@ -209,6 +274,7 @@ class UserController extends Controller
      */
     public function edit($id)
     {
+
 
     }
 
@@ -239,8 +305,6 @@ class UserController extends Controller
      * @param $data_id
      * @param $text
      * @return string
-     *
-     *
      * Custom created methods!!
      */
 

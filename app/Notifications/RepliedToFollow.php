@@ -5,13 +5,12 @@ namespace App\Notifications;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 
 class RepliedToFollow extends Notification
 {
     use Queueable;
     protected $user;
+
     /**
      * Create a new notification instance.
      * @return void
@@ -38,12 +37,6 @@ class RepliedToFollow extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
-    public function toArray($notifiable)
-    {
-        return [
-            //
-        ];
-    }
 
     public function toDatabase($notifiable)
     {

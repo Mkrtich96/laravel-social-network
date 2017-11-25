@@ -2,7 +2,7 @@
 
     data = {
         "cards"         : $('.cards'),
-        "search_win"    : $('.modal').find('.modal-body'),
+        "search_win"    : $('.modal-search-users').find('.modal-body'),
         "cardTitle"     : $('<h4 class="card-title">'),
         "button"        : $('<button>'),
         "lists"         : $('.list-group-item'),

@@ -176,6 +176,15 @@ return [
          */
 
         GrahamCampbell\GitHub\GitHubServiceProvider::class,
+
+        /*
+         * Cashier Laravel
+         */
+        Laravel\Cashier\CashierServiceProvider::class,
+        /*
+         * cURL PACKAGE
+         * */
+        Ixudra\Curl\CurlServiceProvider::class,
         /*
          * Application Service Providers...
          */
@@ -199,6 +208,7 @@ return [
     */
 
     'aliases' => [
+        'Curl' => Ixudra\Curl\Facades\Curl::class,
         'GitHub' => GrahamCampbell\GitHub\Facades\GitHub::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
         'App' => Illuminate\Support\Facades\App::class,

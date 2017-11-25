@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Products;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class IndexGuest extends FormRequest
+class ProductStore extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,16 +21,12 @@ class IndexGuest extends FormRequest
      *
      * @return array
      */
-    public function all()
-    {
-        return array_merge(parent::all(), $this->route()->parameters());
-    }
-
-
     public function rules()
     {
         return [
-            'id' => 'required|exists:users'
+            'name' => 'required|string|max:15',
+            'description' => 'required|string|max:50',
+            'price' => 'required|regex:/^\d*(\.\d{2})?$/'
         ];
     }
 }

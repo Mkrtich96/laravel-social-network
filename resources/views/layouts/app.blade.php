@@ -82,6 +82,5 @@
     <script src="{{ asset('js/providers.js') }}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="https://use.fontawesome.com/cf1e7fe2e3.js"></script>
-
 </body>
 </html>

@@ -1,5 +1,6 @@
 <?php
 
+
 Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
@@ -8,12 +9,40 @@ Route::resource('auth', 'AuthController',['except' => [
     'update', 'destroy'
 ]]);
 
+/**
+ * Admin profile page
+ */
+
+Route::group(['middleware' => ['admin'], 'namespace' => 'Admin'], function(){
+
+    Route::get('/admin/notifications', [
+        'uses' => 'AdminController@showNotifications',
+        'as' => 'admin.notifications'
+    ]);
+
+    Route::resource('/admin','AdminController');
+});
+
+
 Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
 
     /**
-     * User profile page
+     * Connect with Stripe account
      */
-    Route::get('user/{id}',['uses' => 'UserController@guestPage','as' => 'user.guest']);
+    Route::get('/profile/callback/stripe','UserController@stripeConnect');
+
+    /**
+     * Disconnect Stripe account
+     */
+    Route::post('/profile/stripe/disconnect', [
+        'uses' =>'UserController@stripeDisconnect',
+        'as'=>'disconnect.stripe'
+    ]);
+
+    /**
+     * User profile guest page
+     */
+    Route::get('user/{user}',['uses' => 'UserController@guestPage','as' => 'user.guest']);
 
     /**
      * Profile photo
@@ -26,12 +55,13 @@ Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
     /**
      * Auth profile
      */
-    Route::resource('profile', 'UserController',['except' => [
-        'destroy'
-    ]]);
+    Route::resource('profile', 'UserController',[
+        'except' => ['destroy'],
+        'parameters' => ['profile' => 'auth']
+    ]);
 
     /**
-     *
+     * User conversations
      */
     Route::post('/select-groups', 'ConversationsController@selectGroups');
     Route::resource('group', 'ConversationsController');
@@ -39,7 +69,6 @@ Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
     /**
      * Search Routes
      */
-
     Route::get('/search-followers','SearchController@searchFollowers');
 
     Route::resource('/search','SearchController');
@@ -83,5 +112,23 @@ Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
     Route::post('/comment-seen', 'CommentController@commentSeen');
 
     Route::resource('comment', 'CommentController');
+
+    /**
+     * Stripe configurations
+     */
+
+    // user all products
+    Route::resource('/products','ProductController');
+
+    // pay product
+    Route::post('/pay/{product}', [
+        'uses' => 'OrderController@postPayWithStripe',
+        'as' => 'pay'
+    ]);
+
+    Route::post('/store', [
+        'uses' => 'OrderController@postPayWithStripe',
+        'as' => 'store'
+    ]);
 
 });

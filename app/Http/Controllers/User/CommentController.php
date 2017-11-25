@@ -21,7 +21,7 @@ class CommentController extends Controller
      */
     public function index()
     {
-        //
+
     }
 
     /**
@@ -91,6 +91,7 @@ class CommentController extends Controller
             'message' => 'Comment don\'t created, connection error!'
         ], 404);
     }
+
 
     public function commentSeen(StoreCommentSeen $request) {
 

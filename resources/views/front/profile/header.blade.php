@@ -16,8 +16,11 @@
                     <li class="nav-item">
                         <input class="get-id" type="hidden" data-id="{{ $auth['id'] }}">
                     </li>
+                    <li class="nav-item ">
+                        <a href="{{ route('products.index') }}"  class="nav-link text-left modal-width" target="_blank">My Products</a>
+                    </li>
                     <li class="nav-item create-group">
-                        <a  class="nav-link text-left" data-toggle="modal" data-target=".bd-create-group-modal-lg">Group Chat</a>
+                        <a  class="nav-link text-left modal-width" data-toggle="modal" data-target=".bd-create-group-modal-lg">Group Chat</a>
                     </li>
                     <li class="nav-item">
                         <a href="{{ route("gallery.index") }}"  class="nav-link text-left">Gallery</a>
@@ -65,7 +68,7 @@
                     </li>
                     <li class="nav-item">
                         <form action="{{ route('logout') }}" method="post">
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            {{ csrf_field() }}
                             <a href="javascript:;" onclick="parentNode.submit();" class="nav-link sign-up text-center">Logout</a>
                         </form>
                     </li>

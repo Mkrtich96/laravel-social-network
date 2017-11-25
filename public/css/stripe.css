@@ -1,0 +1,72 @@
+#payment-form .StripeElement {
+    background-color: white;
+    padding: 10px 12px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    box-shadow: 0 1px 3px 0 #e6ebf1;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+}
+
+.form-rows {
+    width: 70%;
+    float: left;
+}
+
+label {
+    color: #6b7c93;
+    font-weight: 500;
+    font-size: 14px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 7px 14px rgba(50, 50, 93, .10), 0 3px 6px rgba(0, 0, 0, .08);
+    background-color: #43458b;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    outline: none;
+    text-decoration: none;
+    color: #fff;
+    background: #32325d;
+    /* white-space: nowrap; */
+    display: inline-block;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 14px;
+    box-shadow: 0 4px 6px rgba(50, 50, 93, .11), 0 1px 3px rgba(0, 0, 0, .08);
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    text-decoration: none;
+    -webkit-transition: all 150ms ease;
+    transition: all 150ms ease;
+    float: left;
+    margin-left: 12px;
+    margin-top: 28px;
+}
+
+#card-errors {
+    height: 20px;
+    padding: 4px 0;
+    color: #fa755a;
+}
+
+#payment-form .StripeElement--focus {
+    box-shadow: 0 1px 3px 0 #cfd7df;
+}
+
+#payment-form .StripeElement--invalid {
+    border-color: #fa755a;
+}
+
+#payment-form .StripeElement--webkit-autofill {
+    background-color: #fefde5 !important;
+}

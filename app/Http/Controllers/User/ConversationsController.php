@@ -21,7 +21,6 @@ class ConversationsController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
      * @return \Illuminate\Http\Response
      */
     public function create(GroupCreateGet $request)
@@ -43,7 +42,8 @@ class ConversationsController extends Controller
 
                 return response([
                     'status' => 'success',
-                    'message' => 'Group created and users added successfuly.'
+                    'message' => 'Group created and users added successfuly.',
+                    'group_id' => $group->id
 
                 ], 200);
             }

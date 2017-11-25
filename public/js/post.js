@@ -4,7 +4,7 @@ $(() => {
     /**
      *  Post event ----->> 11
      *  Comment events starting is ---->> 120
-     *  Create Conversation Event ---->> 231
+     *  Create Conversation Event ---->> 265
      */
 
 
@@ -266,7 +266,7 @@ $(() => {
 
         data.group_name = $('.group-name');
         data.modal_body = $(e.target).parents('.modal-content')
-            .find('.modal-body');
+                                        .find('.modal-body');
         data.users = data.modal_body.find('.searched-users');
         data.user_ids = [];
 
@@ -290,7 +290,7 @@ $(() => {
                     },
                     success: res => {
                         if(res.status === "success"){
-
+                            location.href = `/group/${res.group_id}`;
                         }
                     },
                     statusCode: {

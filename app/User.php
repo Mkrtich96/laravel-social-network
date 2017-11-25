@@ -2,18 +2,30 @@
 
 namespace App;
 
+use Laravel\Cashier\Billable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, Billable;
     /**
      * The attributes that are mass assignable.
      * @var array
      */
     protected $fillable = [
-        'role','name', 'email', 'password','avatar','gender','provider','api_info','access_token','provider_id'
+        'name',
+        'email',
+        'admin',
+        'password',
+        'avatar',
+        'gender',
+        'provider',
+        'stripe_account_id',
+        'api_info',
+        'access_token',
+        'provider_id',
+        'stripe_id'
     ];
 
     /**
@@ -71,6 +83,14 @@ class User extends Authenticatable
         return $this->hasMany('App\Conversations','owner_id');
     }
 
+    public function products(){
 
+        return $this->hasMany('App\Product');
+    }
+
+    public function orders(){
+
+        return $this->hasMany('App\Order');
+    }
 
 }

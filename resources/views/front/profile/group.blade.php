@@ -1,4 +1,4 @@
-{{ dd(get_auth()) }}
+
 
 <div class="col">
     <div class="card-group">

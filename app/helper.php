@@ -73,3 +73,11 @@ if( !function_exists('generate_avatar') ){
         return $avatar;
     }
 }
+
+if( !function_exists('pointingPrice') ){
+    function pointingPrice($number){
+
+        $new = strlen($number) - 2;
+        return  substr_replace($number, '.', $new, 0);
+    }
+}
