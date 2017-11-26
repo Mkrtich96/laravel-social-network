@@ -26,9 +26,11 @@ class OrderController extends Controller
 
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
+        $token = $request->stripeToken;
+
         if (!$this->isStripeCustomer()) {
 
-            $customer = $this->createStripeCustomer($request->stripeToken);
+            $customer = $this->createStripeCustomer($token);
         } else {
 
             $customer = Customer::retrieve($auth->stripe_id);
@@ -36,7 +38,7 @@ class OrderController extends Controller
 
         if($customer){
 
-            return $this->createStripeCharge($product->id, $product->price, $product->name, $customer);
+            return $this->createStripeCharge($product, $token);
         }
 
         return redirect()
@@ -56,23 +58,44 @@ class OrderController extends Controller
      * @return postStoreOrder()
      */
 
-    public function createStripeCharge($product_id, $product_price, $product_name, $customer){
+    public function createStripeCharge($product, $token){
 
-        try {
-            Charge::create([
-                "amount" => $product_price,
-                "currency" => "usd",
-                "customer" => $customer->id,
-                "description" => $product_name
-            ]);
-        } catch(Card $e) {
+        if($this->postStoreOrder($product)){
+            try {
 
-            return redirect()
-                ->back()
-                ->with('error', 'Your credit card was been declined. Please try again or contact us.');
+                Charge::create([
+                    "amount" => $product->price,
+                    "currency" => "usd",
+                    "source" => $token,
+                    "destination" => [
+                        "account" => $product->user->stripe_account_id,
+                    ],
+                ]);
+
+                $delete_product = $product->delete();
+
+                if($delete_product){
+
+                    return redirect()
+                        ->back()
+                        ->with('msg', 'Thanks for your purchase!');
+                }
+
+                return redirect()
+                        ->back()
+                        ->with('error', 'Product purchased, but not deleted.');
+
+            } catch(Card $e) {
+
+                return redirect()
+                    ->back()
+                    ->with('error', 'Your credit card was been declined. Please try again or contact us.');
+            }
         }
 
-        return $this->postStoreOrder($product_name, $product_id);
+        return redirect()
+                ->back()
+                ->with('error', 'Please try again later, errors with connection');
     }
 
 
@@ -126,19 +149,23 @@ class OrderController extends Controller
      * @return redirect()
      */
 
-    public function postStoreOrder($product_name, $product_id)
+    public function postStoreOrder($product)
     {
         $auth = get_auth();
+        $order_ok = true;
 
-            $auth->orders()->create([
-                'email' => $auth->email,
-                'product' => $product_name,
-                'product_id' => $product_id
-            ]);
+        $create_order = $auth->orders()->create([
+                            'email' => $auth->email,
+                            'product' => $product->name,
+                            'product_id' => $product->id
+                        ]);
 
-        return redirect()
-            ->back()
-            ->with('msg', 'Thanks for your purchase!');
+        if(is_null($create_order)){
+
+            $order_ok = false;
+        }
+
+        return $order_ok;
     }
 
 }

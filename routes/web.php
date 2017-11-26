@@ -19,7 +19,14 @@ Route::group(['middleware' => ['admin'], 'namespace' => 'Admin'], function(){
         'uses' => 'AdminController@showNotifications',
         'as' => 'admin.notifications'
     ]);
-
+    Route::post('/admin/approved/product', [
+        'uses' => 'AdminController@approveProduct',
+        'as' => 'admin.approve'
+    ]);
+    Route::post('/admin/denied/product', [
+        'uses' => 'AdminController@deniedProduct',
+        'as' => 'admin.denied'
+    ]);
     Route::resource('/admin','AdminController');
 });
 
@@ -42,6 +49,11 @@ Route::group(['middleware'=>['auth'],'namespace'=>'User'],function(){
     /**
      * User profile guest page
      */
+    Route::get('user/{user}/products', [
+        'uses' => 'UserController@guestProducts',
+        'as' => 'guest.products'
+    ]);
+
     Route::get('user/{user}',['uses' => 'UserController@guestPage','as' => 'user.guest']);
 
     /**

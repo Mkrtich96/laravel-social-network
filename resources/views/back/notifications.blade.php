@@ -1,4 +1,4 @@
-@extends('back.layout.admin')
+@extends('back.admin')
 
 
 @section('container')
@@ -38,8 +38,18 @@
                                         <td>$ {{ pointingPrice($notification->data['product_price']) }}</td>
                                         <td>{{ $notification->data['product_created_at'] }}</td>
                                         <td>
-                                            <a href="{{ route('admin.edit',['id' => $notification->data['user_id']]) }}" class="badge badge-success accept-product">Approve</a>
-                                            <a href="{{ route('admin.edit', ['id' => $notification->data['user_id']]) }}" class="badge badge-danger cancel-product">Denied</a>
+                                            <form action="{{ route('admin.approve') }}" method="post">
+                                                {{ csrf_field() }}
+                                                <input type="hidden" name="user" value="{{ $notification->data['user_id'] }}">
+                                                <input type="hidden" name="product" value="{{ $notification->data['product_id'] }}">
+                                                <button class="badge badge-success accept-product" type="submit">Approve</button>
+                                            </form>
+                                            <form action="{{ route('admin.denied') }}" method="post">
+                                                {{ csrf_field() }}
+                                                <input type="hidden" name="user" value="{{ $notification->data['user_id'] }}">
+                                                <input type="hidden" name="product" value="{{ $notification->data['product_id'] }}">
+                                                <button class="badge badge-danger cancel-product" type="submit">Denied</button>
+                                            </form>
                                         </td>
                                     </tr>
                                 @endforeach

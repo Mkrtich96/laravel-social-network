@@ -24,17 +24,17 @@ class ProductController extends Controller
 
         $auth = get_auth();
 
-        if( is_null($auth->strip_account_id) ){
 
+        if( is_null($auth->stripe_account_id) ){
             $this->connect_authorize_url .= "response_type=" . $this->connect_response_type;
             $this->connect_authorize_url .= "&client_id=" . env('STRIPE_CLIENT_ID');
             $this->connect_authorize_url .= "&scope=" . $this->connect_scope;
 
             $connect_url = $this->connect_authorize_url;
         }else{
-
             $products = $auth->products;
         }
+
 
         return view('front.profile.products', compact('auth','products', 'connect_url'));
     }

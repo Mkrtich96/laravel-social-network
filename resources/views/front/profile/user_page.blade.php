@@ -1,21 +1,5 @@
 @extends('front.layout.layout')
 
-@section('head')
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Home page</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="{{asset('css/jquery-ui.css') }}">
-    <link rel="stylesheet" href="{{asset('bootstrap4/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{asset('css/user.css') }}">
-    <link rel="stylesheet" href="{{asset('css/profile.css') }}">
-    <link rel="stylesheet" href="{{asset('css/gallery.css') }}">
-    <link rel="stylesheet" href="{{asset('css/font-awesome/font-awesome.min.css') }}">
-@endsection
-
-
 @section('content')
     <header class="header-user">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -30,9 +14,11 @@
                     <li class="nav-item active">
                         <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Messages</a>
-                    </li>
+                    @if(isset($products))
+                        <a class="nav-link text-dark" href="{{ route('guest.products',$user->id) }}">Products</a>
+                    @else
+                        <a class="nav-link" disabled>Products</a>
+                    @endif
                     <li>
                         <input class="get-id" type="hidden" data-id="{{ get_auth('id') }}">
                     </li>
@@ -57,86 +43,65 @@
                     </div>
                 </div>
                 <div class="col-lg-6 mb-4">
-                    <div class="cards">
-                            @if( isset($posts) )
-                                @foreach( $posts as $post )
-                                    <div class="parent-card users-res card col-12 col-sm-12">
-                                        <div class="card-body">
-                                            <div class="card-text">
-                                                <img src="{{ $user_avatar }}" class="rounded-circle followers-avatar float-left">
-                                                <h5 class="card-title">{{ $user->name }}</h5>
-                                                <small class="form-text text-muted">{{ parseCreatedAt($post->date) }}</small>
-                                            </div>
-                                            <div class="card-text mt-3">
-                                                <p class="text-justify">
-                                                    {{ $post->text }}
-                                                </p>
-                                            </div>
-                                            <div class="card-text float-right w-75 comments-body">
-                                                    @foreach($post->comments as $comment)
-                                                        <div class="card">
-                                                            <div class="card-body p-2">
-                                                                <h5 class="card-title" data-id="{{ $comment->user->id }}">
-                                                                    {{ $comment->user->name }}
-                                                                </h5>
-                                                                @if(!is_null($comment->parent_id))
-                                                                    @php
-                                                                        $comment_parent = $comment->parent()->with('user')->first();
-                                                                        $parent_id = $comment_parent->user->id;
-                                                                    @endphp
 
-                                                                    <a href="{{ url("/user/$parent_id") }}" target="_blank">
-                                                                        {{ $comment_parent->user->name }}
-                                                                    </a>
-                                                                @endif
-                                                                    {{ $comment->comment }}
-                                                            </div>
-                                                            @if($comment->user->name != $auth->name)
-                                                                <a href="" class="reply-comment" data-id="{{ $comment->id }}">Reply</a>
+                        @if( isset($posts) )
+                            <div class="cards">
+                            @foreach( $posts as $post )
+                                <div class="parent-card users-res card col-12 col-sm-12">
+                                    <div class="card-body">
+                                        <div class="card-text">
+                                            <img src="{{ $user_avatar }}" class="rounded-circle followers-avatar float-left">
+                                            <h5 class="card-title">{{ $user->name }}</h5>
+                                            <small class="form-text text-muted">{{ parseCreatedAt($post->date) }}</small>
+                                        </div>
+                                        <div class="card-text mt-3">
+                                            <p class="text-justify">
+                                                {{ $post->text }}
+                                            </p>
+                                        </div>
+                                        <div class="card-text float-right w-75 comments-body">
+                                                @foreach($post->comments as $comment)
+                                                    <div class="card">
+                                                        <div class="card-body p-2">
+                                                            <h5 class="card-title" data-id="{{ $comment->user->id }}">
+                                                                {{ $comment->user->name }}
+                                                            </h5>
+                                                            @if(!is_null($comment->parent_id))
+                                                                @php
+                                                                    $comment_parent = $comment->parent()->with('user')->first();
+                                                                    $parent_id = $comment_parent->user->id;
+                                                                @endphp
+
+                                                                <a href="{{ url("/user/$parent_id") }}" target="_blank">
+                                                                    {{ $comment_parent->user->name }}
+                                                                </a>
                                                             @endif
+                                                                {{ $comment->comment }}
                                                         </div>
-                                                    @endforeach
-                                                <div class="input-group input-group-sm mt-2 apply-comment" id="comment">
-                                                    <input type="text" class="rounded-0 form-control send-comment" placeholder="Comment.." aria-describedby="sizing-addon2" data-id="{{ $post->id }}">
-                                                </div>
-                                            </div>
-
-                                            <div class="clearfix"></div>
-
-                                            <div class="card-text mt-2">
-                                                <a class="btn comment badge badge-primary text-light float-right"  data-id="{{ $post->id }}" data-user="{{ $user->id }}" >
-                                                    Comments
-                                                    <span class="badge badge-light">{{ count($post->comments) }}</span>
-                                                </a>
+                                                        @if($comment->user->name != $auth->name)
+                                                            <a href="" class="reply-comment" data-id="{{ $comment->id }}">Reply</a>
+                                                        @endif
+                                                    </div>
+                                                @endforeach
+                                            <div class="input-group input-group-sm mt-2 apply-comment" id="comment">
+                                                <input type="text" class="rounded-0 form-control send-comment" placeholder="Comment.." aria-describedby="sizing-addon2" data-id="{{ $post->id }}">
                                             </div>
                                         </div>
+                                        <div class="clearfix"></div>
+                                        <div class="card-text mt-2">
+                                            <a class="btn comment badge badge-primary text-light float-right"  data-id="{{ $post->id }}" data-user="{{ $user->id }}" >
+                                                Comments
+                                                <span class="badge badge-light">{{ count($post->comments) }}</span>
+                                            </a>
+                                        </div>
                                     </div>
-                                @endforeach
-                            @endif
-                    </div>
+                                </div>
+                            @endforeach
+                            </div>
+                        @endif
                 </div>
                 @include('front.profile.sec_part_three')
             </div>
         </div>
     </section>
-
-@endsection
-
-
-@section('foot')
-    <script>
-        $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-        });
-    </script>
-    <script src="{{ asset('js/jquery.js') }}"></script>
-    <script src="{{ asset('js/jquery-ui.js') }}"></script>
-    <script src="{{ asset('js/popper.min.js') }}"></script>
-    <script src="{{ asset('bootstrap4/js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('js/helpers.js') }}"></script>
-    <script src="{{ asset('js/providers.js') }}"></script>
-    <script src="{{ asset('js/script.js') }}"></script>
-    <script src="{{ asset('js/gallery.js') }}"></script>
-    <script src="{{ asset('js/message.js') }}"></script>
-    <script src="{{ asset('js/post.js') }}"></script>
 @endsection

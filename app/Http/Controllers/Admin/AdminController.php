@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Requests\AllowProduct;
+use App\Notifications\ToMail;
 use App\Order;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -16,7 +19,6 @@ class AdminController extends Controller
      */
     public function index()
     {
-
         $count_notifications = count($this->notifications());
 
         return view('back.index', compact('count_notifications'));
@@ -28,13 +30,64 @@ class AdminController extends Controller
     public function showNotifications(){
 
         $notifications = $this->notifications();
-
         $notifications = count($notifications) > 0 ? $notifications : null;
 
         return view('back.notifications', compact('notifications'));
     }
 
+    public function approveProduct(AllowProduct $request){
 
+        $admin = get_auth();
+        $user = User::find($request->user);
+
+        $approve = $user->products()
+                        ->where('id', $request->product)
+                        ->update(['status' => true]);
+
+        if($approve){
+
+            $notification = $admin->notifications()
+                                    ->where('to', $request->user)
+                                    ->first();
+
+            if($notification){
+                $delete = $notification->delete();
+
+                if($delete){
+
+                    $user->notify(new ToMail(true));
+
+                    return redirect()
+                        ->back()
+                        ->with('success', 'The user product has been allowed.');
+                }
+            }
+        }
+
+        return redirect()
+                    ->back()
+                    ->with('error', 'The user product dont saved as allowed!');
+
+    }
+
+    public function deniedProduct(AllowProduct $request){
+
+        $admin = get_auth();
+        $user = User::find($request->user);
+        $user->notify(new ToMail(false));
+
+        $notification = $admin->notifications()
+                                ->where('to', $request->user)
+                                ->first();
+
+        if($notification->delete()){
+            return redirect()
+                        ->back()
+                        ->with('success', 'User product denied successfully');
+        }
+
+        return redirect()->back()->with('error', 'Notification don\'t deleted');
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -110,7 +163,6 @@ class AdminController extends Controller
     public function notifications(){
 
         $admin = get_auth();
-
         return $admin->unreadNotifications;
     }
 
@@ -123,7 +175,6 @@ class AdminController extends Controller
 
     public function getAllOrders()
     {
-
         $orders = Order::all();
 
         return view('back.admin', compact('orders'));

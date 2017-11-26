@@ -162,12 +162,35 @@ class UserController extends Controller
 
         $posts = $this->generatePostStatus($user, $post_status);
         $user_avatar = generate_avatar($user);
-        $followers_list =   $this->getFollowersList($auth->id);
+        $followers_list = $this->getFollowersList($auth->id);
+
+        $products = $user->products()->where('status', true)->get();
+
+        if(count($products) === 0){
+            $products = null;
+        }
 
         return view('front.profile.user_page',
-                    compact('user','user_avatar','user_comments','followButton', 'posts', 'auth', 'followers_list')
+                    compact('user',
+                                 'user_avatar',
+                                    'user_comments',
+                                    'followButton',
+                                    'products',
+                                    'posts',
+                                    'auth',
+                                    'followers_list')
                 );
     }
+
+    public function guestProducts(User $user){
+
+        $products = $user->products()->where('status', 1)->get();
+
+        $products = count($products) > 0 ? $products : null;
+
+        return view('front.profile.user_page_products', compact('products'));
+    }
+
 
     /**
      * Connect user stripe account to platform
@@ -178,10 +201,9 @@ class UserController extends Controller
         if (isset($request->code)) {
 
             $token_request_body = [
-                'grant_type' => 'authorization_code',
-                'client_id' => env('STRIPE_CLIENT_ID'),
+                'client_secret' => env('STRIPE_SECRET'),
                 'code' => $request->code,
-                'client_secret' => env('STRIPE_SECRET')
+                'grant_type' => 'authorization_code',
             ];
 
             $response = Curl::to(env('STRIPE_TOKEN_URI'))

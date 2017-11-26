@@ -1,21 +1,5 @@
 @extends('front.layout.layout')
 
-@section('head')
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Home page</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="{{asset('css/jquery-ui.css') }}">
-    <link rel="stylesheet" href="{{asset('bootstrap4/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{asset('css/font-awesome/font-awesome.min.css') }}">
-    <link rel="stylesheet" href="{{asset('css/user.css') }}">
-    <link rel="stylesheet" href="{{asset('css/profile.css') }}">
-    <link rel="stylesheet" href="{{asset('css/gallery.css') }}">
-    <link rel="stylesheet" href="{{asset('css/stripe.css') }}">
-@endsection
-
 
 @section('content')
     <div class="container mt-2">
@@ -53,29 +37,17 @@
                 <button class="stripe-connect mt-0" type="submit"> <span>Disconnect Stripe account</span></button>
             </form>
         
-            @if(isset($products))
-                @foreach($products as $product)
-    
-    
-    
-                @endforeach
-            @endif
+            @isset($products)
+                <div class="row">
+                    @foreach($products as $product)
+                        <div class="col-3 productbox">
+                            <div class="producttitle">{{ $product->name }}</div>
+                            <div class="producttitle">{{ $product->description }}</div>
+                        </div>
+                    @endforeach
+                </div>
+            @endisset
         @endif
     </div>
     @include('front.profile.add_product')
-@endsection
-
-@section('foot')
-    <script src="{{ asset('js/jquery.js') }}"></script>
-
-    <script>
-        $.ajaxSetup({
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
-        });
-    </script>
-    <script src="{{ asset('js/jquery-ui.js') }}"></script>
-    <script src="{{ asset('js/popper.min.js') }}"></script>
-    <script src="{{ asset('bootstrap4/js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('js/helpers.js') }}"></script>
-    <script src="{{ asset('js/message.js') }}"></script>
 @endsection
