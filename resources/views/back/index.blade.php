@@ -23,6 +23,7 @@
                             <tr>
                                 <th>Email</th>
                                 <th>Product</th>
+                                <th>Created</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -31,6 +32,7 @@
                                         <tr>
                                             <td>{{ $order->email }}</td>
                                             <td>{{ $order->product }}</td>
+                                            <td>{{ parseCreatedAt($order->created_at) }}</td>
                                         </tr>
                                     @endforeach
                                 @endisset

@@ -61,7 +61,7 @@ class ProductController extends Controller
         if($save_product){
 
             $admin = User::where('admin', true)->first();
-            $notify = $admin->notify(new RepliedToPublicProduct($save_product, $auth));
+            $admin->notify(new RepliedToPublicProduct($save_product, $auth));
 
             return redirect()
                 ->back()
@@ -71,18 +71,6 @@ class ProductController extends Controller
         return redirect()
                     ->back()
                     ->with('error', 'Product don\' created. Please try again later.');
-
-        /*Stripe::setApiKey(env('STRIPE_SECRET'));
-
-        $charge = Charge::create([
-            "amount" => 1000,
-            "currency" => "usd",
-            "source" => "tok_visa",
-        ], ["stripe_account" => "acct_1BQF2VFwm9THsHN5"]);
-
-        dd($charge);*/
-
-
     }
 
     /**

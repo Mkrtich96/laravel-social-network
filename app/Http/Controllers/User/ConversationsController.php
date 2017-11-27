@@ -100,7 +100,7 @@ class ConversationsController extends Controller
         $auth = get_auth();
         $conversations = $auth->conversations;
 
-       if(count($conversations) > 0){
+       if($conversations->count()){
 
            return response([
                'status' => 'success',
