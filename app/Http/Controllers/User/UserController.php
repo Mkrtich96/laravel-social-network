@@ -6,12 +6,10 @@ use App\User;
 use App\Follow;
 use App\Notify;
 use Illuminate\Http\Request;
-use App\Http\Requests\IndexGuest;
+use Ixudra\Curl\Facades\Curl;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserProfilePhoto;
 use GrahamCampbell\GitHub\GitHubManager;
-use Ixudra\Curl\CurlService;
-use Ixudra\Curl\Facades\Curl;
 
 
 class UserController extends Controller
@@ -89,10 +87,10 @@ class UserController extends Controller
             $followers_list = $this->getFollowersList($auth->id);
 
             // Auth user notifications
-            $notifications =   $auth->readnotifications;
+            $notifications = $auth->readnotifications;
 
             // Auth user posts
-            $posts  =   $this->generatePostStatus($auth,true);
+            $posts = $this->generatePostStatus($auth,true);
 
             // Auth user avatar
             $user_avatar = generate_avatar($auth);
@@ -186,7 +184,7 @@ class UserController extends Controller
 
         $products = $user->products()->where('status', 1)->get();
 
-        $products = count($products) > 0 ? $products : null;
+        $products = $products->count() ? $products : null;
 
         return view('front.profile.user_page_products', compact('products'));
     }
@@ -235,11 +233,11 @@ class UserController extends Controller
         $auth = get_auth();
 
         $response = Curl::to($this->disconnect_url)
-            ->withHeader("Authorization: Bearer " . env('STRIPE_SECRET'))
-            ->withData([
-                'client_id' => env('STRIPE_CLIENT_ID'),
-                'stripe_user_id' => $auth->stripe_account_id
-            ])->post();
+                        ->withHeader("Authorization: Bearer " . env('STRIPE_SECRET'))
+                        ->withData([
+                            'client_id' => env('STRIPE_CLIENT_ID'),
+                            'stripe_user_id' => $auth->stripe_account_id
+                        ])->post();
 
         if ($response) {
 
@@ -249,15 +247,15 @@ class UserController extends Controller
 
                 return redirect('/')
                             ->with('success', 'You deauthorized from stripe account.');
-            } else {
-                return redirect('/')
-                            ->with('error', 'Your stripe account dissconneced, but not saved in server. Please try again later.');
             }
 
-            return redirect()
-                    ->back()
-                    ->with('error', 'An error has occured. Please try again later.');
+            return redirect('/')
+                        ->with('error', 'Your stripe account dissconneced, but not saved in server. Please try again later.');
         }
+
+        return redirect()
+            ->back()
+            ->with('error', 'An error has occured. Please try again later.');
     }
 
 

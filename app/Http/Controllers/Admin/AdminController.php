@@ -21,7 +21,11 @@ class AdminController extends Controller
     {
         $count_notifications = count($this->notifications());
 
-        return view('back.index', compact('count_notifications'));
+        $orders = Order::all();
+
+        $orders = $orders->count() ? $orders : null;
+
+        return view('back.index', compact('count_notifications', 'orders'));
     }
 
     /**
@@ -30,7 +34,7 @@ class AdminController extends Controller
     public function showNotifications(){
 
         $notifications = $this->notifications();
-        $notifications = count($notifications) > 0 ? $notifications : null;
+        $notifications = $notifications->count() ? $notifications : null;
 
         return view('back.notifications', compact('notifications'));
     }
@@ -81,6 +85,7 @@ class AdminController extends Controller
                                 ->first();
 
         if($notification->delete()){
+
             return redirect()
                         ->back()
                         ->with('success', 'User product denied successfully');
@@ -163,20 +168,8 @@ class AdminController extends Controller
     public function notifications(){
 
         $admin = get_auth();
+
         return $admin->unreadNotifications;
     }
 
-    /**
-     * Get all orders.
-     *
-     * @var Order $orders
-     * @return view
-     */
-
-    public function getAllOrders()
-    {
-        $orders = Order::all();
-
-        return view('back.admin', compact('orders'));
-    }
 }
